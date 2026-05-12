@@ -24,4 +24,7 @@ public class CreateVehicleDto
 
     [Range(0, 2000000)]
     public int CurrentMileage { get; set; }
+
+    [Required]
+    public int AppUserId { get; set; }
 }

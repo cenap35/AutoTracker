@@ -48,7 +48,8 @@ public class VehiclesController : ControllerBase
       Model = dto.Model,
       Year = dto.Year,
       PlateNumber = dto.PlateNumber,
-      CurrentMileage = dto.CurrentMileage
+      CurrentMileage = dto.CurrentMileage,
+      AppUserId = dto.AppUserId
     };
 
     _context.Vehicles.Add(vehicle);
