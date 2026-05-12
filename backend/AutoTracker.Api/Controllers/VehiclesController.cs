@@ -2,6 +2,7 @@ using AutoTracker.Api.Data;
 using AutoTracker.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using AutoTracker.Api.DTOs;
 
 namespace AutoTracker.Api.Controllers;
 
@@ -17,7 +18,7 @@ public class VehiclesController : ControllerBase
     _context = context;
   }
 
-  [HttpGet] 
+  [HttpGet]
   public async Task<ActionResult<List<Vehicle>>> GetVehicles()
   {
     var vehicles = await _context.Vehicles.ToListAsync();
@@ -39,27 +40,36 @@ public class VehiclesController : ControllerBase
   }
 
   [HttpPost]
-  public async Task<ActionResult<Vehicle>> CreateVehicle(Vehicle vehicle)
+  public async Task<ActionResult<Vehicle>> CreateVehicle(CreateVehicleDto dto)
   {
+    var vehicle = new Vehicle
+    {
+      Brand = dto.Brand,
+      Model = dto.Model,
+      Year = dto.Year,
+      PlateNumber = dto.PlateNumber,
+      CurrentMileage = dto.CurrentMileage
+    };
+
     _context.Vehicles.Add(vehicle);
 
     await _context.SaveChangesAsync();
 
     return CreatedAtAction(
-        nameof(GetVehicles),
+        nameof(GetVehicleById),
         new { id = vehicle.Id },
         vehicle
     );
   }
 
   [HttpDelete("{id}")]
-public async Task<IActionResult> DeleteVehicle(int id)
-{
+  public async Task<IActionResult> DeleteVehicle(int id)
+  {
     var vehicle = await _context.Vehicles.FindAsync(id);
 
     if (vehicle is null)
     {
-        return NotFound();
+      return NotFound();
     }
 
     _context.Vehicles.Remove(vehicle);
@@ -67,26 +77,26 @@ public async Task<IActionResult> DeleteVehicle(int id)
     await _context.SaveChangesAsync();
 
     return NoContent();
-}
+  }
 
-[HttpPut("{id}")]
-public async Task<IActionResult> UpdateVehicle(int id, Vehicle updatedVehicle)
-{
+  [HttpPut("{id}")]
+  public async Task<IActionResult> UpdateVehicle(int id, UpdateVehicleDto dto)
+  {
     var vehicle = await _context.Vehicles.FindAsync(id);
 
     if (vehicle is null)
     {
-        return NotFound();
+      return NotFound();
     }
 
-    vehicle.Brand = updatedVehicle.Brand;
-    vehicle.Model = updatedVehicle.Model;
-    vehicle.Year = updatedVehicle.Year;
-    vehicle.PlateNumber = updatedVehicle.PlateNumber;
-    vehicle.CurrentMileage = updatedVehicle.CurrentMileage;
+    vehicle.Brand = dto.Brand;
+    vehicle.Model = dto.Model;
+    vehicle.Year = dto.Year;
+    vehicle.PlateNumber = dto.PlateNumber;
+    vehicle.CurrentMileage = dto.CurrentMileage;
 
     await _context.SaveChangesAsync();
 
     return NoContent();
-}
+  }
 }
