@@ -1,5 +1,7 @@
 namespace AutoTracker.Api.Models;
+using Microsoft.EntityFrameworkCore;
 
+[Index(nameof(Email), IsUnique = true)] // unique constraint for the email column
 public class AppUser
 {
     public int Id { get; set; }
