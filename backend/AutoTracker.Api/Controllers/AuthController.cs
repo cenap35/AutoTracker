@@ -4,6 +4,10 @@ using AutoTracker.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
 
 namespace AutoTracker.Api.Controllers;
 
@@ -64,12 +68,43 @@ public class AuthController : ControllerBase
       return Unauthorized("Email veya şifre hatalı.");
     }
 
+    var token = CreateToken(user);
+
     return Ok(new
     {
       message = "Login başarılı",
+      token = token,
       userId = user.Id,
       fullName = user.FullName,
       email = user.Email
     });
+  }
+  private string CreateToken(AppUser user)  // creating the token for the user jwt
+  {
+    var claims = new List<Claim>
+    {
+        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+        new Claim(ClaimTypes.Name, user.FullName),
+        new Claim(ClaimTypes.Email, user.Email)
+    };
+
+    var key = new SymmetricSecurityKey(
+        Encoding.UTF8.GetBytes(
+            HttpContext.RequestServices
+                .GetRequiredService<IConfiguration>()["Jwt:Key"]!
+        )
+    );
+
+    var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+    var token = new JwtSecurityToken(
+        issuer: HttpContext.RequestServices.GetRequiredService<IConfiguration>()["Jwt:Issuer"],
+        audience: HttpContext.RequestServices.GetRequiredService<IConfiguration>()["Jwt:Audience"],
+        claims: claims,
+        expires: DateTime.UtcNow.AddHours(2),
+        signingCredentials: credentials
+    );
+
+    return new JwtSecurityTokenHandler().WriteToken(token);
   }
 }
