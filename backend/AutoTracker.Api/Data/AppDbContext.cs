@@ -10,6 +10,7 @@ public class AppDbContext : DbContext
     {
     }
 
-    public DbSet<Vehicle> Vehicles { get; set; }
-    public DbSet<AppUser> AppUsers { get; set; }
+    public DbSet<Vehicle> Vehicles { get; set; } = null!;
+    public DbSet<AppUser> AppUsers { get; set; } = null!;
+    public DbSet<MaintenanceRecord> MaintenanceRecords { get; set; } = null!;
 }

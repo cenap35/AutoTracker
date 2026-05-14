@@ -25,4 +25,5 @@ public class Vehicle
     public int CurrentMileage { get; set; }
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public List<MaintenanceRecord> MaintenanceRecords { get; set; } = new();
 }
