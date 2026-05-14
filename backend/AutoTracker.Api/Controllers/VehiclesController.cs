@@ -3,12 +3,15 @@ using AutoTracker.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AutoTracker.Api.DTOs;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace AutoTracker.Api.Controllers;
 
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class VehiclesController : ControllerBase
 {
   private readonly AppDbContext _context;
@@ -21,7 +24,11 @@ public class VehiclesController : ControllerBase
   [HttpGet]
   public async Task<ActionResult<List<Vehicle>>> GetVehicles()
   {
-    var vehicles = await _context.Vehicles.ToListAsync();
+    var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+    var vehicles = await _context.Vehicles
+        .Where(v => v.AppUserId == userId)
+        .ToListAsync();
 
     return Ok(vehicles);
   }
@@ -42,6 +49,7 @@ public class VehiclesController : ControllerBase
   [HttpPost]
   public async Task<ActionResult<Vehicle>> CreateVehicle(CreateVehicleDto dto)
   {
+    var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
     var vehicle = new Vehicle
     {
       Brand = dto.Brand,
@@ -49,7 +57,7 @@ public class VehiclesController : ControllerBase
       Year = dto.Year,
       PlateNumber = dto.PlateNumber,
       CurrentMileage = dto.CurrentMileage,
-      AppUserId = dto.AppUserId
+      AppUserId = userId
     };
 
     _context.Vehicles.Add(vehicle);
