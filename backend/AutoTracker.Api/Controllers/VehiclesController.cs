@@ -22,21 +22,45 @@ public class VehiclesController : ControllerBase
   }
 
   [HttpGet]
-  public async Task<ActionResult<List<Vehicle>>> GetVehicles()
+  public async Task<ActionResult<List<VehicleDto>>> GetVehicles()
   {
     var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
     var vehicles = await _context.Vehicles
         .Where(v => v.AppUserId == userId)
+        .Select(v => new VehicleDto
+        {
+          Id = v.Id,
+          Brand = v.Brand,
+          Model = v.Model,
+          Year = v.Year,
+          PlateNumber = v.PlateNumber,
+          CurrentMileage = v.CurrentMileage,
+          CreatedAt = v.CreatedAt
+        })
         .ToListAsync();
 
     return Ok(vehicles);
   }
 
   [HttpGet("{id}")]
-  public async Task<ActionResult<Vehicle>> GetVehicleById(int id)
+  public async Task<ActionResult<VehicleDto>> GetVehicleById(int id)
   {
-    var vehicle = await _context.Vehicles.FindAsync(id);
+    var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+    var vehicle = await _context.Vehicles
+        .Where(v => v.Id == id && v.AppUserId == userId)
+        .Select(v => new VehicleDto
+        {
+          Id = v.Id,
+          Brand = v.Brand,
+          Model = v.Model,
+          Year = v.Year,
+          PlateNumber = v.PlateNumber,
+          CurrentMileage = v.CurrentMileage,
+          CreatedAt = v.CreatedAt
+        })
+        .FirstOrDefaultAsync();
 
     if (vehicle is null)
     {
@@ -47,7 +71,7 @@ public class VehiclesController : ControllerBase
   }
 
   [HttpPost]
-  public async Task<ActionResult<Vehicle>> CreateVehicle(CreateVehicleDto dto)
+  public async Task<ActionResult<VehicleDto>> CreateVehicle(CreateVehicleDto dto)
   {
     var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
     var vehicle = new Vehicle
@@ -64,17 +88,31 @@ public class VehiclesController : ControllerBase
 
     await _context.SaveChangesAsync();
 
+    var vehicleDto = new VehicleDto
+    {
+      Id = vehicle.Id,
+      Brand = vehicle.Brand,
+      Model = vehicle.Model,
+      Year = vehicle.Year,
+      PlateNumber = vehicle.PlateNumber,
+      CurrentMileage = vehicle.CurrentMileage,
+      CreatedAt = vehicle.CreatedAt
+    };
+
     return CreatedAtAction(
         nameof(GetVehicleById),
         new { id = vehicle.Id },
-        vehicle
+        vehicleDto
     );
   }
 
   [HttpDelete("{id}")]
   public async Task<IActionResult> DeleteVehicle(int id)
   {
-    var vehicle = await _context.Vehicles.FindAsync(id);
+    var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+    var vehicle = await _context.Vehicles
+        .FirstOrDefaultAsync(v => v.Id == id && v.AppUserId == userId);
 
     if (vehicle is null)
     {
@@ -91,7 +129,10 @@ public class VehiclesController : ControllerBase
   [HttpPut("{id}")]
   public async Task<IActionResult> UpdateVehicle(int id, UpdateVehicleDto dto)
   {
-    var vehicle = await _context.Vehicles.FindAsync(id);
+    var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+    var vehicle = await _context.Vehicles
+        .FirstOrDefaultAsync(v => v.Id == id && v.AppUserId == userId);
 
     if (vehicle is null)
     {
