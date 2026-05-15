@@ -1,25 +1,31 @@
-import { useState } from 'react'
-import { login } from '../services/authService'
+import { useState } from "react";
+import { login } from "../services/authService";
+import { useNavigate } from "react-router-dom";
+
+
 
 function LoginPage() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
+
+  const navigate = useNavigate()
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     try {
-      const data = await login(email, password)
+      const data = await login(email, password);
 
-      localStorage.setItem('token', data.token)
+      localStorage.setItem("token", data.token);
 
-      console.log('Login başarılı:', data)
+      navigate("/vehicles");
     } catch (err) {
-      setError('Email veya şifre hatalı')
-      console.error(err)
+      setError("Email veya şifre hatalı");
+
+      console.error(err);
     }
-  }
+  };
 
   return (
     <div>
@@ -45,7 +51,7 @@ function LoginPage() {
 
       {error && <p>{error}</p>}
     </div>
-  )
+  );
 }
 
-export default LoginPage
+export default LoginPage;
