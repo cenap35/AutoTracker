@@ -8,6 +8,7 @@ import VehicleDetailPage from "./pages/VehicleDetailPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from "./components/Navbar";
 import DashboardPage from "./pages/DashboardPage";
+import Footer from "./components/Footer"
 
 function App() {
   return (
@@ -47,6 +48,8 @@ function App() {
           }
         />
       </Routes>
+
+      <Footer />
     </>
   );
 }
