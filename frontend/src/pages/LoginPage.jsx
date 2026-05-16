@@ -18,6 +18,7 @@ function LoginPage() {
       const data = await login(email, password);
 
       localStorage.setItem("token", data.token);
+      localStorage.setItem('fullName', data.fullName)
 
       navigate("/vehicles");
     } catch (err) {
