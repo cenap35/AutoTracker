@@ -4,6 +4,7 @@ import {
   createVehicle,
   deleteVehicle,
 } from "../services/vehicleService";
+import { Link } from 'react-router-dom'
 
 function VehiclesPage() {
   const [vehicles, setVehicles] = useState([]);
@@ -106,6 +107,9 @@ function VehiclesPage() {
           <p>Yıl: {vehicle.year}</p>
           <p>Plaka: {vehicle.plateNumber}</p>
           <p>KM: {vehicle.currentMileage}</p>
+          
+          <button> <Link to={`/vehicles/${vehicle.id}`}>Details</Link> </button>
+          
 
           <button onClick={() => handleDeleteVehicle(vehicle.id)}>
             Delete
