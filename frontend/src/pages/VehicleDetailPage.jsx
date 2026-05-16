@@ -4,6 +4,7 @@ import { getVehicleById } from "../services/vehicleService";
 import {
   getMaintenanceRecords,
   createMaintenanceRecord,
+  deleteMaintenanceRecord,
 } from "../services/maintenanceService";
 
 function VehicleDetailPage() {
@@ -43,7 +44,7 @@ function VehicleDetailPage() {
         description,
         mileage: Number(mileage),
         cost: Number(cost),
-        maintenanceDate:new Date(maintenanceDate).toISOString(),
+        maintenanceDate: new Date(maintenanceDate).toISOString(),
       });
 
       setMaintenanceRecords([...maintenanceRecords, newRecord]);
@@ -53,6 +54,18 @@ function VehicleDetailPage() {
       setMileage("");
       setCost("");
       setMaintenanceDate("");
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleDeleteMaintenanceRecord = async (recordId) => {
+    try {
+      await deleteMaintenanceRecord(id, recordId);
+
+      setMaintenanceRecords(
+        maintenanceRecords.filter((record) => record.id !== recordId),
+      );
     } catch (err) {
       console.error(err);
     }
@@ -116,6 +129,9 @@ function VehicleDetailPage() {
           <p>Mileage: {record.mileage}</p>
           <p>Cost: {record.cost}</p>
           <p>Date: {record.maintenanceDate}</p>
+          <button onClick={() => handleDeleteMaintenanceRecord(record.id)}>
+            Delete
+          </button>
         </div>
       ))}
     </div>
