@@ -64,7 +64,7 @@ function VehiclesPage() {
   };
 
   return (
-    <div>
+    <div className="page-container">
       <h1>Vehicles Page</h1>
 
       <form onSubmit={handleCreateVehicle}>

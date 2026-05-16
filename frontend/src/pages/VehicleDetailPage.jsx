@@ -109,7 +109,7 @@ function VehicleDetailPage() {
   }
 
   return (
-    <div>
+    <div className="page-container">
       <h1>
         {vehicle.brand} {vehicle.model}
       </h1>

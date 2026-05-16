@@ -27,7 +27,7 @@ function DashboardPage() {
   }
 
   return (
-    <div>
+    <div className="page-container">
       <h1>Dashboard</h1>
 
       <h2>Total Vehicles: {summary.totalVehicles}</h2>
