@@ -34,16 +34,16 @@ function Navbar() {
         <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
           <div className="navbar-nav me-auto">
             <Link className="nav-link active" aria-current="page" to="/">
-              Home
+              Anasayfa
             </Link>
             {token && (
               <Link className="nav-link" to="/vehicles">
-                Vehicles
+                Araçlarım
               </Link>
             )}
             {token && (
               <Link className="nav-link" to="/dashboard">
-                Dashboard
+                Kontrol Paneli
               </Link>
             )}
           </div>
