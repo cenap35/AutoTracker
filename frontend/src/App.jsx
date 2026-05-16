@@ -7,6 +7,7 @@ import VehiclesPage from "./pages/VehiclePage";
 import VehicleDetailPage from "./pages/VehicleDetailPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from "./components/Navbar";
+import DashboardPage from "./pages/DashboardPage";
 
 function App() {
   return (
@@ -33,6 +34,15 @@ function App() {
           element={
             <ProtectedRoute>
               <VehicleDetailPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <DashboardPage />
             </ProtectedRoute>
           }
         />
