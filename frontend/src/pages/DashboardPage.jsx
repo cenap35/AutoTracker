@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { getDashboardSummary } from "../services/dashboardService";
 import { getVehicles } from "../services/vehicleService";
 import { Link } from "react-router-dom";
+import PageWrapper from "../components/PageWrapper";
 
 function DashboardPage() {
   const [summary, setSummary] = useState(null);
@@ -27,6 +28,7 @@ function DashboardPage() {
   }
 
   return (
+    <PageWrapper>
     <div className="container py-4">
       <div className="row mb-4 align-items-center">
         <div className="col-md-8">
@@ -120,6 +122,7 @@ function DashboardPage() {
         ))}
       </div>
     </div>
+    </PageWrapper>
   );
 }
 

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { register } from "../services/authService";
 import { useNavigate } from "react-router-dom";
+import PageWrapper from "../components/PageWrapper";
 
 function RegisterPage() {
   const navigate = useNavigate();
@@ -32,6 +33,7 @@ function RegisterPage() {
   };
 
   return (
+    <PageWrapper>
     <div
       className="d-flex align-items-center justify-content-center"
       style={{
@@ -183,6 +185,7 @@ function RegisterPage() {
         </div>
       </div>
     </div>
+    </PageWrapper>
   );
 }
 
