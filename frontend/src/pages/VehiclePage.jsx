@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
-import { getVehicles, createVehicle } from "../services/vehicleService";
+import {
+  getVehicles,
+  createVehicle,
+  deleteVehicle,
+} from "../services/vehicleService";
 
 function VehiclesPage() {
   const [vehicles, setVehicles] = useState([]);
@@ -43,6 +47,16 @@ function VehiclesPage() {
       setYear("");
       setPlateNumber("");
       setCurrentMileage("");
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleDeleteVehicle = async (id) => {
+    try {
+      await deleteVehicle(id);
+
+      setVehicles(vehicles.filter((vehicle) => vehicle.id !== id));
     } catch (err) {
       console.error(err);
     }
@@ -92,6 +106,10 @@ function VehiclesPage() {
           <p>Yıl: {vehicle.year}</p>
           <p>Plaka: {vehicle.plateNumber}</p>
           <p>KM: {vehicle.currentMileage}</p>
+
+          <button onClick={() => handleDeleteVehicle(vehicle.id)}>
+            Delete
+          </button>
         </div>
       ))}
     </div>
