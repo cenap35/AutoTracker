@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getVehicleById } from "../services/vehicleService";
+import { getVehicleById, updateVehicle } from "../services/vehicleService";
 import {
   getMaintenanceRecords,
   createMaintenanceRecord,
@@ -18,12 +18,22 @@ function VehicleDetailPage() {
   const [mileage, setMileage] = useState("");
   const [cost, setCost] = useState("");
   const [maintenanceDate, setMaintenanceDate] = useState("");
+  const [brand, setBrand] = useState("");
+  const [model, setModel] = useState("");
+  const [year, setYear] = useState("");
+  const [plateNumber, setPlateNumber] = useState("");
+  const [currentMileage, setCurrentMileage] = useState("");
 
   useEffect(() => {
     const fetchVehicle = async () => {
       try {
         const data = await getVehicleById(id);
         setVehicle(data);
+        setBrand(data.brand);
+        setModel(data.model);
+        setYear(data.year);
+        setPlateNumber(data.plateNumber);
+        setCurrentMileage(data.currentMileage);
         const records = await getMaintenanceRecords(id);
         setMaintenanceRecords(records);
       } catch (err) {
@@ -66,6 +76,25 @@ function VehicleDetailPage() {
       setMaintenanceRecords(
         maintenanceRecords.filter((record) => record.id !== recordId),
       );
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleUpdateVehicle = async (e) => {
+    e.preventDefault();
+
+    try {
+      await updateVehicle(id, {
+        brand,
+        model,
+        year: Number(year),
+        plateNumber,
+        currentMileage: Number(currentMileage),
+      });
+
+      const updatedVehicle = await getVehicleById(id);
+      setVehicle(updatedVehicle);
     } catch (err) {
       console.error(err);
     }
@@ -132,6 +161,22 @@ function VehicleDetailPage() {
           <button onClick={() => handleDeleteMaintenanceRecord(record.id)}>
             Delete
           </button>
+
+          <form onSubmit={handleUpdateVehicle}>
+            <input value={brand} onChange={(e) => setBrand(e.target.value)} />
+            <input value={model} onChange={(e) => setModel(e.target.value)} />
+            <input value={year} onChange={(e) => setYear(e.target.value)} />
+            <input
+              value={plateNumber}
+              onChange={(e) => setPlateNumber(e.target.value)}
+            />
+            <input
+              value={currentMileage}
+              onChange={(e) => setCurrentMileage(e.target.value)}
+            />
+
+            <button type="submit">Update Vehicle</button>
+          </form>
         </div>
       ))}
     </div>

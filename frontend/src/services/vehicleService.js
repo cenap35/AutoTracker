@@ -1,23 +1,28 @@
-import api from '../api/axios'
+import api from "../api/axios";
 
 export const getVehicles = async () => {
-  const response = await api.get('/vehicles')
+  const response = await api.get("/vehicles");
 
-  return response.data
-}
+  return response.data;
+};
 
 export const createVehicle = async (vehicleData) => {
-  const response = await api.post('/vehicles', vehicleData)
+  const response = await api.post("/vehicles", vehicleData);
 
-  return response.data
-}
+  return response.data;
+};
 
 export const deleteVehicle = async (id) => {
-  await api.delete(`/vehicles/${id}`)
-}
+  await api.delete(`/vehicles/${id}`);
+};
 
 export const getVehicleById = async (id) => {
-  const response = await api.get(`/vehicles/${id}`)
+  const response = await api.get(`/vehicles/${id}`);
 
-  return response.data
-}
+  return response.data;
+};
+export const updateVehicle = async (id, vehicleData) => {
+  const response = await api.put(`/vehicles/${id}`, vehicleData);
+
+  return response.data;
+};
