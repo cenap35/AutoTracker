@@ -136,16 +136,23 @@ function VehiclesPage() {
                   </select>
                 </div>
                 <div className="col-sm-4">
-                  <input
-                    type="number"
-                    className="form-control"
-                    placeholder="Yıl"
+                  <select
+                    className="form-select"
                     value={year}
                     onChange={(e) => setYear(e.target.value)}
-                    min="1900"
-                    max={new Date().getFullYear() + 1}
                     required
-                  />
+                  >
+                    <option value="">Yıl seç</option>
+
+                    {Array.from(
+                      { length: new Date().getFullYear() - 1980 + 2 },
+                      (_, index) => new Date().getFullYear() + 1 - index,
+                    ).map((yearValue) => (
+                      <option key={yearValue} value={yearValue}>
+                        {yearValue}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div className="col-sm-4">
                   <input
