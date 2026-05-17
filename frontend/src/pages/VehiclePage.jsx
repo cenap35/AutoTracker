@@ -5,7 +5,8 @@ import {
   createVehicle,
   deleteVehicle,
 } from "../services/vehicleService";
-import { Link } from 'react-router-dom'
+import { Link } from "react-router-dom";
+import vehicleData from "../constants/vehicleData";
 
 function VehiclesPage() {
   const [vehicles, setVehicles] = useState([]);
@@ -65,13 +66,21 @@ function VehiclesPage() {
   };
 
   return (
-    
     <PageWrapper>
-      <div className="container py-5" style={{ minHeight: "calc(100vh - 90px)" }}>
+      <div
+        className="container py-5"
+        style={{ minHeight: "calc(100vh - 90px)" }}
+      >
         <div className="row justify-content-center mb-4">
           <div className="col-md-9 col-lg-7 text-center mb-2">
-            <h1 className="fw-bold display-5" style={{ color: "#314286", letterSpacing: "1px" }}>
-              <i className="bi bi-car-front-fill me-2" style={{ color: "#3b60c5" }}></i>
+            <h1
+              className="fw-bold display-5"
+              style={{ color: "#314286", letterSpacing: "1px" }}
+            >
+              <i
+                className="bi bi-car-front-fill me-2"
+                style={{ color: "#3b60c5" }}
+              ></i>
               Araçlarım
             </h1>
             <p className="lead" style={{ color: "#456" }}>
@@ -87,25 +96,44 @@ function VehiclesPage() {
               className="card shadow-sm border-0 p-4 mb-3"
               style={{ background: "#f4f7fe", borderRadius: 14 }}
             >
-              <h3 className="mb-3 text-primary"><i className="bi bi-plus-circle me-2"></i>Yeni Araç Ekle</h3>
+              <h3 className="mb-3 text-primary">
+                <i className="bi bi-plus-circle me-2"></i>Yeni Araç Ekle
+              </h3>
               <div className="row g-3 mb-2">
                 <div className="col-sm-6">
-                  <input
-                    className="form-control"
-                    placeholder="Marka"
+                  <select
+                    className="form-select mb-3"
                     value={brand}
-                    onChange={(e) => setBrand(e.target.value)}
-                    required
-                  />
+                    onChange={(e) => {
+                      setBrand(e.target.value);
+                      setModel("");
+                    }}
+                  >
+                    <option value="">Marka Seç</option>
+
+                    {Object.keys(vehicleData).map((brandName) => (
+                      <option key={brandName} value={brandName}>
+                        {brandName}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div className="col-sm-6">
-                  <input
-                    className="form-control"
-                    placeholder="Model"
+                  <select
+                    className="form-select mb-3"
                     value={model}
                     onChange={(e) => setModel(e.target.value)}
-                    required
-                  />
+                    disabled={!brand}
+                  >
+                    <option value="">Model Seç</option>
+
+                    {brand &&
+                      vehicleData[brand].map((modelName) => (
+                        <option key={modelName} value={modelName}>
+                          {modelName}
+                        </option>
+                      ))}
+                  </select>
                 </div>
                 <div className="col-sm-4">
                   <input
@@ -140,7 +168,11 @@ function VehiclesPage() {
                   />
                 </div>
               </div>
-              <button type="submit" className="btn btn-primary px-4 fw-bold mt-2" style={{ borderRadius: 6 }}>
+              <button
+                type="submit"
+                className="btn btn-primary px-4 fw-bold mt-2"
+                style={{ borderRadius: 6 }}
+              >
                 <i className="bi bi-plus-lg me-1"></i> Ekle
               </button>
               {error && <div className="alert alert-danger mt-3">{error}</div>}
@@ -158,18 +190,30 @@ function VehiclesPage() {
           )}
           {vehicles.map((vehicle) => (
             <div className="col-md-6 col-lg-4" key={vehicle.id}>
-              <div className="card h-100 border-0 shadow-sm vehicle-card position-relative" style={{ borderRadius: 16 }}>
+              <div
+                className="card h-100 border-0 shadow-sm vehicle-card position-relative"
+                style={{ borderRadius: 16 }}
+              >
                 <div className="card-body pb-3">
                   <div className="mb-2 d-flex justify-content-between align-items-center">
                     <span className="badge bg-primary" style={{ fontSize: 15 }}>
                       {vehicle.plateNumber}
                     </span>
-                    <span className="badge bg-light text-dark border" style={{ fontSize: 13 }}>
+                    <span
+                      className="badge bg-light text-dark border"
+                      style={{ fontSize: 13 }}
+                    >
                       {vehicle.year}
                     </span>
                   </div>
-                  <h5 className="card-title fw-bold mb-1" style={{ color: "#345" }}>
-                    <i className="bi bi-car-front-fill me-2" style={{ color: "#546adc" }}></i>
+                  <h5
+                    className="card-title fw-bold mb-1"
+                    style={{ color: "#345" }}
+                  >
+                    <i
+                      className="bi bi-car-front-fill me-2"
+                      style={{ color: "#546adc" }}
+                    ></i>
                     {vehicle.brand} {vehicle.model}
                   </h5>
                   <div className="mb-2 small text-muted">
