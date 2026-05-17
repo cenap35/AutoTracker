@@ -32,7 +32,7 @@ function DashboardPage() {
     <div className="container py-4">
       <div className="row mb-4 align-items-center">
         <div className="col-md-8">
-          <h1 className="display-5 fw-bold text-primary mb-2" style={{letterSpacing: "1px"}}>Dashboard</h1>
+          <h1 className="display-5 fw-bold text-primary mb-2" style={{letterSpacing: "1px"}}>Kontrol Paneli</h1>
           <p className="lead" style={{color:"#456", maxWidth: 600}}>Hoş geldiniz! Araçlarınızın özet bilgilerinin yanı sıra bakım masraflarınızı takip edebilir ve detaylarını görüntüleyebilirsiniz.</p>
         </div>
         <div className="col-md-4">
