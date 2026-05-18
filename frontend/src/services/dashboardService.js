@@ -5,3 +5,8 @@ export const getDashboardSummary = async () => {
 
   return response.data;
 };
+
+export const getRecentMaintenance = async () => {
+  const response = await api.get("/dashboard/recent-maintenance");
+  return response.data;
+};

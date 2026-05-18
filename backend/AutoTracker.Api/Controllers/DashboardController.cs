@@ -40,4 +40,31 @@ public class DashboardController : ControllerBase
             totalMaintenanceCost
         });
     }
+
+    [HttpGet("recent-maintenance")]
+    public async Task<IActionResult> GetRecentMaintenance()
+    {
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        var records = await _context.MaintenanceRecords
+            .Where(r => r.Vehicle.AppUserId == userId)
+            .OrderByDescending(r => r.CreatedAt)
+            .Take(5)
+            .Select(r => new
+            {
+                r.Id,
+                r.Title,
+                r.Description,
+                r.Mileage,
+                r.Cost,
+                r.MaintenanceDate,
+                CreatedAt = r.CreatedAt,
+                VehicleId = r.VehicleId,
+                VehicleName = r.Vehicle.Brand + " " + r.Vehicle.Model,
+                PlateNumber = r.Vehicle.PlateNumber
+            })
+            .ToListAsync();
+
+        return Ok(records);
+    }
 }
