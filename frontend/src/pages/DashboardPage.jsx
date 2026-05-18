@@ -487,7 +487,7 @@ function DashboardPage() {
         </div>
       </div>
 
-      <div className="card mt-5 border-0 shadow-sm" style={{ borderRadius: 14 }}>
+      <div className="card mt-5 border-0 shadow-sm " style={{ borderRadius: 14 }}>
         <div className="card-body">
           <h5 className="mb-4" style={{ fontWeight: 600 }}>
             Araçlara Göre Bakım Masrafı
