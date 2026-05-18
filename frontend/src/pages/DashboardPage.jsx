@@ -4,6 +4,8 @@ import { getVehicles } from "../services/vehicleService";
 import { Link } from "react-router-dom";
 import PageWrapper from "../components/PageWrapper";
 import { getRecentMaintenance } from "../services/dashboardService";
+import StatsCard from "../components/Dashboard/StatsCard";
+import CostByVehicleChart from "../components/Dashboard/CostByVehicleChart";
 import {
   BarChart,
   Bar,
@@ -159,117 +161,36 @@ function DashboardPage() {
             </div>
           </div>
         </div>
-        {/* DASHBOARD STATS */}
+
+        {/*Display StatsCard components for the dashboard statistics */}
+
         <div className="row mb-5 g-4 justify-content-center">
-          <div className="col-sm-6 col-md-4">
-            <div
-              className="card shadow-sm border-0 h-100 dashboard-stat"
-              style={{
-                background:
-                  "linear-gradient(110deg, #eaf2ff 60%, #eff5fc 100%)",
-                borderRadius: "18px",
-                transition: "box-shadow 0.2s",
-              }}
-            >
-              <div className="card-body text-center py-4">
-                <div
-                  className="mb-2 d-flex justify-content-center align-items-center rounded-circle shadow"
-                  style={{
-                    fontSize: 37,
-                    color: "#2357b1",
-                    background: "#f2f7ff",
-                    width: 56,
-                    height: 56,
-                    margin: "auto",
-                  }}
-                >
-                  <i className="bi bi-truck-front-fill"></i>
-                </div>
-                <h6
-                  className="card-title text-secondary mb-1"
-                  style={{ fontWeight: 600 }}
-                >
-                  Toplam Araç
-                </h6>
-                <div className="h3 fw-bold text-dark">
-                  {summary.totalVehicles || 0}
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="col-sm-6 col-md-4">
-            <div
-              className="card shadow-sm border-0 h-100 dashboard-stat"
-              style={{
-                background:
-                  "linear-gradient(110deg, #eaf9ef 65%, #f8fff9 100%)",
-                borderRadius: "18px",
-              }}
-            >
-              <div className="card-body text-center py-4">
-                <div
-                  className="mb-2 d-flex justify-content-center align-items-center rounded-circle shadow"
-                  style={{
-                    fontSize: 37,
-                    color: "#1a906c",
-                    background: "#edfff7",
-                    width: 56,
-                    height: 56,
-                    margin: "auto",
-                  }}
-                >
-                  <i className="bi bi-wrench-adjustable"></i>
-                </div>
-                <h6
-                  className="card-title text-secondary mb-1"
-                  style={{ fontWeight: 600 }}
-                >
-                  Bakım Kaydı
-                </h6>
-                <div className="h3 fw-bold text-dark">
-                  {summary.totalMaintenanceRecords || 0}
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="col-sm-6 col-md-4">
-            <div
-              className="card shadow-sm border-0 h-100 dashboard-stat"
-              style={{
-                background:
-                  "linear-gradient(110deg, #fff5de 67%, #fffdf6 100%)",
-                borderRadius: "18px",
-              }}
-            >
-              <div className="card-body text-center py-4">
-                <div
-                  className="mb-2 d-flex justify-content-center align-items-center rounded-circle shadow"
-                  style={{
-                    fontSize: 37,
-                    color: "#b78b16",
-                    background: "#fff8e2",
-                    width: 56,
-                    height: 56,
-                    margin: "auto",
-                  }}
-                >
-                  <i className="bi bi-currency-exchange"></i>
-                </div>
-                <h6
-                  className="card-title text-secondary mb-1"
-                  style={{ fontWeight: 600 }}
-                >
-                  Toplam Bakım Masrafı
-                </h6>
-                <div className="h3 fw-bold text-dark">
-                  ₺
-                  {summary.totalMaintenanceCost
-                    ? summary.totalMaintenanceCost.toLocaleString("tr-TR")
-                    : "0"}
-                </div>
-              </div>
-            </div>
-          </div>
+          <StatsCard
+            icon="bi-truck-front-fill"
+            title="Toplam Araç"
+            value={summary.totalVehicles || 0}
+            iconColor="#2357b1"
+            iconBg="#f2f7ff"
+            background="linear-gradient(110deg, #eaf2ff 60%, #eff5fc 100%)"
+          />
+
+          <StatsCard
+            icon="bi-wrench-adjustable"
+            title="Bakım Kaydı"
+            value={summary.totalMaintenanceRecords || 0}
+            iconColor="#1a906c"
+            iconBg="#edfff7"
+            background="linear-gradient(110deg, #eaf9ef 65%, #f8fff9 100%)"
+          />
+
+          <StatsCard
+            icon="bi-currency-exchange"
+            title="Toplam Bakım Masrafı"
+            value={`₺${summary.totalMaintenanceCost?.toLocaleString("tr-TR") || "0"}`}
+            iconColor="#b78b16"
+            iconBg="#fff8e2"
+            background="linear-gradient(110deg, #fff5de 67%, #fffdf6 100%)"
+          />
         </div>
 
         {/* RECENT MAINTENANCE */}
@@ -487,32 +408,10 @@ function DashboardPage() {
         </div>
       </div>
 
-      <div className="card mt-5 border-0 shadow-sm " style={{ borderRadius: 14 }}>
-        <div className="card-body">
-          <h5 className="mb-4" style={{ fontWeight: 600 }}>
-            Araçlara Göre Bakım Masrafı
-          </h5>
-          <div style={{ width: "100%", height: 240 }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={costByVehicle}>
-                <XAxis dataKey="vehicleName" tick={{ fontSize: 12 }} />
-                <YAxis tick={{ fontSize: 12 }} />
-                <Tooltip
-                  formatter={v =>
-                    v?.toLocaleString("tr-TR", {
-                      style: "currency",
-                      currency: "TRY",
-                      maximumFractionDigits: 0,
-                    })
-                  }
-                />
-                <Bar dataKey="totalCost" fill="#2d7be0" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      </div>
+      {/* Graphic CostbyVehicle */}
+      <CostByVehicleChart data={costByVehicle} />
 
+      
     </PageWrapper>
   );
 }
