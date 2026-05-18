@@ -67,4 +67,22 @@ public class DashboardController : ControllerBase
 
         return Ok(records);
     }
+
+    [HttpGet("cost-by-vehicle")]
+    public async Task<IActionResult> GetCostByVehicle()
+    {
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        var data = await _context.Vehicles
+            .Where(v => v.AppUserId == userId)
+            .Select(v => new
+            {
+                VehicleName = v.Brand + " " + v.Model,
+                PlateNumber = v.PlateNumber,
+                TotalCost = v.MaintenanceRecords.Sum(r => r.Cost)
+            })
+            .ToListAsync();
+
+        return Ok(data);
+    }
 }

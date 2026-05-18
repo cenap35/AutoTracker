@@ -4,11 +4,22 @@ import { getVehicles } from "../services/vehicleService";
 import { Link } from "react-router-dom";
 import PageWrapper from "../components/PageWrapper";
 import { getRecentMaintenance } from "../services/dashboardService";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+
+import { getCostByVehicle } from "../services/dashboardService";
 
 function DashboardPage() {
   const [summary, setSummary] = useState(null);
   const [vehicles, setVehicles] = useState([]);
   const [recentMaintenance, setRecentMaintenance] = useState([]);
+  const [costByVehicle, setCostByVehicle] = useState([]);
 
   useEffect(() => {
     const fetchSummary = async () => {
@@ -17,6 +28,8 @@ function DashboardPage() {
         setSummary(data);
         const maintenanceData = await getRecentMaintenance();
         setRecentMaintenance(maintenanceData);
+        const costData = await getCostByVehicle();
+        setCostByVehicle(costData);
         const vehiclesData = await getVehicles();
         setVehicles(vehiclesData);
       } catch (err) {
@@ -48,7 +61,8 @@ function DashboardPage() {
               <i className="bi bi-speedometer2 me-2"></i> Kontrol Paneli
             </h1>
             <p className="lead" style={{ color: "#4a5b75", maxWidth: 620 }}>
-              Hoş geldiniz! Araçlarınızın özet bilgilerini, bakım masraflarınızı ve son güncellemeleri şık ve sade bir panelde görüntüleyin.
+              Hoş geldiniz! Araçlarınızın özet bilgilerini, bakım masraflarınızı
+              ve son güncellemeleri şık ve sade bir panelde görüntüleyin.
             </p>
           </div>
           <div className="col-md-4 text-end">
@@ -63,7 +77,8 @@ function DashboardPage() {
               <span
                 className="d-none d-md-inline-flex justify-content-center align-items-center position-relative"
                 style={{
-                  background: "linear-gradient(122deg, #415fcebb 58%, #3e8cdf 90%, #41c8e8 100%)",
+                  background:
+                    "linear-gradient(122deg, #415fcebb 58%, #3e8cdf 90%, #41c8e8 100%)",
                   borderRadius: "50%",
                   padding: "27px 32px 23px 32px",
                   border: "3.5px solid #f6da72",
@@ -73,13 +88,16 @@ function DashboardPage() {
                   fontSize: 70,
                   color: "#fff",
                   zIndex: 2,
-                  overflow: "visible"
+                  overflow: "visible",
                 }}
                 title="Havalı Araç Sticker"
                 role="img"
                 aria-label="Havalı Araç Sticker"
               >
-                <i className="bi bi-car-front-fill" style={{ textShadow: "0 4px 34px #2b538544" }}></i>
+                <i
+                  className="bi bi-car-front-fill"
+                  style={{ textShadow: "0 4px 34px #2b538544" }}
+                ></i>
                 {/* headlight effect */}
                 <span
                   style={{
@@ -89,7 +107,8 @@ function DashboardPage() {
                     width: 12,
                     height: 8,
                     borderRadius: "50%",
-                    background: "radial-gradient(circle, #ffe082cc 65%, #fff0 85%)",
+                    background:
+                      "radial-gradient(circle, #ffe082cc 65%, #fff0 85%)",
                     filter: "blur(0.5px)",
                     opacity: 0.85,
                   }}
@@ -102,7 +121,8 @@ function DashboardPage() {
                     width: 12,
                     height: 8,
                     borderRadius: "50%",
-                    background: "radial-gradient(circle, #ffe082cc 65%, #fff0 85%)",
+                    background:
+                      "radial-gradient(circle, #ffe082cc 65%, #fff0 85%)",
                     filter: "blur(0.5px)",
                     opacity: 0.85,
                   }}
@@ -116,7 +136,8 @@ function DashboardPage() {
                     width: 28,
                     height: 9,
                     borderRadius: "10px",
-                    background: "linear-gradient(108deg, #55c8fa55 10%, #fff0 100%)",
+                    background:
+                      "linear-gradient(108deg, #55c8fa55 10%, #fff0 100%)",
                     transform: "rotate(12deg)",
                     opacity: 0.55,
                   }}
@@ -136,8 +157,7 @@ function DashboardPage() {
                 />
               </span>
             </div>
-   
-            </div>
+          </div>
         </div>
         {/* DASHBOARD STATS */}
         <div className="row mb-5 g-4 justify-content-center">
@@ -145,7 +165,8 @@ function DashboardPage() {
             <div
               className="card shadow-sm border-0 h-100 dashboard-stat"
               style={{
-                background: "linear-gradient(110deg, #eaf2ff 60%, #eff5fc 100%)",
+                background:
+                  "linear-gradient(110deg, #eaf2ff 60%, #eff5fc 100%)",
                 borderRadius: "18px",
                 transition: "box-shadow 0.2s",
               }}
@@ -164,7 +185,12 @@ function DashboardPage() {
                 >
                   <i className="bi bi-truck-front-fill"></i>
                 </div>
-                <h6 className="card-title text-secondary mb-1" style={{fontWeight:600}}>Toplam Araç</h6>
+                <h6
+                  className="card-title text-secondary mb-1"
+                  style={{ fontWeight: 600 }}
+                >
+                  Toplam Araç
+                </h6>
                 <div className="h3 fw-bold text-dark">
                   {summary.totalVehicles || 0}
                 </div>
@@ -175,8 +201,9 @@ function DashboardPage() {
             <div
               className="card shadow-sm border-0 h-100 dashboard-stat"
               style={{
-                background: "linear-gradient(110deg, #eaf9ef 65%, #f8fff9 100%)",
-                borderRadius: "18px"
+                background:
+                  "linear-gradient(110deg, #eaf9ef 65%, #f8fff9 100%)",
+                borderRadius: "18px",
               }}
             >
               <div className="card-body text-center py-4">
@@ -193,7 +220,12 @@ function DashboardPage() {
                 >
                   <i className="bi bi-wrench-adjustable"></i>
                 </div>
-                <h6 className="card-title text-secondary mb-1" style={{fontWeight:600}}>Bakım Kaydı</h6>
+                <h6
+                  className="card-title text-secondary mb-1"
+                  style={{ fontWeight: 600 }}
+                >
+                  Bakım Kaydı
+                </h6>
                 <div className="h3 fw-bold text-dark">
                   {summary.totalMaintenanceRecords || 0}
                 </div>
@@ -204,8 +236,9 @@ function DashboardPage() {
             <div
               className="card shadow-sm border-0 h-100 dashboard-stat"
               style={{
-                background: "linear-gradient(110deg, #fff5de 67%, #fffdf6 100%)",
-                borderRadius: "18px"
+                background:
+                  "linear-gradient(110deg, #fff5de 67%, #fffdf6 100%)",
+                borderRadius: "18px",
               }}
             >
               <div className="card-body text-center py-4">
@@ -222,9 +255,15 @@ function DashboardPage() {
                 >
                   <i className="bi bi-currency-exchange"></i>
                 </div>
-                <h6 className="card-title text-secondary mb-1" style={{fontWeight:600}}>Toplam Bakım Masrafı</h6>
+                <h6
+                  className="card-title text-secondary mb-1"
+                  style={{ fontWeight: 600 }}
+                >
+                  Toplam Bakım Masrafı
+                </h6>
                 <div className="h3 fw-bold text-dark">
-                  ₺{summary.totalMaintenanceCost
+                  ₺
+                  {summary.totalMaintenanceCost
                     ? summary.totalMaintenanceCost.toLocaleString("tr-TR")
                     : "0"}
                 </div>
@@ -235,7 +274,10 @@ function DashboardPage() {
 
         {/* RECENT MAINTENANCE */}
         <div className="container mb-3">
-          <h2 className="mt-5 mb-4 fw-bold" style={{ color: "#365d96", letterSpacing: "1px"}}>
+          <h2
+            className="mt-5 mb-4 fw-bold"
+            style={{ color: "#365d96", letterSpacing: "1px" }}
+          >
             <i className="bi bi-tools me-2"></i> Son Bakımlar
           </h2>
 
@@ -243,7 +285,7 @@ function DashboardPage() {
             {recentMaintenance.length === 0 ? (
               <div className="col-12">
                 <div className="alert alert-info text-center shadow-sm rounded-3">
-                  Son bakım kaydı bulunamadı. 
+                  Son bakım kaydı bulunamadı.
                 </div>
               </div>
             ) : (
@@ -252,7 +294,8 @@ function DashboardPage() {
                   <div
                     className="card shadow-lg rounded-4 border-0 h-100 dashboard-maintenance-card"
                     style={{
-                      background: "linear-gradient(104deg, #eaf2ff 65%, #fffaf2 100%)",
+                      background:
+                        "linear-gradient(104deg, #eaf2ff 65%, #fffaf2 100%)",
                       borderLeft: "5px solid #4468d6",
                       overflow: "hidden",
                       minHeight: 180,
@@ -276,7 +319,10 @@ function DashboardPage() {
                           <i className="bi bi-tools"></i>
                         </div>
                         <div>
-                          <h5 className="mb-1 fw-bold" style={{ color: "#314286", fontSize: 21 }}>
+                          <h5
+                            className="mb-1 fw-bold"
+                            style={{ color: "#314286", fontSize: 21 }}
+                          >
                             {record.title}
                           </h5>
                           <span
@@ -290,14 +336,24 @@ function DashboardPage() {
                       <div className="d-flex flex-wrap gap-3 mb-3 mt-2">
                         <span
                           className="badge bg-warning-subtle text-dark py-2 px-3 shadow-sm"
-                          style={{ borderRadius: 12, fontSize: 15, minWidth: 100, border: "1.5px solid #ffe1ad" }}
+                          style={{
+                            borderRadius: 12,
+                            fontSize: 15,
+                            minWidth: 100,
+                            border: "1.5px solid #ffe1ad",
+                          }}
                         >
-                          <i className="bi bi-currency-exchange me-1"></i>
-                          ₺{Number(record.cost).toLocaleString("tr-TR")}
+                          <i className="bi bi-currency-exchange me-1"></i>₺
+                          {Number(record.cost).toLocaleString("tr-TR")}
                         </span>
                         <span
                           className="badge bg-light text-primary py-2 px-3 shadow-sm border"
-                          style={{ borderRadius: 12, fontSize: 15, minWidth: 100, border: "1.5px solid #cfe2ff" }}
+                          style={{
+                            borderRadius: 12,
+                            fontSize: 15,
+                            minWidth: 100,
+                            border: "1.5px solid #cfe2ff",
+                          }}
                         >
                           <i className="bi bi-graph-up-arrow me-1"></i>
                           {record.mileage.toLocaleString("tr-TR")} km
@@ -305,10 +361,16 @@ function DashboardPage() {
                         {record.maintenanceDate && (
                           <span
                             className="badge bg-secondary-subtle text-dark py-2 px-3 shadow-sm"
-                            style={{ borderRadius: 12, fontSize: 15, border: "1.5px solid #eadafd" }}
+                            style={{
+                              borderRadius: 12,
+                              fontSize: 15,
+                              border: "1.5px solid #eadafd",
+                            }}
                           >
                             <i className="bi bi-calendar-event me-1"></i>
-                            {new Date(record.maintenanceDate).toLocaleDateString("tr-TR")}
+                            {new Date(
+                              record.maintenanceDate,
+                            ).toLocaleDateString("tr-TR")}
                           </span>
                         )}
                       </div>
@@ -322,11 +384,14 @@ function DashboardPage() {
                         <small className="text-secondary">
                           Kayıt:{" "}
                           {record.createdAt
-                            ? new Date(record.createdAt).toLocaleDateString("tr-TR", {
-                                year: "numeric",
-                                month: "2-digit",
-                                day: "2-digit",
-                              })
+                            ? new Date(record.createdAt).toLocaleDateString(
+                                "tr-TR",
+                                {
+                                  year: "numeric",
+                                  month: "2-digit",
+                                  day: "2-digit",
+                                },
+                              )
                             : "-"}
                         </small>
                       </div>
@@ -343,7 +408,10 @@ function DashboardPage() {
           <h2 className="h4 fw-bold text-primary m-0 d-flex align-items-center gap-1">
             <i className="bi bi-car-front-fill me-2"></i> Araçlarım
           </h2>
-          <Link to="/vehicles" className="btn btn-outline-primary btn-sm border-2 px-3 py-1 rounded-pill fw-semibold">
+          <Link
+            to="/vehicles"
+            className="btn btn-outline-primary btn-sm border-2 px-3 py-1 rounded-pill fw-semibold"
+          >
             Tümünü Gör <i className="bi bi-arrow-right-short"></i>
           </Link>
         </div>
@@ -358,7 +426,8 @@ function DashboardPage() {
               <div
                 className="card h-100 shadow-sm border-0 vehicle-card position-relative"
                 style={{
-                  background: "linear-gradient(111deg, #f3f8ff 70%, #fffef8 100%)",
+                  background:
+                    "linear-gradient(111deg, #f3f8ff 70%, #fffef8 100%)",
                   borderRadius: 16,
                   transition: "box-shadow 0.18s",
                 }}
@@ -367,26 +436,42 @@ function DashboardPage() {
                   <div className="mb-2 d-flex align-items-center gap-2">
                     <span
                       className="badge bg-primary me-2"
-                      style={{ fontSize: 15, letterSpacing: ".5px", padding: "8px 13px", borderRadius: 16, boxShadow: "0 1px 5px #2457ab18" }}
+                      style={{
+                        fontSize: 15,
+                        letterSpacing: ".5px",
+                        padding: "8px 13px",
+                        borderRadius: 16,
+                        boxShadow: "0 1px 5px #2457ab18",
+                      }}
                     >
                       {vehicle.plateNumber}
                     </span>
                     <span
                       className="badge bg-light text-dark border ms-1"
-                      style={{ fontSize: 13, borderRadius: 13, padding: "5px 12px" }}
+                      style={{
+                        fontSize: 13,
+                        borderRadius: 13,
+                        padding: "5px 12px",
+                      }}
                     >
                       {vehicle.year}
                     </span>
                   </div>
                   <h5
                     className="card-title fw-bold mb-1"
-                    style={{ color: "#274a78", fontSize: 20, letterSpacing: ".5px" }}
+                    style={{
+                      color: "#274a78",
+                      fontSize: 20,
+                      letterSpacing: ".5px",
+                    }}
                   >
                     {vehicle.brand} {vehicle.model}
                   </h5>
                   <div className="mb-3 small text-muted d-flex align-items-center gap-1">
                     <i className="bi bi-speedometer2 me-1"></i>
-                    <span>{vehicle.currentMileage?.toLocaleString("tr-TR") || 0} km</span>
+                    <span>
+                      {vehicle.currentMileage?.toLocaleString("tr-TR") || 0} km
+                    </span>
                   </div>
                   <Link
                     to={`/vehicles/${vehicle.id}`}
@@ -399,6 +484,32 @@ function DashboardPage() {
               </div>
             </div>
           ))}
+        </div>
+      </div>
+
+      <div className="card mt-5 border-0 shadow-sm" style={{ borderRadius: 14 }}>
+        <div className="card-body">
+          <h5 className="mb-4" style={{ fontWeight: 600 }}>
+            Araçlara Göre Bakım Masrafı
+          </h5>
+          <div style={{ width: "100%", height: 240 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={costByVehicle}>
+                <XAxis dataKey="vehicleName" tick={{ fontSize: 12 }} />
+                <YAxis tick={{ fontSize: 12 }} />
+                <Tooltip
+                  formatter={v =>
+                    v?.toLocaleString("tr-TR", {
+                      style: "currency",
+                      currency: "TRY",
+                      maximumFractionDigits: 0,
+                    })
+                  }
+                />
+                <Bar dataKey="totalCost" fill="#2d7be0" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </div>
 

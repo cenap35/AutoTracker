@@ -10,3 +10,8 @@ export const getRecentMaintenance = async () => {
   const response = await api.get("/dashboard/recent-maintenance");
   return response.data;
 };
+
+export const getCostByVehicle = async () => {
+  const response = await api.get("/dashboard/cost-by-vehicle");
+  return response.data;
+};
