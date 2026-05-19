@@ -55,19 +55,33 @@ public class AuthController : ControllerBase
     await _context.SaveChangesAsync();
     var confirmationLink =
     $"http://localhost:5101/api/auth/confirm-email?token={emailToken}";
+    
+    try
+    {
+      await _emailService.SendEmailAsync(
+          user.Email,
+          "AutoTracker Email Doğrulama",
+          $@"
+        <h2>AutoTracker Email Doğrulama</h2>
+        <p>Merhaba {user.FullName},</p>
+        <p>Hesabınızı aktifleştirmek için aşağıdaki linke tıklayın:</p>
+        <a href='{confirmationLink}'>Email adresimi doğrula</a>
+        "
+      );
+    }
+    catch
+    {
+      _context.AppUsers.Remove(user);
 
-    await _emailService.SendEmailAsync(
-        user.Email,
-        "AutoTracker Email Doğrulama",
-        $@"
-    <h2>AutoTracker Email Doğrulama</h2>
-    <p>Merhaba {user.FullName},</p>
-    <p>Hesabınızı aktifleştirmek için aşağıdaki linke tıklayın:</p>
-    <a href='{confirmationLink}'>Email adresimi doğrula</a>
-    "
-    );
+      await _context.SaveChangesAsync();
 
-    return Ok(user);
+      return StatusCode(
+          500,
+          "Kayıt oluşturulamadı. Doğrulama emaili gönderilemedi."
+      );
+    }
+
+    return Ok("Kayıt başarılı. Lütfen email adresinizi doğrulayın.");
   }
 
   [HttpGet("confirm-email")]  //email validate
@@ -156,5 +170,60 @@ public class AuthController : ControllerBase
     );
 
     return new JwtSecurityTokenHandler().WriteToken(token);
+  }
+
+
+  [HttpPost("resend-confirmation-email")]
+  public async Task<ActionResult> ResendConfirmationEmail(
+    ResendConfirmationEmailDto dto)
+  {
+    var user = await _context.AppUsers
+        .FirstOrDefaultAsync(u => u.Email == dto.Email);
+
+    if (user == null)
+    {
+      return BadRequest("Kullanıcı bulunamadı.");
+    }
+
+    if (user.IsEmailConfirmed)
+    {
+      return BadRequest("Email zaten doğrulanmış.");
+    }
+
+    var newToken = Guid.NewGuid().ToString();
+
+    user.EmailConfirmationToken = newToken;
+    user.EmailConfirmationTokenExpiresAt =
+        DateTime.UtcNow.AddHours(24);
+
+    await _context.SaveChangesAsync();
+
+    var confirmationLink =
+        $"http://localhost:5101/api/auth/confirm-email?token={newToken}";
+
+    try
+    {
+      await _emailService.SendEmailAsync(
+          user.Email,
+          "AutoTracker Email Doğrulama",
+          $@"
+        <h2>AutoTracker Email Doğrulama</h2>
+        <p>Merhaba {user.FullName},</p>
+        <p>Yeni doğrulama linkiniz:</p>
+        <a href='{confirmationLink}'>
+            Email adresimi doğrula
+        </a>
+        "
+      );
+    }
+    catch
+    {
+      return StatusCode(
+          500,
+          "Email gönderilemedi. Lütfen biraz sonra tekrar deneyin."
+      );
+    }
+
+    return Ok("Doğrulama emaili tekrar gönderildi.");
   }
 }

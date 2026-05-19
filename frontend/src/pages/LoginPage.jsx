@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { login } from "../services/authService";
+import { login, resendConfirmationEmail } from "../services/authService";
 import { useNavigate } from "react-router-dom";
 import PageWrapper from "../components/PageWrapper";
 
@@ -8,6 +8,8 @@ function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [showResend, setShowResend] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,6 +25,10 @@ function LoginPage() {
       const errorMessage = err.response?.data || "Email veya şifre hatalı";
 
       setError(errorMessage);
+
+      if (errorMessage.includes("doğrulayın")) {
+        setShowResend(true);
+      }
 
       setTimeout(() => {
         setError("");
@@ -117,6 +123,35 @@ function LoginPage() {
                 <i className="bi bi-exclamation-triangle-fill me-2"></i>
                 {error}
               </div>
+            )}
+
+            {showResend && (
+              <button
+                type="button"
+                className="btn btn-outline-warning w-100 mb-3"
+                disabled={resendCooldown}
+                onClick={async () => {
+                  try {
+                    setResendCooldown(true);
+
+                    const message = await resendConfirmationEmail(email);
+                    setError(message);
+
+                    setTimeout(() => {
+                      setResendCooldown(false);
+                    }, 30000);
+                  } catch (err) {
+                    setError(
+                      err.response?.data || "Email tekrar gönderilemedi.",
+                    );
+                    setResendCooldown(false);
+                  }
+                }}
+              >
+                {resendCooldown
+                  ? "Tekrar göndermek için bekleyin..."
+                  : "Doğrulama emailini tekrar gönder"}
+              </button>
             )}
 
             <button
