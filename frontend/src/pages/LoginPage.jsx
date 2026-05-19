@@ -3,11 +3,8 @@ import { login } from "../services/authService";
 import { useNavigate } from "react-router-dom";
 import PageWrapper from "../components/PageWrapper";
 
-
-
 function LoginPage() {
-
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -19,11 +16,17 @@ function LoginPage() {
       const data = await login(email, password);
 
       localStorage.setItem("token", data.token);
-      localStorage.setItem('fullName', data.fullName)
+      localStorage.setItem("fullName", data.fullName);
 
       navigate("/vehicles");
     } catch (err) {
-      setError("Email veya şifre hatalı");
+      const errorMessage = err.response?.data || "Email veya şifre hatalı";
+
+      setError(errorMessage);
+
+      setTimeout(() => {
+        setError("");
+      }, 7000);
 
       console.error(err);
     }
@@ -31,10 +34,32 @@ function LoginPage() {
 
   return (
     <PageWrapper>
-      <div className="d-flex align-items-center justify-content-center" style={{ minHeight: "100vh", background: "linear-gradient(110deg, #e8f0fe 70%, #cddafd 100%)" }}>
-        <div className="card shadow-lg border-0 p-4 px-4 px-md-5" style={{ maxWidth: 370, width: "100%", borderRadius: 18, background: "rgba(255,255,255,0.97)" }}>
+      <div
+        className="d-flex align-items-center justify-content-center"
+        style={{
+          minHeight: "100vh",
+          background: "linear-gradient(110deg, #e8f0fe 70%, #cddafd 100%)",
+        }}
+      >
+        <div
+          className="card shadow-lg border-0 p-4 px-4 px-md-5"
+          style={{
+            maxWidth: 370,
+            width: "100%",
+            borderRadius: 18,
+            background: "rgba(255,255,255,0.97)",
+          }}
+        >
           <div className="text-center mb-4">
-            <div style={{ fontSize: 38, marginBottom: 2, color: "#4860be", fontWeight: 800, letterSpacing: "1px" }}>
+            <div
+              style={{
+                fontSize: 38,
+                marginBottom: 2,
+                color: "#4860be",
+                fontWeight: 800,
+                letterSpacing: "1px",
+              }}
+            >
               <i className="bi bi-person-circle me-2" />
               Giriş Yap
             </div>
@@ -45,7 +70,11 @@ function LoginPage() {
 
           <form onSubmit={handleSubmit} autoComplete="on">
             <div className="mb-3">
-              <label className="form-label fw-bold" htmlFor="email" style={{ color: "#3a4a75" }}>
+              <label
+                className="form-label fw-bold"
+                htmlFor="email"
+                style={{ color: "#3a4a75" }}
+              >
                 Email
               </label>
               <input
@@ -61,7 +90,11 @@ function LoginPage() {
               />
             </div>
             <div className="mb-3">
-              <label className="form-label fw-bold" htmlFor="password" style={{ color: "#3a4a75" }}>
+              <label
+                className="form-label fw-bold"
+                htmlFor="password"
+                style={{ color: "#3a4a75" }}
+              >
                 Şifre
               </label>
               <input
@@ -77,15 +110,23 @@ function LoginPage() {
             </div>
 
             {error && (
-              <div className="alert alert-danger py-2 px-3 mb-3 shadow-sm" style={{ fontSize: 15 }}>
-                <i className="bi bi-exclamation-triangle-fill me-2"></i>{error}
+              <div
+                className="alert alert-danger py-2 px-3 mb-3 shadow-sm"
+                style={{ fontSize: 15 }}
+              >
+                <i className="bi bi-exclamation-triangle-fill me-2"></i>
+                {error}
               </div>
             )}
 
             <button
               type="submit"
               className="btn btn-primary w-100 p-2 fw-bold"
-              style={{ fontSize: 18, borderRadius: 7, boxShadow: "0 2px 12px #bbe1fc40" }}
+              style={{
+                fontSize: 18,
+                borderRadius: 7,
+                boxShadow: "0 2px 12px #bbe1fc40",
+              }}
             >
               <i className="bi bi-door-open me-2"></i>
               Giriş Yap
@@ -94,7 +135,14 @@ function LoginPage() {
 
           <div className="text-center mt-4" style={{ fontSize: 15 }}>
             Hesabınız yok mu?{" "}
-            <a href="/register" style={{ color: "#3977f5", fontWeight: 600, textDecoration: "none" }}>
+            <a
+              href="/register"
+              style={{
+                color: "#3977f5",
+                fontWeight: 600,
+                textDecoration: "none",
+              }}
+            >
               <i className="bi bi-person-plus-fill me-1"></i>Kayıt Ol
             </a>
           </div>

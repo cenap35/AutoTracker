@@ -8,6 +8,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using AutoTracker.Api.Services;
 
 namespace AutoTracker.Api.Controllers;
 
@@ -16,37 +17,82 @@ namespace AutoTracker.Api.Controllers;
 public class AuthController : ControllerBase
 {
   private readonly AppDbContext _context;
+  private readonly EmailService _emailService;
 
-  public AuthController(AppDbContext context)
+  public AuthController(AppDbContext context, EmailService emailService)
   {
     _context = context;
+    _emailService = emailService;
   }
 
   [HttpPost("register")]
   public async Task<ActionResult<AppUser>> Register(RegisterDto dto)
   {
     var emailExists = await _context.AppUsers
-    .AnyAsync(u => u.Email == dto.Email);
+        .AnyAsync(u => u.Email == dto.Email);
 
     if (emailExists)
     {
       return BadRequest("Bu email zaten kayıtlı.");
     }
 
+    var emailToken = Guid.NewGuid().ToString();
+
     var user = new AppUser
     {
       FullName = dto.FullName,
-      Email = dto.Email
+      Email = dto.Email,
+      IsEmailConfirmed = false,
+      EmailConfirmationToken = emailToken,
+      EmailConfirmationTokenExpiresAt = DateTime.UtcNow.AddHours(24)
     };
 
-    user.PasswordHash = new PasswordHasher<AppUser>()  // hashing the password
+    user.PasswordHash = new PasswordHasher<AppUser>()
         .HashPassword(user, dto.Password);
 
     _context.AppUsers.Add(user);
 
     await _context.SaveChangesAsync();
+    var confirmationLink =
+    $"http://localhost:5101/api/auth/confirm-email?token={emailToken}";
+
+    await _emailService.SendEmailAsync(
+        user.Email,
+        "AutoTracker Email Doğrulama",
+        $@"
+    <h2>AutoTracker Email Doğrulama</h2>
+    <p>Merhaba {user.FullName},</p>
+    <p>Hesabınızı aktifleştirmek için aşağıdaki linke tıklayın:</p>
+    <a href='{confirmationLink}'>Email adresimi doğrula</a>
+    "
+    );
 
     return Ok(user);
+  }
+
+  [HttpGet("confirm-email")]  //email validate
+  public async Task<IActionResult> ConfirmEmail(string token)
+  {
+    var user = await _context.AppUsers
+        .FirstOrDefaultAsync(u => u.EmailConfirmationToken == token);
+
+    if (user == null)
+    {
+      return BadRequest("Geçersiz doğrulama linki.");
+    }
+
+    if (user.EmailConfirmationTokenExpiresAt < DateTime.UtcNow)
+    {
+      return BadRequest("Doğrulama linkinin süresi dolmuş.");
+    }
+
+    user.IsEmailConfirmed = true;
+    user.EmailConfirmationToken = null;
+    user.EmailConfirmationTokenExpiresAt = null;
+
+    await _context.SaveChangesAsync();
+
+    return Ok("Email başarıyla doğrulandı.");
   }
 
   [HttpPost("login")]
@@ -58,6 +104,10 @@ public class AuthController : ControllerBase
     if (user is null)
     {
       return Unauthorized("Email veya şifre hatalı.");
+    }
+    if (!user.IsEmailConfirmed)
+    {
+      return Unauthorized("Lütfen email adresinizi doğrulayın.");
     }
 
     var result = new PasswordHasher<AppUser>()
