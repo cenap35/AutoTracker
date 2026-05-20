@@ -11,6 +11,8 @@ import DashboardPage from "./pages/DashboardPage";
 import Footer from "./components/Footer";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
+import MaintenancePage from "./pages/MaintenancePage";
+import ReportsPage from "./pages/ReportsPage";
 
 function App() {
   return (
@@ -50,6 +52,24 @@ function App() {
           element={
             <ProtectedRoute>
               <DashboardPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/maintenance"
+          element={
+            <ProtectedRoute>
+              <MaintenancePage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/reports"
+          element={
+            <ProtectedRoute>
+              <ReportsPage />
             </ProtectedRoute>
           }
         />

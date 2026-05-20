@@ -46,36 +46,57 @@ function Navbar() {
           className="collapse navbar-collapse"
           id="navbarNavModern"
         >
-          <div className="navbar-nav me-auto gap-1">
+          <div className="navbar-nav me-auto gap-1 flex-wrap align-items-center">
             <Link
-              className="nav-link px-3 fw-semibold rounded-pill"
+              className="nav-link px-2 fw-semibold rounded-pill d-flex align-items-center gap-2"
               to="/"
-              style={{ color: "#fff", transition: "all 0.2s", marginLeft: 5 }}
+              style={{ color: "#ffe082", fontSize: 15, minWidth: 40 }}
             >
-              <i className="bi bi-house-door-fill me-1"></i>
-              Anasayfa
+              <i className="bi bi-house-door-fill"></i>
+              <span className="d-none d-sm-inline">Anasayfa</span>
             </Link>
             {token && (
               <Link
-                className="nav-link px-3 fw-semibold rounded-pill"
+                className="nav-link px-2 fw-semibold rounded-pill d-flex align-items-center gap-2"
                 to="/vehicles"
-                style={{ color: "#fff", transition: "all 0.2s" }}
+                style={{ color: "#fff", fontSize: 15, minWidth: 40 }}
               >
-                <i className="bi bi-car-front me-1"></i>
-                Araçlarım
+                <i className="bi bi-car-front"></i>
+                <span className="d-none d-sm-inline">Araçlarım</span>
               </Link>
             )}
             {token && (
               <Link
-                className="nav-link px-3 fw-semibold rounded-pill"
+                className="nav-link px-2 fw-semibold rounded-pill d-flex align-items-center gap-2"
                 to="/dashboard"
-                style={{ color: "#fff", transition: "all 0.2s" }}
+                style={{ color: "#fff", fontSize: 15, minWidth: 40 }}
               >
-                <i className="bi bi-speedometer2 me-1"></i>
-                Kontrol Paneli
+                <i className="bi bi-speedometer2"></i>
+                <span className="d-none d-sm-inline">Panel</span>
+              </Link>
+            )}
+            {token && (
+              <Link
+                className="nav-link px-2 fw-semibold rounded-pill d-flex align-items-center gap-2"
+                to="/maintenance"
+                style={{ color: "#fff", fontSize: 15, minWidth: 40 }}
+              >
+                <i className="bi bi-tools"></i>
+                <span className="d-none d-sm-inline">Bakım</span>
+              </Link>
+            )}
+            {token && (
+              <Link
+                className="nav-link px-2 fw-semibold rounded-pill d-flex align-items-center gap-2"
+                to="/reports"
+                style={{ color: "#fff", fontSize: 15, minWidth: 40 }}
+              >
+                <i className="bi bi-bar-chart-line"></i>
+                <span className="d-none d-sm-inline">Raporlar</span>
               </Link>
             )}
           </div>
+     
           <div className="navbar-nav ms-auto align-items-center gap-2">
             {!token ? (
               <>
