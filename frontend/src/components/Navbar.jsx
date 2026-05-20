@@ -16,7 +16,7 @@ function Navbar() {
 
   return (
     <nav
-      className="navbar navbar-expand-lg shadow-sm mb-3"
+      className="navbar navbar-expand-lg shadow-sm "
       style={{
         background: "linear-gradient(90deg, #3b60c5 55%, #314286 100%)",
         borderBottom: "3px solid #f7d358",

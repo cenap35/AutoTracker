@@ -6,6 +6,7 @@ import PageWrapper from "../components/PageWrapper";
 import { getRecentMaintenance } from "../services/dashboardService";
 import StatsCard from "../components/Dashboard/StatsCard";
 import CostByVehicleChart from "../components/Dashboard/CostByVehicleChart";
+import DashboardBackground from "../components/Dashboard/DashboardBackground";
 import {
   BarChart,
   Bar,
@@ -48,6 +49,7 @@ function DashboardPage() {
 
   return (
     <PageWrapper>
+      <DashboardBackground>
       <div className="container py-4">
         {/* HEADER */}
         <div className="row mb-4 align-items-center">
@@ -411,7 +413,7 @@ function DashboardPage() {
       {/* Graphic CostbyVehicle */}
       <CostByVehicleChart data={costByVehicle} />
 
-      
+      </DashboardBackground>
     </PageWrapper>
   );
 }

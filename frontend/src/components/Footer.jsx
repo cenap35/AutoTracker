@@ -3,7 +3,7 @@ import Logo from "./Logo";
 
 function Footer() {
   return (
-    <footer className="bg-light border-top py-3 mt-5">
+    <footer className="bg-light border-top py-3">
       <div className="container d-flex flex-column flex-md-row align-items-center justify-content-between">
         <div className="mb-2 mb-md-0">
           <Logo size={32} />
