@@ -66,56 +66,73 @@ function VehiclesPage() {
           )}
           {vehicles.map((vehicle) => (
             <div className="col-md-6 col-lg-4" key={vehicle.id}>
-              <div
-                className="card h-100 border-0 shadow-sm vehicle-card position-relative"
-                style={{ borderRadius: 16 }}
+              <Link
+                to={`/vehicles/${vehicle.id}`}
+                className="text-decoration-none"
+                style={{ cursor: "pointer" }}
               >
-                <div className="card-body pb-3">
-                  <div className="mb-2 d-flex justify-content-between align-items-center">
-                    <span className="badge bg-primary" style={{ fontSize: 15 }}>
-                      {vehicle.plateNumber}
-                    </span>
-                    <span
-                      className="badge bg-light text-dark border"
-                      style={{ fontSize: 13 }}
+                <div
+                  className="card h-100 border-0 shadow-sm vehicle-card position-relative"
+                  style={{
+                    borderRadius: 16,
+                    transition: "transform 0.19s cubic-bezier(.29, 1.53, .62, 1), box-shadow 0.18s",
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.transform = "translateY(-7px) scale(1.025)";
+                    e.currentTarget.style.boxShadow = "0 8px 32px -8px #3b60c599";
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.transform = "";
+                    e.currentTarget.style.boxShadow = "";
+                  }}
+                >
+                  <div className="card-body pb-3">
+                    <div className="mb-2 d-flex justify-content-between align-items-center">
+                      <span
+                        className="badge bg-primary"
+                        style={{ fontSize: 15 }}
+                      >
+                        {vehicle.plateNumber}
+                      </span>
+                      <span
+                        className="badge bg-light text-dark border"
+                        style={{ fontSize: 13 }}
+                      >
+                        {vehicle.year}
+                      </span>
+                    </div>
+                    <h5
+                      className="card-title fw-bold mb-1"
+                      style={{ color: "#345" }}
                     >
-                      {vehicle.year}
-                    </span>
-                  </div>
-                  <h5
-                    className="card-title fw-bold mb-1"
-                    style={{ color: "#345" }}
-                  >
-                    <i
-                      className="bi bi-car-front-fill me-2"
-                      style={{ color: "#546adc" }}
-                    ></i>
-                    {vehicle.brand} {vehicle.model}
-                  </h5>
-                  <div className="mb-2 small text-muted">
-                    <i className="bi bi-speedometer2 me-1"></i>
-                    {vehicle.currentMileage?.toLocaleString("tr-TR") || 0} km
-                  </div>
-                  <div className="d-flex mt-3 gap-2">
-                    <Link
-                      to={`/vehicles/${vehicle.id}`}
-                      className="btn btn-sm btn-outline-primary fw-bold px-3"
-                      style={{ borderRadius: 5 }}
-                    >
-                      <i className="bi bi-info-circle me-1"></i> Detaylar
-                    </Link>
-                    <button
-                      className="btn btn-sm btn-outline-danger px-3"
-                      style={{ borderRadius: 5 }}
-                      onClick={() => handleDeleteVehicle(vehicle.id)}
-                    >
-                      <i className="bi bi-trash me-1"></i> Sil
-                    </button>
+                      <i
+                        className="bi bi-car-front-fill me-2"
+                        style={{ color: "#546adc" }}
+                      ></i>
+                      {vehicle.brand} {vehicle.model}
+                    </h5>
+                    <div className="mb-2 small text-muted">
+                      <i className="bi bi-speedometer2 me-1"></i>
+                      {vehicle.currentMileage?.toLocaleString("tr-TR") || 0} km
+                    </div>
+                    <div className="d-flex mt-3 gap-2">
+                      <button
+                        className="btn btn-sm btn-outline-danger px-3"
+                        style={{ borderRadius: 5 }}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleDeleteVehicle(vehicle.id);
+                        }}
+                      >
+                        <i className="bi bi-trash me-1"></i> Sil
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             </div>
           ))}
+     
         </div>
       </div>
     </PageWrapper>
