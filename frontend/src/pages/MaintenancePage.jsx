@@ -80,114 +80,200 @@ function MaintenancePage() {
       }
     });
 
+  const totalFilteredCost = filteredRecords.reduce(
+    (sum, record) => sum + Number(record.cost || 0),
+    0,
+  );
+
+  const averageFilteredCost =
+    filteredRecords.length > 0 ? totalFilteredCost / filteredRecords.length : 0;
+
   return (
     <PageWrapper>
       <div
         className="container py-5"
         style={{
           minHeight: "calc(100vh - 90px)",
-          background:
-            "radial-gradient(circle at 80% 20%, #e6edff 0%, #f8fbff 80%)",
+          background: "#f8fbff",
           borderRadius: 26,
           boxShadow: "0 4px 42px -14px #3b60c533",
         }}
       >
-        <div className="mb-5 text-center">
-          <h1
-            className="fw-bold"
-            style={{
-              color: "#294686",
-              fontSize: 38,
-              letterSpacing: "1.5px",
-              textShadow: "1px 2px 12px #e0e7ff",
-            }}
-          >
-            <i
-              className="bi bi-tools me-2"
+        {/* Başlık ve Açıklama */}
+        <div className="mb-4">
+          <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
+            <div>
+              <h1
+                className="fw-bold mb-2"
+                style={{
+                  color: "#294686",
+                  fontSize: 34,
+                  letterSpacing: "1px",
+                  textShadow: "1px 2px 12px #e0e7ff",
+                }}
+              >
+                <i
+                  className="bi bi-tools me-2"
+                  style={{
+                    color: "#3b60c5",
+                    fontSize: 28,
+                    textShadow: "2px 4px 12px #e6edff77",
+                  }}
+                ></i>
+                Bakımlar
+              </h1>
+              <p
+                style={{
+                  color: "#546e8c",
+                  fontSize: 16,
+                  opacity: 0.9,
+                  fontWeight: 500,
+                  marginBottom: 0,
+                }}
+              >
+                Araçlarınızın bakım kayıtlarını kolayca inceleyin.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Filtreleme ve İstatistik Yan Yana */}
+        <div className="row mb-4 g-3">
+          {/* Filtreleme Card'ı */}
+          <div className="col-12 col-md-5 col-lg-4">
+            <div
+              className="card h-100 shadow-sm"
               style={{
-                color: "#3b60c5",
-                fontSize: 36,
-                textShadow: "2px 4px 12px #e6edff77",
+                borderRadius: 14,
+                background: "#fafdff",
+                border: "1px solid #e2eaf9",
+                boxShadow: "0 1px 7px -2px #3b60c520",
               }}
-            ></i>
-            Bakımlar
-          </h1>
-          <p
-            className="mt-2"
-            style={{
-              color: "#546e8c",
-              fontSize: 18,
-              opacity: 0.9,
-              fontWeight: 500,
-            }}
-          >
-            Tüm araçlarınıza ait bakım kayıtlarını şık ve düzenli bir ekranda
-            görüntüleyin.
-          </p>
-        </div>
-
-        <div
-          className="mb-4 mx-auto p-3"
-          style={{
-            maxWidth: 420,
-            background: "linear-gradient(87deg, #eef2fd 60%, #f7f9fd 100%)",
-            borderRadius: 15,
-            boxShadow: "0 2px 12px -5px #3b60c529",
-          }}
-        >
-          <label
-            className="form-label fw-semibold mb-1"
-            style={{ color: "#355" }}
-          >
-            Araca göre filtrele
-          </label>
-          <select
-            className="form-select shadow-none"
-            style={{
-              borderRadius: 8,
-              background: "#fcfdff",
-              borderColor: "#bfd5f7",
-              fontWeight: 500,
-            }}
-            value={selectedVehicleId}
-            onChange={(e) => setSelectedVehicleId(e.target.value)}
-          >
-            <option value="all" style={{ fontWeight: 600 }}>
-              🚗 Tüm araçlar
-            </option>
-            {vehicles.map((vehicle) => (
-              <option key={vehicle.id} value={vehicle.id}>
-                {vehicle.brand} {vehicle.model} - {vehicle.plateNumber}
-              </option>
-            ))}
-          </select>
-
-          <div className="mb-4" style={{ maxWidth: 360 }}>
-            <label className="form-label fw-semibold">Bakım ara</label>
-            <input
-              className="form-control"
-              placeholder="Yağ, fren, BMW, plaka..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-
-          <div className="mb-4" style={{ maxWidth: 360 }}>
-            <label className="form-label fw-semibold">Sırala</label>
-            <select
-              className="form-select"
-              value={sortOption}
-              onChange={(e) => setSortOption(e.target.value)}
             >
-              <option value="newest">En yeni bakım</option>
-              <option value="oldest">En eski bakım</option>
-              <option value="highestCost">En yüksek masraf</option>
-              <option value="lowestCost">En düşük masraf</option>
-              <option value="highestMileage">En yüksek KM</option>
-            </select>
+              <div className="card-body p-4">
+                <h5 className="fw-bold mb-3 text-primary" style={{ fontSize: 18, letterSpacing: "1px" }}>
+                  <i className="bi bi-funnel me-2"></i>
+                  Filtrele
+                </h5>
+                <div className="d-flex flex-column gap-2">
+                  <select
+                    className="form-select form-select-sm shadow-none"
+                    style={{
+                      minWidth: 140,
+                      borderRadius: 8,
+                      borderColor: "#bfd5f7",
+                      fontWeight: 500,
+                      background: "#fff",
+                    }}
+                    value={selectedVehicleId}
+                    onChange={(e) => setSelectedVehicleId(e.target.value)}
+                    aria-label="Araç filtrele"
+                  >
+                    <option value="all" style={{ fontWeight: 600 }}>
+                      🚗 Tüm araçlar
+                    </option>
+                    {vehicles.map((vehicle) => (
+                      <option key={vehicle.id} value={vehicle.id}>
+                        {vehicle.brand} {vehicle.model} - {vehicle.plateNumber}
+                      </option>
+                    ))}
+                  </select>
+                  <input
+                    type="text"
+                    className="form-control form-control-sm"
+                    placeholder="Bakım ara..."
+                    style={{
+                      minWidth: 120,
+                      borderRadius: 8,
+                      borderColor: "#bfd5f7",
+                      fontWeight: 500,
+                      background: "#fff",
+                    }}
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    aria-label="Bakım arama"
+                  />
+                  <select
+                    className="form-select form-select-sm"
+                    style={{
+                      minWidth: 120,
+                      borderRadius: 8,
+                      borderColor: "#bfd5f7",
+                      fontWeight: 500,
+                      background: "#fff",
+                    }}
+                    value={sortOption}
+                    onChange={(e) => setSortOption(e.target.value)}
+                    aria-label="Sırala"
+                  >
+                    <option value="newest">En yeni bakım</option>
+                    <option value="oldest">En eski bakım</option>
+                    <option value="highestCost">En yüksek masraf</option>
+                    <option value="lowestCost">En düşük masraf</option>
+                    <option value="highestMileage">En yüksek KM</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          {/* İstatistik Kartları */}
+          <div className="col-12 col-md-7 col-lg-8 d-flex gap-3 align-items-stretch flex-wrap">
+            <div
+              className="text-center flex-fill"
+              style={{
+                background: "#fff",
+                borderRadius: 12,
+                boxShadow: "0 1px 7px -4px #3b60c528",
+                padding: "20px 24px",
+                minWidth: 110,
+              }}
+            >
+              <div className="text-muted mb-1" style={{ fontSize: 13 }}>
+                Gösterilen Kayıt
+              </div>
+              <div className="h5 mb-0 fw-bold">{filteredRecords.length}</div>
+            </div>
+            <div
+              className="text-center flex-fill"
+              style={{
+                background: "#fff",
+                borderRadius: 12,
+                boxShadow: "0 1px 7px -4px #3b60c528",
+                padding: "20px 24px",
+                minWidth: 110,
+              }}
+            >
+              <div className="text-muted mb-1" style={{ fontSize: 13 }}>
+                Toplam Masraf
+              </div>
+              <div className="h5 mb-0 fw-bold">
+                ₺{totalFilteredCost.toLocaleString("tr-TR")}
+              </div>
+            </div>
+            <div
+              className="text-center flex-fill"
+              style={{
+                background: "#fff",
+                borderRadius: 12,
+                boxShadow: "0 1px 7px -4px #3b60c528",
+                padding: "20px 24px",
+                minWidth: 110,
+              }}
+            >
+              <div className="text-muted mb-1" style={{ fontSize: 13 }}>
+                Ortalama Masraf
+              </div>
+              <div className="h5 mb-0 fw-bold">
+                ₺
+                {averageFilteredCost.toLocaleString("tr-TR", {
+                  maximumFractionDigits: 0,
+                })}
+              </div>
+            </div>
           </div>
         </div>
 
+        {/* Hata veya Bilgi Mesajı */}
         {error && (
           <div
             className="alert alert-danger text-center"
@@ -201,11 +287,11 @@ function MaintenancePage() {
           <div
             className="alert alert-info shadow-sm mt-4 text-center"
             style={{
-              borderRadius: 16,
+              borderRadius: 14,
               background: "#f6fbff",
-              color: "#365",
+              color: "#265",
               fontWeight: 500,
-              fontSize: 18,
+              fontSize: 17,
               letterSpacing: ".2px",
             }}
           >
@@ -214,111 +300,114 @@ function MaintenancePage() {
           </div>
         ) : (
           <div className="row g-4">
-            {filteredRecords.map((record, idx) => (
+            {filteredRecords.map((record) => (
               <div className="col-md-6 col-lg-4" key={record.id}>
                 <div
-                  className="card border-0 shadow h-100 maintenance-card"
+                  className="card border-0 h-100"
                   style={{
-                    borderRadius: 22,
-                    overflow: "hidden",
-                    background:
-                      "linear-gradient(140deg, #f3f7fd 78%, #fff 100%)",
-                    boxShadow:
-                      "0 10px 32px -12px #3b60c52b, 0 1px 0 0 #3b60c511",
-                    transition:
-                      "transform .15s cubic-bezier(.4,0,.2,1), box-shadow .18s",
+                    borderRadius: 18,
+                    background: "#fff",
+                    boxShadow: "0 2px 16px -8px #3b60c519",
+                    transition: "box-shadow .18s, transform .14s",
                   }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform =
-                      "scale(1.025) translateY(-5px)";
-                    e.currentTarget.style.boxShadow =
-                      "0 12px 32px -8px #3b60c585, 0 4px 0 0 #3b60c511";
+                  onMouseEnter={e => {
+                    e.currentTarget.style.transform = "translateY(-2px) scale(1.012)";
+                    e.currentTarget.style.boxShadow = "0 8px 28px -6px #3b60c540";
                   }}
-                  onMouseLeave={(e) => {
+                  onMouseLeave={e => {
                     e.currentTarget.style.transform = "";
-                    e.currentTarget.style.boxShadow =
-                      "0 10px 32px -12px #3b60c52b, 0 1px 0 0 #3b60c511";
+                    e.currentTarget.style.boxShadow = "0 2px 16px -8px #3b60c519";
                   }}
                 >
                   <div className="card-body px-4 pb-4 pt-3 d-flex flex-column">
-                    <div className="d-flex justify-content-between align-items-start mb-2">
-                      <h5
-                        className="fw-bold mb-0"
-                        style={{
-                          color: "#345",
-                          fontSize: 20,
-                          letterSpacing: ".1px",
-                        }}
-                        title={record.title}
-                      >
+                    <div className="mb-2 d-flex align-items-center justify-content-between">
+                      <div className="fw-bold" style={{ color: "#345", fontSize: 18 }}>
                         <i className="bi bi-wrench-adjustable me-2 text-info"></i>
                         {record.title}
-                      </h5>
+                      </div>
                       <span
-                        className="badge bg-gradient bg-primary shadow"
+                        className="badge bg-primary bg-gradient text-white"
                         style={{
-                          fontSize: 16,
-                          padding: "7px 15px",
-                          borderRadius: 9,
-                          boxShadow: "0 2px 10px -6px #3b60c577",
-                          letterSpacing: ".3px",
+                          fontSize: 15,
+                          padding: "6px 12px",
+                          borderRadius: 8,
                         }}
                       >
                         ₺{Number(record.cost).toLocaleString("tr-TR")}
                       </span>
                     </div>
-                    <div className="mb-2 d-flex align-items-center gap-2 small text-secondary">
-                      <i className="bi bi-car-front-fill text-warning"></i>
-                      <span style={{ fontWeight: 600 }}>
-                        {record.vehicleName}
-                      </span>
+                    <div className="mb-2 d-flex align-items-center small text-secondary">
+                      <i className="bi bi-car-front-fill text-warning me-2"></i>
+                      <span className="fw-semibold">{record.vehicleName}</span>
                       <span
                         className="badge bg-light border ms-2"
-                        style={{ fontSize: 13, color: "#355" }}
+                        style={{
+                          fontSize: 12,
+                          color: "#355",
+                          borderRadius: 6,
+                        }}
                       >
                         {record.plateNumber}
                       </span>
                     </div>
                     {record.description && (
-                      <p
+                      <div
                         className="small text-muted border-start border-3 ps-2 mb-1"
-                        style={{ borderColor: "#3b60c555" }}
+                        style={{ borderColor: "#b6caf8" }}
                       >
                         {record.description}
-                      </p>
+                      </div>
                     )}
                     <div className="d-flex flex-wrap gap-2 mb-3 mt-2">
                       <span
                         className="badge bg-light text-dark border"
-                        style={{ fontWeight: 500 }}
+                        style={{ fontWeight: 500, fontSize: 13 }}
                       >
                         <i className="bi bi-speedometer2 me-1"></i>
                         {record.mileage?.toLocaleString("tr-TR")} km
                       </span>
                       <span
                         className="badge bg-light text-dark border"
-                        style={{ fontWeight: 500 }}
+                        style={{ fontWeight: 500, fontSize: 13 }}
                       >
                         <i className="bi bi-calendar-event me-1"></i>
-                        {new Date(record.maintenanceDate).toLocaleDateString(
-                          "tr-TR",
-                        )}
+                        {new Date(record.maintenanceDate).toLocaleDateString("tr-TR")}
                       </span>
                     </div>
                     <div className="mt-auto text-end">
+                      {/* SADE ve HOVER'lı Button */}
                       <Link
                         to={`/vehicles/${record.vehicleId}`}
-                        className="btn btn-outline-primary btn-sm fw-bold"
                         style={{
+                          border: "1px solid #3b60c5",
+                          background: "#fff",
+                          color: "#294686",
+                          padding: "6px 22px",
                           borderRadius: 7,
+                          fontWeight: 600,
                           fontSize: 15,
-                          letterSpacing: "0.7px",
-                          background: "#fafdff",
-                          boxShadow: "0 2px 10px -7px #3b60c550",
+                          letterSpacing: ".6px",
+                          transition: "background .14s, color .14s, border .14s, box-shadow .14s",
+                          outline: "none",
+                          textDecoration: "none",
+                          boxShadow: "0 2px 10px -8px #3b60c515",
+                          display: "inline-block",
+                          cursor: "pointer",
+                        }}
+                        onMouseEnter={e => {
+                          e.currentTarget.style.background = "#3b60c5";
+                          e.currentTarget.style.color = "#fff";
+                          e.currentTarget.style.border = "1px solid #294686";
+                          e.currentTarget.style.boxShadow = "0 4px 16px -8px #3456b060";
+                        }}
+                        onMouseLeave={e => {
+                          e.currentTarget.style.background = "#fff";
+                          e.currentTarget.style.color = "#294686";
+                          e.currentTarget.style.border = "1px solid #3b60c5";
+                          e.currentTarget.style.boxShadow = "0 2px 10px -8px #3b60c515";
                         }}
                       >
-                        <i className="bi bi-search me-1"></i>
-                        Araç Detayına Git
+                        Aracı Görüntüle
                       </Link>
                     </div>
                   </div>
@@ -328,6 +417,8 @@ function MaintenancePage() {
           </div>
         )}
       </div>
+
+
     </PageWrapper>
   );
 }
