@@ -20,6 +20,11 @@ function ResetPasswordPage() {
 
       setMessage(response);
       setError("");
+      setNewPassword("");
+
+      setTimeout(() => {
+        navigate("/login");
+      }, 2500);
     } catch (err) {
       setError(err.response?.data || "Şifre sıfırlanamadı.");
       setMessage("");
