@@ -10,6 +10,7 @@ function MaintenancePage() {
   const [vehicles, setVehicles] = useState([]);
   const [selectedVehicleId, setSelectedVehicleId] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [sortOption, setSortOption] = useState("newest");
 
   useEffect(() => {
     const fetchAllMaintenanceRecords = async () => {
@@ -40,22 +41,44 @@ function MaintenancePage() {
     fetchAllMaintenanceRecords();
   }, []);
 
-  const filteredRecords = records.filter((record) => {
-    const matchesVehicle =
-      selectedVehicleId === "all" ||
-      record.vehicleId === Number(selectedVehicleId);
+  const filteredRecords = records
+    .filter((record) => {
+      const matchesVehicle =
+        selectedVehicleId === "all" ||
+        record.vehicleId === Number(selectedVehicleId);
 
-    const searchText = `
+      const searchText = `
       ${record.title}
       ${record.description}
       ${record.vehicleName}
       ${record.plateNumber}
     `.toLowerCase();
 
-    const matchesSearch = searchText.includes(searchTerm.toLowerCase());
+      const matchesSearch = searchText.includes(searchTerm.toLowerCase());
 
-    return matchesVehicle && matchesSearch;
-  });
+      return matchesVehicle && matchesSearch;
+    })
+    .sort((a, b) => {
+      switch (sortOption) {
+        case "newest":
+          return new Date(b.maintenanceDate) - new Date(a.maintenanceDate);
+
+        case "oldest":
+          return new Date(a.maintenanceDate) - new Date(b.maintenanceDate);
+
+        case "highestCost":
+          return Number(b.cost) - Number(a.cost);
+
+        case "lowestCost":
+          return Number(a.cost) - Number(b.cost);
+
+        case "highestMileage":
+          return Number(b.mileage) - Number(a.mileage);
+
+        default:
+          return 0;
+      }
+    });
 
   return (
     <PageWrapper>
@@ -147,6 +170,21 @@ function MaintenancePage() {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
+          </div>
+
+          <div className="mb-4" style={{ maxWidth: 360 }}>
+            <label className="form-label fw-semibold">Sırala</label>
+            <select
+              className="form-select"
+              value={sortOption}
+              onChange={(e) => setSortOption(e.target.value)}
+            >
+              <option value="newest">En yeni bakım</option>
+              <option value="oldest">En eski bakım</option>
+              <option value="highestCost">En yüksek masraf</option>
+              <option value="lowestCost">En düşük masraf</option>
+              <option value="highestMileage">En yüksek KM</option>
+            </select>
           </div>
         </div>
 
