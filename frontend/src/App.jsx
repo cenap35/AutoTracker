@@ -10,6 +10,7 @@ import Navbar from "./components/Navbar";
 import DashboardPage from "./pages/DashboardPage";
 import Footer from "./components/Footer";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 
 function App() {
   return (
@@ -23,6 +24,8 @@ function App() {
         <Route path="/register" element={<RegisterPage />} />
 
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
 
         <Route
           path="/vehicles"
