@@ -9,6 +9,7 @@ function MaintenancePage() {
   const [error, setError] = useState("");
   const [vehicles, setVehicles] = useState([]);
   const [selectedVehicleId, setSelectedVehicleId] = useState("all");
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const fetchAllMaintenanceRecords = async () => {
@@ -39,12 +40,22 @@ function MaintenancePage() {
     fetchAllMaintenanceRecords();
   }, []);
 
-  const filteredRecords =
-    selectedVehicleId === "all"
-      ? records
-      : records.filter(
-          (record) => record.vehicleId === Number(selectedVehicleId),
-        );
+  const filteredRecords = records.filter((record) => {
+    const matchesVehicle =
+      selectedVehicleId === "all" ||
+      record.vehicleId === Number(selectedVehicleId);
+
+    const searchText = `
+      ${record.title}
+      ${record.description}
+      ${record.vehicleName}
+      ${record.plateNumber}
+    `.toLowerCase();
+
+    const matchesSearch = searchText.includes(searchTerm.toLowerCase());
+
+    return matchesVehicle && matchesSearch;
+  });
 
   return (
     <PageWrapper>
@@ -83,11 +94,12 @@ function MaintenancePage() {
             style={{
               color: "#546e8c",
               fontSize: 18,
-              opacity: .9,
+              opacity: 0.9,
               fontWeight: 500,
             }}
           >
-            Tüm araçlarınıza ait bakım kayıtlarını şık ve düzenli bir ekranda görüntüleyin.
+            Tüm araçlarınıza ait bakım kayıtlarını şık ve düzenli bir ekranda
+            görüntüleyin.
           </p>
         </div>
 
@@ -95,13 +107,15 @@ function MaintenancePage() {
           className="mb-4 mx-auto p-3"
           style={{
             maxWidth: 420,
-            background:
-              "linear-gradient(87deg, #eef2fd 60%, #f7f9fd 100%)",
+            background: "linear-gradient(87deg, #eef2fd 60%, #f7f9fd 100%)",
             borderRadius: 15,
             boxShadow: "0 2px 12px -5px #3b60c529",
           }}
         >
-          <label className="form-label fw-semibold mb-1" style={{ color: "#355" }}>
+          <label
+            className="form-label fw-semibold mb-1"
+            style={{ color: "#355" }}
+          >
             Araca göre filtrele
           </label>
           <select
@@ -124,6 +138,16 @@ function MaintenancePage() {
               </option>
             ))}
           </select>
+
+          <div className="mb-4" style={{ maxWidth: 360 }}>
+            <label className="form-label fw-semibold">Bakım ara</label>
+            <input
+              className="form-control"
+              placeholder="Yağ, fren, BMW, plaka..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
         </div>
 
         {error && (
@@ -159,17 +183,20 @@ function MaintenancePage() {
                   style={{
                     borderRadius: 22,
                     overflow: "hidden",
-                    background: "linear-gradient(140deg, #f3f7fd 78%, #fff 100%)",
+                    background:
+                      "linear-gradient(140deg, #f3f7fd 78%, #fff 100%)",
                     boxShadow:
                       "0 10px 32px -12px #3b60c52b, 0 1px 0 0 #3b60c511",
-                    transition: "transform .15s cubic-bezier(.4,0,.2,1), box-shadow .18s",
+                    transition:
+                      "transform .15s cubic-bezier(.4,0,.2,1), box-shadow .18s",
                   }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.transform = "scale(1.025) translateY(-5px)";
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform =
+                      "scale(1.025) translateY(-5px)";
                     e.currentTarget.style.boxShadow =
                       "0 12px 32px -8px #3b60c585, 0 4px 0 0 #3b60c511";
                   }}
-                  onMouseLeave={e => {
+                  onMouseLeave={(e) => {
                     e.currentTarget.style.transform = "";
                     e.currentTarget.style.boxShadow =
                       "0 10px 32px -12px #3b60c52b, 0 1px 0 0 #3b60c511";
@@ -207,23 +234,37 @@ function MaintenancePage() {
                       <span style={{ fontWeight: 600 }}>
                         {record.vehicleName}
                       </span>
-                      <span className="badge bg-light border ms-2" style={{ fontSize: 13, color: "#355" }}>
+                      <span
+                        className="badge bg-light border ms-2"
+                        style={{ fontSize: 13, color: "#355" }}
+                      >
                         {record.plateNumber}
                       </span>
                     </div>
                     {record.description && (
-                      <p className="small text-muted border-start border-3 ps-2 mb-1" style={{borderColor:"#3b60c555"}}>
+                      <p
+                        className="small text-muted border-start border-3 ps-2 mb-1"
+                        style={{ borderColor: "#3b60c555" }}
+                      >
                         {record.description}
                       </p>
                     )}
                     <div className="d-flex flex-wrap gap-2 mb-3 mt-2">
-                      <span className="badge bg-light text-dark border" style={{ fontWeight: 500 }}>
+                      <span
+                        className="badge bg-light text-dark border"
+                        style={{ fontWeight: 500 }}
+                      >
                         <i className="bi bi-speedometer2 me-1"></i>
                         {record.mileage?.toLocaleString("tr-TR")} km
                       </span>
-                      <span className="badge bg-light text-dark border" style={{ fontWeight: 500 }}>
+                      <span
+                        className="badge bg-light text-dark border"
+                        style={{ fontWeight: 500 }}
+                      >
                         <i className="bi bi-calendar-event me-1"></i>
-                        {new Date(record.maintenanceDate).toLocaleDateString("tr-TR")}
+                        {new Date(record.maintenanceDate).toLocaleDateString(
+                          "tr-TR",
+                        )}
                       </span>
                     </div>
                     <div className="mt-auto text-end">
@@ -249,7 +290,6 @@ function MaintenancePage() {
           </div>
         )}
       </div>
- 
     </PageWrapper>
   );
 }
