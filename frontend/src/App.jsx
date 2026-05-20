@@ -8,7 +8,8 @@ import VehicleDetailPage from "./pages/VehicleDetailPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from "./components/Navbar";
 import DashboardPage from "./pages/DashboardPage";
-import Footer from "./components/Footer"
+import Footer from "./components/Footer";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 
 function App() {
   return (
@@ -20,6 +21,8 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
 
         <Route path="/register" element={<RegisterPage />} />
+
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
         <Route
           path="/vehicles"

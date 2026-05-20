@@ -248,16 +248,26 @@ public class AuthController : ControllerBase
     var resetLink =
         $"http://localhost:5173/reset-password?token={resetToken}";
 
-    await _emailService.SendEmailAsync(
-        user.Email,
-        "AutoTracker Şifre Sıfırlama",
-        $@"
+    try
+    {
+      await _emailService.SendEmailAsync(
+          user.Email,
+          "AutoTracker Şifre Sıfırlama",
+          $@"
         <h2>AutoTracker Şifre Sıfırlama</h2>
         <p>Merhaba {user.FullName},</p>
         <p>Şifrenizi sıfırlamak için aşağıdaki linke tıklayın:</p>
         <a href='{resetLink}'>Şifremi sıfırla</a>
         "
-    );
+      );
+    }
+    catch
+    {
+      return StatusCode(
+          500,
+          "Şifre sıfırlama emaili gönderilemedi. Lütfen biraz sonra tekrar deneyin."
+      );
+    }
 
     return Ok("Eğer bu email kayıtlıysa şifre sıfırlama bağlantısı gönderildi.");
   }

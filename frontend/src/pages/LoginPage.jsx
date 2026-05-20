@@ -168,6 +168,23 @@ function LoginPage() {
             </button>
           </form>
 
+
+          <div className="text-end mb-3">
+            <a
+              href="/forgot-password"
+              style={{
+                fontSize: 14,
+                color: "#3977f5",
+                fontWeight: 600,
+                textDecoration: "none",
+              }}
+            >
+              Şifremi unuttum
+            </a>
+          </div>
+
+
+
           <div className="text-center mt-4" style={{ fontSize: 15 }}>
             Hesabınız yok mu?{" "}
             <a
