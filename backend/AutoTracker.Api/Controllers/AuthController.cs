@@ -55,7 +55,7 @@ public class AuthController : ControllerBase
     await _context.SaveChangesAsync();
     var confirmationLink =
     $"http://localhost:5101/api/auth/confirm-email?token={emailToken}";
-    
+
     try
     {
       await _emailService.SendEmailAsync(
@@ -225,5 +225,68 @@ public class AuthController : ControllerBase
     }
 
     return Ok("Doğrulama emaili tekrar gönderildi.");
+  }
+
+  [HttpPost("forgot-password")]
+  public async Task<ActionResult> ForgotPassword(ForgotPasswordDto dto)
+  {
+    var user = await _context.AppUsers
+        .FirstOrDefaultAsync(u => u.Email == dto.Email);
+
+    if (user == null)
+    {
+      return Ok("Eğer bu email kayıtlıysa şifre sıfırlama bağlantısı gönderildi.");
+    }
+
+    var resetToken = Guid.NewGuid().ToString();
+
+    user.PasswordResetToken = resetToken;
+    user.PasswordResetTokenExpiresAt = DateTime.UtcNow.AddHours(1);
+
+    await _context.SaveChangesAsync();
+
+    var resetLink =
+        $"http://localhost:5173/reset-password?token={resetToken}";
+
+    await _emailService.SendEmailAsync(
+        user.Email,
+        "AutoTracker Şifre Sıfırlama",
+        $@"
+        <h2>AutoTracker Şifre Sıfırlama</h2>
+        <p>Merhaba {user.FullName},</p>
+        <p>Şifrenizi sıfırlamak için aşağıdaki linke tıklayın:</p>
+        <a href='{resetLink}'>Şifremi sıfırla</a>
+        "
+    );
+
+    return Ok("Eğer bu email kayıtlıysa şifre sıfırlama bağlantısı gönderildi.");
+  }
+
+
+  [HttpPost("reset-password")]
+  public async Task<ActionResult> ResetPassword(ResetPasswordDto dto)
+  {
+    var user = await _context.AppUsers
+        .FirstOrDefaultAsync(u => u.PasswordResetToken == dto.Token);
+
+    if (user == null)
+    {
+      return BadRequest("Geçersiz şifre sıfırlama linki.");
+    }
+
+    if (user.PasswordResetTokenExpiresAt < DateTime.UtcNow)
+    {
+      return BadRequest("Şifre sıfırlama linkinin süresi dolmuş.");
+    }
+
+    user.PasswordHash = new PasswordHasher<AppUser>()
+        .HashPassword(user, dto.NewPassword);
+
+    user.PasswordResetToken = null;
+    user.PasswordResetTokenExpiresAt = null;
+
+    await _context.SaveChangesAsync();
+
+    return Ok("Şifre başarıyla güncellendi.");
   }
 }
