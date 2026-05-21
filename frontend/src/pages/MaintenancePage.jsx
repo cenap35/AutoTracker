@@ -7,6 +7,7 @@ import {
   createMaintenanceRecord,
 } from "../services/maintenanceService";
 import AddMaintenanceForm from "../components/AddMaintenanceForm";
+import MaintenanceCard from "../components/MaintenanceCard";
 
 function MaintenancePage() {
   const [records, setRecords] = useState([]);
@@ -341,127 +342,10 @@ function MaintenancePage() {
           <div className="row g-4">
             {filteredRecords.map((record) => (
               <div className="col-md-6 col-lg-4" key={record.id}>
-                <div
-                  className="card border-0 h-100"
-                  style={{
-                    borderRadius: 18,
-                    background: "#fff",
-                    boxShadow: "0 2px 16px -8px #3b60c519",
-                    transition: "box-shadow .18s, transform .14s",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform =
-                      "translateY(-2px) scale(1.012)";
-                    e.currentTarget.style.boxShadow =
-                      "0 8px 28px -6px #3b60c540";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = "";
-                    e.currentTarget.style.boxShadow =
-                      "0 2px 16px -8px #3b60c519";
-                  }}
-                >
-                  <div className="card-body px-4 pb-4 pt-3 d-flex flex-column">
-                    <div className="mb-2 d-flex align-items-center justify-content-between">
-                      <div
-                        className="fw-bold"
-                        style={{ color: "#345", fontSize: 18 }}
-                      >
-                        <i className="bi bi-wrench-adjustable me-2 text-info"></i>
-                        {record.title}
-                      </div>
-                      <span
-                        className="badge bg-primary bg-gradient text-white"
-                        style={{
-                          fontSize: 15,
-                          padding: "6px 12px",
-                          borderRadius: 8,
-                        }}
-                      >
-                        ₺{Number(record.cost).toLocaleString("tr-TR")}
-                      </span>
-                    </div>
-                    <div className="mb-2 d-flex align-items-center small text-secondary">
-                      <i className="bi bi-car-front-fill text-warning me-2"></i>
-                      <span className="fw-semibold">{record.vehicleName}</span>
-                      <span
-                        className="badge bg-light border ms-2"
-                        style={{
-                          fontSize: 12,
-                          color: "#355",
-                          borderRadius: 6,
-                        }}
-                      >
-                        {record.plateNumber}
-                      </span>
-                    </div>
-                    {record.description && (
-                      <div
-                        className="small text-muted border-start border-3 ps-2 mb-1"
-                        style={{ borderColor: "#b6caf8" }}
-                      >
-                        {record.description}
-                      </div>
-                    )}
-                    <div className="d-flex flex-wrap gap-2 mb-3 mt-2">
-                      <span
-                        className="badge bg-light text-dark border"
-                        style={{ fontWeight: 500, fontSize: 13 }}
-                      >
-                        <i className="bi bi-speedometer2 me-1"></i>
-                        {record.mileage?.toLocaleString("tr-TR")} km
-                      </span>
-                      <span
-                        className="badge bg-light text-dark border"
-                        style={{ fontWeight: 500, fontSize: 13 }}
-                      >
-                        <i className="bi bi-calendar-event me-1"></i>
-                        {new Date(record.maintenanceDate).toLocaleDateString(
-                          "tr-TR",
-                        )}
-                      </span>
-                    </div>
-                    <div className="mt-auto text-end">
-                      {/* SADE ve HOVER'lı Button */}
-                      <Link
-                        to={`/vehicles/${record.vehicleId}`}
-                        style={{
-                          border: "1px solid #3b60c5",
-                          background: "#fff",
-                          color: "#294686",
-                          padding: "6px 22px",
-                          borderRadius: 7,
-                          fontWeight: 600,
-                          fontSize: 15,
-                          letterSpacing: ".6px",
-                          transition:
-                            "background .14s, color .14s, border .14s, box-shadow .14s",
-                          outline: "none",
-                          textDecoration: "none",
-                          boxShadow: "0 2px 10px -8px #3b60c515",
-                          display: "inline-block",
-                          cursor: "pointer",
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.background = "#3b60c5";
-                          e.currentTarget.style.color = "#fff";
-                          e.currentTarget.style.border = "1px solid #294686";
-                          e.currentTarget.style.boxShadow =
-                            "0 4px 16px -8px #3456b060";
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.background = "#fff";
-                          e.currentTarget.style.color = "#294686";
-                          e.currentTarget.style.border = "1px solid #3b60c5";
-                          e.currentTarget.style.boxShadow =
-                            "0 2px 10px -8px #3b60c515";
-                        }}
-                      >
-                        Aracı Görüntüle
-                      </Link>
-                    </div>
-                  </div>
-                </div>
+                <MaintenanceCard
+                  record={record}
+                  showVehicleInfo={true}
+                />
               </div>
             ))}
           </div>
