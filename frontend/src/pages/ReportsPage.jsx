@@ -133,7 +133,7 @@ function ReportsPage() {
                 style={{ fontSize: "2.15rem", letterSpacing: 0.3 }}
               >
                 <i className="bi bi-clipboard-check me-2" />
-                Araç Notları
+                Raporlar
               </h2>
               <span className="fs-6 text-muted">
                 Toplam {notes.length} not kaydı
@@ -150,7 +150,7 @@ function ReportsPage() {
                 <option value="all">🚗 Tüm Araçlar</option>
                 {vehicles.map((v) => (
                   <option key={v.id} value={v.id}>
-                    {v.brand} {v.model}
+                    {v.brand} {v.model} - {v.plateNumber}
                   </option>
                 ))}
               </select>
@@ -186,7 +186,7 @@ function ReportsPage() {
             </div>
           )}
 
-          {/* Not Ekle Formu: tam genişlik ve responsive */}
+          {/* Not Ekle Formu */}
           <div className="mb-4 bg-light bg-opacity-75 rounded-4 shadow p-3 p-md-4 w-100 mx-auto">
             <form onSubmit={handleCreateNote}>
               <div className="row g-2 mb-2">
@@ -201,7 +201,7 @@ function ReportsPage() {
                     <option value="">Araç seç...</option>
                     {vehicles.map((v) => (
                       <option key={v.id} value={v.id}>
-                        {v.brand} {v.model}
+                        {v.brand} {v.model} - {v.plateNumber}
                       </option>
                     ))}
                   </select>
