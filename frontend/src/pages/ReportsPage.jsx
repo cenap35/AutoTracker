@@ -18,6 +18,10 @@ function ReportsPage() {
   const [priority, setPriority] = useState("Orta");
   const [error, setError] = useState("");
 
+  const [selectedVehicleId, setSelectedVehicleId] = useState("all");
+  const [selectedStatus, setSelectedStatus] = useState("all");
+  const [selectedPriority, setSelectedPriority] = useState("all");
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -71,8 +75,8 @@ function ReportsPage() {
         notes.map((item) =>
           item.id === note.id
             ? { ...item, isCompleted: !item.isCompleted }
-            : item
-        )
+            : item,
+        ),
       );
     } catch (err) {
       setError("Not güncellenemedi.");
@@ -96,6 +100,22 @@ function ReportsPage() {
     Yüksek: "danger",
   };
 
+  const filteredNotes = notes.filter((note) => {
+    const vehicleMatch =
+      selectedVehicleId === "all" ||
+      note.vehicleId === Number(selectedVehicleId);
+
+    const statusMatch =
+      selectedStatus === "all" ||
+      (selectedStatus === "completed" && note.isCompleted) ||
+      (selectedStatus === "pending" && !note.isCompleted);
+
+    const priorityMatch =
+      selectedPriority === "all" || note.priority === selectedPriority;
+
+    return vehicleMatch && statusMatch && priorityMatch;
+  });
+
   return (
     <PageWrapper>
       <div className="container py-5">
@@ -105,13 +125,17 @@ function ReportsPage() {
             Araç Notları
           </h1>
           <p className="text-muted">
-            Araçlarınıza özel yapılacakları, kontrol notlarını ve planları takip edin.
+            Araçlarınıza özel yapılacakları, kontrol notlarını ve planları takip
+            edin.
           </p>
         </div>
 
         {error && <div className="alert alert-danger">{error}</div>}
 
-        <div className="card border-0 shadow-sm mb-4" style={{ borderRadius: 16 }}>
+        <div
+          className="card border-0 shadow-sm mb-4"
+          style={{ borderRadius: 16 }}
+        >
           <div className="card-body p-4">
             <h4 className="fw-bold mb-3">Yeni Not Ekle</h4>
 
@@ -176,13 +200,67 @@ function ReportsPage() {
           </div>
         </div>
 
-        {notes.length === 0 ? (
+        <div
+          className="card border-0 shadow-sm mb-4"
+          style={{ borderRadius: 16 }}
+        >
+          <div className="card-body p-4">
+            <h4 className="fw-bold mb-3">
+              <i className="bi bi-funnel me-2"></i>
+              Filtrele
+            </h4>
+
+            <div className="row g-3">
+              <div className="col-md-4">
+                <select
+                  className="form-select"
+                  value={selectedVehicleId}
+                  onChange={(e) => setSelectedVehicleId(e.target.value)}
+                >
+                  <option value="all">Tüm araçlar</option>
+                  {vehicles.map((vehicle) => (
+                    <option key={vehicle.id} value={vehicle.id}>
+                      {vehicle.brand} {vehicle.model} - {vehicle.plateNumber}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="col-md-4">
+                <select
+                  className="form-select"
+                  value={selectedStatus}
+                  onChange={(e) => setSelectedStatus(e.target.value)}
+                >
+                  <option value="all">Tüm durumlar</option>
+                  <option value="pending">Bekleyenler</option>
+                  <option value="completed">Tamamlananlar</option>
+                </select>
+              </div>
+
+              <div className="col-md-4">
+                <select
+                  className="form-select"
+                  value={selectedPriority}
+                  onChange={(e) => setSelectedPriority(e.target.value)}
+                >
+                  <option value="all">Tüm öncelikler</option>
+                  <option value="Düşük">Düşük</option>
+                  <option value="Orta">Orta</option>
+                  <option value="Yüksek">Yüksek</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {filteredNotes.length === 0 ? (
           <div className="alert alert-info shadow-sm">
             Henüz araç notu bulunmuyor.
           </div>
         ) : (
           <div className="row g-4">
-            {notes.map((note) => (
+            {filteredNotes.map((note) => (
               <div className="col-md-6 col-lg-4" key={note.id}>
                 <div
                   className="card h-100 border-0 shadow-sm"
@@ -196,13 +274,17 @@ function ReportsPage() {
                       <h5
                         className="fw-bold mb-0"
                         style={{
-                          textDecoration: note.isCompleted ? "line-through" : "none",
+                          textDecoration: note.isCompleted
+                            ? "line-through"
+                            : "none",
                         }}
                       >
                         {note.title}
                       </h5>
 
-                      <span className={`badge bg-${priorityColor[note.priority]}`}>
+                      <span
+                        className={`badge bg-${priorityColor[note.priority]}`}
+                      >
                         {note.priority}
                       </span>
                     </div>
