@@ -1,6 +1,7 @@
 import { useState } from "react";
 
-function AddMaintenanceForm({ onCreate }) {
+function AddMaintenanceForm({ onCreate, vehicles = [], showVehicleSelect = false }) {
+  const [vehicleId, setVehicleId] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [mileage, setMileage] = useState("");
@@ -11,6 +12,7 @@ function AddMaintenanceForm({ onCreate }) {
     e.preventDefault();
 
     await onCreate({
+      vehicleId: showVehicleSelect ? Number(vehicleId) : undefined,
       title,
       description,
       mileage: Number(mileage),
@@ -18,6 +20,7 @@ function AddMaintenanceForm({ onCreate }) {
       maintenanceDate: new Date(maintenanceDate).toISOString(),
     });
 
+    setVehicleId("");
     setTitle("");
     setDescription("");
     setMileage("");
@@ -34,7 +37,25 @@ function AddMaintenanceForm({ onCreate }) {
         </h3>
 
         <form className="row g-3" onSubmit={handleSubmit}>
-          <div className="col-md-4">
+          {showVehicleSelect && (
+            <div className="col-md-4">
+              <select
+                className="form-select"
+                value={vehicleId}
+                onChange={(e) => setVehicleId(e.target.value)}
+                required
+              >
+                <option value="">Araç seç</option>
+                {vehicles.map((vehicle) => (
+                  <option key={vehicle.id} value={vehicle.id}>
+                    {vehicle.plateNumber} | {vehicle.brand} {vehicle.model}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          <div className={showVehicleSelect ? "col-md-4" : "col-md-4"}>
             <input
               className="form-control"
               placeholder="Başlık"
@@ -44,7 +65,7 @@ function AddMaintenanceForm({ onCreate }) {
             />
           </div>
 
-          <div className="col-md-8">
+          <div className={showVehicleSelect ? "col-md-4" : "col-md-8"}>
             <input
               className="form-control"
               placeholder="Açıklama"

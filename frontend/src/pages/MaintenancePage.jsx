@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import PageWrapper from "../components/PageWrapper";
 import { getVehicles } from "../services/vehicleService";
-import { getMaintenanceRecords } from "../services/maintenanceService";
+import {
+  getMaintenanceRecords,
+  createMaintenanceRecord,
+} from "../services/maintenanceService";
+import AddMaintenanceForm from "../components/AddMaintenanceForm";
 
 function MaintenancePage() {
   const [records, setRecords] = useState([]);
@@ -40,6 +44,33 @@ function MaintenancePage() {
 
     fetchAllMaintenanceRecords();
   }, []);
+
+  const handleCreateMaintenance = async (recordData) => {
+    try {
+      const newRecord = await createMaintenanceRecord(
+        recordData.vehicleId,
+        recordData,
+      );
+
+      const selectedVehicle = vehicles.find(
+        (vehicle) => vehicle.id === recordData.vehicleId,
+      );
+
+      const recordWithVehicleInfo = {
+        ...newRecord,
+        vehicleId: recordData.vehicleId,
+        vehicleName: selectedVehicle
+          ? `${selectedVehicle.brand} ${selectedVehicle.model}`
+          : "",
+        plateNumber: selectedVehicle?.plateNumber || "",
+      };
+
+      setRecords([recordWithVehicleInfo, ...records]);
+    } catch (err) {
+      setError("Bakım kaydı eklenemedi.");
+      console.error(err);
+    }
+  };
 
   const filteredRecords = records
     .filter((record) => {
@@ -99,6 +130,11 @@ function MaintenancePage() {
           boxShadow: "0 4px 42px -14px #3b60c533",
         }}
       >
+        <AddMaintenanceForm
+          vehicles={vehicles}
+          showVehicleSelect={true}
+          onCreate={handleCreateMaintenance}
+        />
         {/* Başlık ve Açıklama */}
         <div className="mb-4">
           <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">

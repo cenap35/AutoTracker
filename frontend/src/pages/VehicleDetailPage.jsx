@@ -270,73 +270,82 @@ function VehicleDetailPage() {
                   </div>
                 ) : (
                   <div className="row g-3">
-                    {maintenanceRecords.map((record) => (
-                      <div key={record.id} className="col-md-6 col-lg-4">
-                        <div
-                          className="card border-0 shadow-sm h-100"
-                          style={{
-                            borderRadius: 11,
-                            background: "#f7faff",
-                          }}
-                        >
-                          <div className="card-body pb-3">
-                            <div className="mb-2">
-                              <span className="fw-semibold text-info fs-6">
-                                <i className="bi bi-clipboard-check me-1"></i>
-                                {record.title}
-                              </span>
-                            </div>
-                            <div
-                              className="text-muted mb-2"
-                              style={{ fontSize: 14 }}
-                            >
-                              {record.description}
-                            </div>
-                            <ul
-                              className="list-unstyled mb-2"
-                              style={{ fontSize: 15 }}
-                            >
-                              <li>
-                                <i className="bi bi-speedometer2 me-1"></i>
-                                {record.mileage?.toLocaleString("tr-TR")} km
-                              </li>
-                              <li>
-                                <i className="bi bi-currency-exchange me-1"></i>
-                                {record.cost?.toLocaleString("tr-TR")} ₺
-                              </li>
-                              <li>
-                                <i className="bi bi-calendar3 me-1"></i>
-                                {new Date(record.maintenanceDate).toLocaleString(
-                                  "tr-TR",
-                                  {
-                                    dateStyle: "medium",
-                                    timeStyle: "short",
-                                  }
-                                )}
-                              </li>
-                            </ul>
-                            <div className="d-flex justify-content-end">
-                              <button
-                                className="btn btn-outline-danger btn-sm px-3"
-                                style={{
-                                  borderRadius: 8,
-                                  fontSize: 15,
-                                }}
-                                onClick={() =>
-                                  handleDeleteMaintenanceRecord(record.id)
-                                }
+                    {[...maintenanceRecords]
+                      .sort(
+                        (a, b) =>
+                          new Date(b.maintenanceDate) -
+                          new Date(a.maintenanceDate)
+                      )
+                      .map((record) => (
+                        <div key={record.id} className="col-md-6 col-lg-4">
+                          <div
+                            className="card border-0 shadow-sm h-100"
+                            style={{
+                              borderRadius: 11,
+                              background: "#f7faff",
+                            }}
+                          >
+                            <div className="card-body pb-3">
+                              <div className="mb-2">
+                                <span className="fw-semibold text-info fs-6">
+                                  <i className="bi bi-clipboard-check me-1"></i>
+                                  {record.title}
+                                </span>
+                              </div>
+                              <div
+                                className="text-muted mb-2"
+                                style={{ fontSize: 14 }}
                               >
-                                <i className="bi bi-trash me-1"></i>Sil
-                              </button>
+                                {record.description}
+                              </div>
+                              <ul
+                                className="list-unstyled mb-2"
+                                style={{ fontSize: 15 }}
+                              >
+                                <li>
+                                  <i className="bi bi-speedometer2 me-1"></i>
+                                  {record.mileage?.toLocaleString("tr-TR")} km
+                                </li>
+                                <li>
+                                  <i className="bi bi-currency-exchange me-1"></i>
+                                  {record.cost?.toLocaleString("tr-TR")} ₺
+                                </li>
+                                <li>
+                                  <i className="bi bi-calendar3 me-1"></i>
+                                  {new Date(record.maintenanceDate).toLocaleString(
+                                    "tr-TR",
+                                    {
+                                      dateStyle: "medium",
+                                      timeStyle: "short",
+                                    }
+                                  )}
+                                </li>
+                              </ul>
+                              <div className="d-flex justify-content-end">
+                                <button
+                                  className="btn btn-outline-danger btn-sm px-3"
+                                  style={{
+                                    borderRadius: 8,
+                                    fontSize: 15,
+                                  }}
+                                  onClick={() => {
+                                    if (window.confirm("Emin misiniz?")) {
+                                      handleDeleteMaintenanceRecord(record.id);
+                                    }
+                                  }}
+                                >
+                                  <i className="bi bi-trash me-1"></i>Sil
+                                </button>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
                   </div>
                 )}
               </div>
             </div>
+       
           </div>
         </div>
       </div>
