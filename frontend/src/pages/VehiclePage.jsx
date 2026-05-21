@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 import PageWrapper from "../components/PageWrapper";
-import { getVehicles, deleteVehicle } from "../services/vehicleService";
+import {
+  getVehicles,
+  deleteVehicle,
+  createVehicle,
+} from "../services/vehicleService";
 import { Link } from "react-router-dom";
+import AddVehicleForm from "../components/AddVehicleForm";
 
 function VehiclesPage() {
   const [vehicles, setVehicles] = useState([]);
@@ -31,8 +36,47 @@ function VehiclesPage() {
     }
   };
 
+  const handleCreateVehicle = async (vehicleFormData) => {
+    try {
+      const newVehicle = await createVehicle(vehicleFormData);
+      setVehicles([...vehicles, newVehicle]);
+      setError("");
+    } catch (err) {
+      setError("Araç eklenemedi.");
+      console.error(err);
+    }
+  };
+
   return (
     <PageWrapper>
+
+      {/* Dropdawn AddFormVehicle */}
+      <div className="dropdown m-2">
+        <button
+          className="btn btn-primary dropdown-toggle px-4 fw-bold"
+          type="button"
+          id="addVehicleDropdown"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+          style={{ borderRadius: 6 }}
+        >
+          <i className="bi bi-plus-circle me-2"></i>Yeni Araç Ekle
+        </button>
+        <ul
+          className="dropdown-menu p-0"
+          aria-labelledby="addVehicleDropdown"
+          style={{ minWidth: 400, borderRadius: 12 }}
+        >
+          <li className="p-3" style={{ minWidth: 340, background: "#f4f7fe" }}>
+            <AddVehicleForm
+              onVehicleCreated={handleCreateVehicle}
+              error={error}
+            />
+          </li>
+        </ul>
+      </div>
+
+      {/*---- */}
       <div
         className="container py-5"
         style={{ minHeight: "calc(100vh - 90px)" }}
@@ -75,13 +119,16 @@ function VehiclesPage() {
                   className="card h-100 border-0 shadow-sm vehicle-card position-relative"
                   style={{
                     borderRadius: 16,
-                    transition: "transform 0.19s cubic-bezier(.29, 1.53, .62, 1), box-shadow 0.18s",
+                    transition:
+                      "transform 0.19s cubic-bezier(.29, 1.53, .62, 1), box-shadow 0.18s",
                   }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.transform = "translateY(-7px) scale(1.025)";
-                    e.currentTarget.style.boxShadow = "0 8px 32px -8px #3b60c599";
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform =
+                      "translateY(-7px) scale(1.025)";
+                    e.currentTarget.style.boxShadow =
+                      "0 8px 32px -8px #3b60c599";
                   }}
-                  onMouseLeave={e => {
+                  onMouseLeave={(e) => {
                     e.currentTarget.style.transform = "";
                     e.currentTarget.style.boxShadow = "";
                   }}
@@ -132,7 +179,6 @@ function VehiclesPage() {
               </Link>
             </div>
           ))}
-     
         </div>
       </div>
     </PageWrapper>

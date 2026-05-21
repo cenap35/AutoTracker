@@ -1,5 +1,5 @@
 import { useState } from "react";
-import vehicleData from "../../constants/vehicleData";
+import vehicleData from "../constants/vehicleData";
 
 function AddVehicleForm({ onVehicleCreated, error }) {
   const [brand, setBrand] = useState("");

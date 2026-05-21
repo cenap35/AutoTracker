@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { getDashboardSummary } from "../services/dashboardService";
-import { getVehicles, createVehicle } from "../services/vehicleService";
-import AddVehicleForm from "../components/Dashboard/AddVehicleForm";
+import { getVehicles } from "../services/vehicleService";
 import { Link } from "react-router-dom";
 import PageWrapper from "../components/PageWrapper";
 import { getRecentMaintenance } from "../services/dashboardService";
@@ -15,7 +14,6 @@ function DashboardPage() {
   const [vehicles, setVehicles] = useState([]);
   const [recentMaintenance, setRecentMaintenance] = useState([]);
   const [costByVehicle, setCostByVehicle] = useState([]);
-  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -39,17 +37,6 @@ function DashboardPage() {
     fetchDashboardData();
   }, []);
 
-  const handleCreateVehicle = async (vehicleFormData) => {
-    try {
-      const newVehicle = await createVehicle(vehicleFormData);
-      setVehicles([...vehicles, newVehicle]);
-      setError("");
-    } catch (err) {
-      setError("Araç eklenemedi.");
-      console.error(err);
-    }
-  };
-
   if (!summary) {
     return <p>Loading...</p>;
   }
@@ -58,13 +45,6 @@ function DashboardPage() {
     <PageWrapper>
       <DashboardBackground>
         <div className="container py-4">
-          <div>
-            <AddVehicleForm
-              onVehicleCreated={handleCreateVehicle}
-              error={error}
-            />
-          </div>
-
           {/* HEADER */}
           <div className="row mb-4 align-items-center">
             <div className="col-md-8">
