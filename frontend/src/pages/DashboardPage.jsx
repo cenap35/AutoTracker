@@ -191,6 +191,116 @@ function DashboardPage() {
             />
           </div>
 
+          {/* QUICK ACTIONS */}
+          <div className="row mb-5 g-4">
+            <div className="col-md-3 col-sm-6">
+              <Link to="/vehicles" className="text-decoration-none">
+                <div
+                  className="card border-0 shadow-sm h-100"
+                  style={{
+                    borderRadius: 16,
+                    background:
+                      "linear-gradient(110deg, #eef5ff 65%, #ffffff 100%)",
+                  }}
+                >
+                  <div className="card-body text-center py-4">
+                    <i className="bi bi-plus-circle-fill fs-1 text-primary"></i>
+                    <h5
+                      className="fw-bold mt-3 mb-1"
+                      style={{ color: "#284185" }}
+                    >
+                      Araç Ekle
+                    </h5>
+                    <p className="text-muted small mb-0">
+                      Yeni araç kaydı oluştur
+                    </p>
+                  </div>
+                </div>
+              </Link>
+            </div>
+
+            <div className="col-md-3 col-sm-6">
+              <Link to="/maintenance" className="text-decoration-none">
+                <div
+                  className="card border-0 shadow-sm h-100"
+                  style={{
+                    borderRadius: 16,
+                    background:
+                      "linear-gradient(110deg, #eefcf5 65%, #ffffff 100%)",
+                  }}
+                >
+                  <div className="card-body text-center py-4">
+                    <i className="bi bi-wrench-adjustable-circle-fill fs-1 text-success"></i>
+                    <h5
+                      className="fw-bold mt-3 mb-1"
+                      style={{ color: "#286b52" }}
+                    >
+                      Bakım Ekle
+                    </h5>
+                    <p className="text-muted small mb-0">
+                      Bakım ve masraf kaydı gir
+                    </p>
+                  </div>
+                </div>
+              </Link>
+            </div>
+
+            <div className="col-md-3 col-sm-6">
+              <Link to="/reports" className="text-decoration-none">
+                <div
+                  className="card border-0 shadow-sm h-100"
+                  style={{
+                    borderRadius: 16,
+                    background:
+                      "linear-gradient(110deg, #fff8e8 65%, #ffffff 100%)",
+                  }}
+                >
+                  <div className="card-body text-center py-4">
+                    <i className="bi bi-journal-plus fs-1 text-warning"></i>
+                    <h5
+                      className="fw-bold mt-3 mb-1"
+                      style={{ color: "#8a6514" }}
+                    >
+                      Not Ekle
+                    </h5>
+                    <p className="text-muted small mb-0">
+                      Araç için yapılacak notu yaz
+                    </p>
+                  </div>
+                </div>
+              </Link>
+            </div>
+
+            <div className="col-md-3 col-sm-6">
+              <Link to="/vehicles" className="text-decoration-none">
+                <div
+                  className="card border-0 shadow-sm h-100"
+                  style={{
+                    borderRadius: 16,
+                    background:
+                      "linear-gradient(110deg, #f2f0ff 65%, #ffffff 100%)",
+                  }}
+                >
+                  <div className="card-body text-center py-4">
+                    <i
+                      className="bi bi-car-front-fill fs-1"
+                      style={{ color: "#5b4fd6" }}
+                    ></i>
+                    <h5
+                      className="fw-bold mt-3 mb-1"
+                      style={{ color: "#3e348f" }}
+                    >
+                      Tüm Araçlar
+                    </h5>
+                    <p className="text-muted small mb-0">
+                      Araç listesini görüntüle
+                    </p>
+                  </div>
+                </div>
+              </Link>
+            </div>
+          </div>
+
           {/* RECENT MAINTENANCE */}
           <div className="container mb-3">
             <h2
