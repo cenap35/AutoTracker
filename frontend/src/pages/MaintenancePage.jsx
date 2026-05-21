@@ -151,7 +151,10 @@ function MaintenancePage() {
               }}
             >
               <div className="card-body p-4">
-                <h5 className="fw-bold mb-3 text-primary" style={{ fontSize: 18, letterSpacing: "1px" }}>
+                <h5
+                  className="fw-bold mb-3 text-primary"
+                  style={{ fontSize: 18, letterSpacing: "1px" }}
+                >
                   <i className="bi bi-funnel me-2"></i>
                   Filtrele
                 </h5>
@@ -310,18 +313,24 @@ function MaintenancePage() {
                     boxShadow: "0 2px 16px -8px #3b60c519",
                     transition: "box-shadow .18s, transform .14s",
                   }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.transform = "translateY(-2px) scale(1.012)";
-                    e.currentTarget.style.boxShadow = "0 8px 28px -6px #3b60c540";
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform =
+                      "translateY(-2px) scale(1.012)";
+                    e.currentTarget.style.boxShadow =
+                      "0 8px 28px -6px #3b60c540";
                   }}
-                  onMouseLeave={e => {
+                  onMouseLeave={(e) => {
                     e.currentTarget.style.transform = "";
-                    e.currentTarget.style.boxShadow = "0 2px 16px -8px #3b60c519";
+                    e.currentTarget.style.boxShadow =
+                      "0 2px 16px -8px #3b60c519";
                   }}
                 >
                   <div className="card-body px-4 pb-4 pt-3 d-flex flex-column">
                     <div className="mb-2 d-flex align-items-center justify-content-between">
-                      <div className="fw-bold" style={{ color: "#345", fontSize: 18 }}>
+                      <div
+                        className="fw-bold"
+                        style={{ color: "#345", fontSize: 18 }}
+                      >
                         <i className="bi bi-wrench-adjustable me-2 text-info"></i>
                         {record.title}
                       </div>
@@ -371,7 +380,9 @@ function MaintenancePage() {
                         style={{ fontWeight: 500, fontSize: 13 }}
                       >
                         <i className="bi bi-calendar-event me-1"></i>
-                        {new Date(record.maintenanceDate).toLocaleDateString("tr-TR")}
+                        {new Date(record.maintenanceDate).toLocaleDateString(
+                          "tr-TR",
+                        )}
                       </span>
                     </div>
                     <div className="mt-auto text-end">
@@ -387,24 +398,27 @@ function MaintenancePage() {
                           fontWeight: 600,
                           fontSize: 15,
                           letterSpacing: ".6px",
-                          transition: "background .14s, color .14s, border .14s, box-shadow .14s",
+                          transition:
+                            "background .14s, color .14s, border .14s, box-shadow .14s",
                           outline: "none",
                           textDecoration: "none",
                           boxShadow: "0 2px 10px -8px #3b60c515",
                           display: "inline-block",
                           cursor: "pointer",
                         }}
-                        onMouseEnter={e => {
+                        onMouseEnter={(e) => {
                           e.currentTarget.style.background = "#3b60c5";
                           e.currentTarget.style.color = "#fff";
                           e.currentTarget.style.border = "1px solid #294686";
-                          e.currentTarget.style.boxShadow = "0 4px 16px -8px #3456b060";
+                          e.currentTarget.style.boxShadow =
+                            "0 4px 16px -8px #3456b060";
                         }}
-                        onMouseLeave={e => {
+                        onMouseLeave={(e) => {
                           e.currentTarget.style.background = "#fff";
                           e.currentTarget.style.color = "#294686";
                           e.currentTarget.style.border = "1px solid #3b60c5";
-                          e.currentTarget.style.boxShadow = "0 2px 10px -8px #3b60c515";
+                          e.currentTarget.style.boxShadow =
+                            "0 2px 10px -8px #3b60c515";
                         }}
                       >
                         Aracı Görüntüle
@@ -417,8 +431,6 @@ function MaintenancePage() {
           </div>
         )}
       </div>
-
-
     </PageWrapper>
   );
 }

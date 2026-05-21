@@ -8,6 +8,7 @@ import {
   createMaintenanceRecord,
   deleteMaintenanceRecord,
 } from "../services/maintenanceService";
+import AddMaintenanceForm from "../components/AddMaintenanceForm";
 
 function VehicleDetailPage() {
   const { id } = useParams();
@@ -15,11 +16,6 @@ function VehicleDetailPage() {
   const [vehicle, setVehicle] = useState(null);
   const [error, setError] = useState("");
   const [maintenanceRecords, setMaintenanceRecords] = useState([]);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [mileage, setMileage] = useState("");
-  const [cost, setCost] = useState("");
-  const [maintenanceDate, setMaintenanceDate] = useState("");
   const [brand, setBrand] = useState("");
   const [model, setModel] = useState("");
   const [year, setYear] = useState("");
@@ -47,25 +43,11 @@ function VehicleDetailPage() {
     fetchVehicle();
   }, [id]);
 
-  const handleCreateMaintenanceRecord = async (e) => {
-    e.preventDefault();
-
+  const handleCreateMaintenanceRecord = async (recordData) => {
     try {
-      const newRecord = await createMaintenanceRecord(id, {
-        title,
-        description,
-        mileage: Number(mileage),
-        cost: Number(cost),
-        maintenanceDate: new Date(maintenanceDate).toISOString(),
-      });
+      const newRecord = await createMaintenanceRecord(id, recordData);
 
       setMaintenanceRecords([...maintenanceRecords, newRecord]);
-
-      setTitle("");
-      setDescription("");
-      setMileage("");
-      setCost("");
-      setMaintenanceDate("");
     } catch (err) {
       console.error(err);
     }
@@ -113,28 +95,32 @@ function VehicleDetailPage() {
   return (
     <PageWrapper>
       <div
-        className="container py-5"
+        className="py-4"
         style={{
           minHeight: "100vh",
-          background: "linear-gradient(115deg, #e8f0fe 70%, #e0e5ff 100%)",
+          background: "#f4f7fa",
         }}
       >
         <div className="row justify-content-center">
-          <div className="col-lg-9">
+          <div className="col-12 col-lg-9">
+            {/* Araç Bilgisi */}
             <div
-              className="card shadow-lg border-0 mb-4"
-              style={{ borderRadius: 18 }}
+              className="card border-0 shadow-sm mb-4"
+              style={{
+                borderRadius: 18,
+                background: "#fff",
+              }}
             >
-              <div className="card-body d-flex flex-column flex-md-row align-items-center">
+              <div className="card-body d-flex flex-column flex-md-row align-items-md-center py-3 px-4">
                 <div>
-                  <h1
-                    className="fw-bold display-5 text-primary mb-2"
-                    style={{ letterSpacing: "1px" }}
+                  <h2
+                    className="fw-semibold mb-2"
+                    style={{ letterSpacing: ".5px", color: "#2563eb" }}
                   >
                     <i className="bi bi-car-front-fill me-2"></i>
                     {vehicle.brand} {vehicle.model}
-                  </h1>
-                  <div className="mb-3">
+                  </h2>
+                  <div className="mb-2">
                     <span
                       className="badge bg-primary me-2"
                       style={{ fontSize: 17 }}
@@ -160,18 +146,21 @@ function VehicleDetailPage() {
 
             {/* Araç Güncelleme Formu */}
             <div
-              className="card shadow-sm border-0 mb-4"
-              style={{ borderRadius: 14 }}
+              className="card border-0 shadow-sm mb-4"
+              style={{
+                borderRadius: 14,
+                background: "#fff",
+              }}
             >
-              <div className="card-body">
-                <h3 className="mb-3 text-secondary">
+              <div className="card-body p-4">
+                <h5 className="mb-3 text-secondary fw-normal">
                   <i className="bi bi-pencil-square me-2"></i>
                   Araç Bilgisini Güncelle
-                </h3>
-                <form className="row g-3 mb-2" onSubmit={handleUpdateVehicle}>
+                </h5>
+                <form className="row g-3 mb-1" onSubmit={handleUpdateVehicle}>
                   <div className="col-md-4">
                     <select
-                      className="form-select mb-3"
+                      className="form-select"
                       value={brand}
                       required
                       onChange={(e) => {
@@ -180,7 +169,6 @@ function VehicleDetailPage() {
                       }}
                     >
                       <option value="">Marka Seç</option>
-
                       {Object.keys(vehicleData).map((brandName) => (
                         <option key={brandName} value={brandName}>
                           {brandName}
@@ -190,14 +178,13 @@ function VehicleDetailPage() {
                   </div>
                   <div className="col-md-4">
                     <select
-                      className="form-select mb-3"
+                      className="form-select"
                       value={model}
                       required
                       onChange={(e) => setModel(e.target.value)}
                       disabled={!brand}
                     >
                       <option value="">Model Seç</option>
-
                       {brand &&
                         vehicleData[brand].map((modelName) => (
                           <option key={modelName} value={modelName}>
@@ -214,7 +201,6 @@ function VehicleDetailPage() {
                       required
                     >
                       <option value="">Yıl seç</option>
-
                       {Array.from(
                         { length: new Date().getFullYear() - 1980 + 2 },
                         (_, index) => new Date().getFullYear() + 1 - index,
@@ -245,161 +231,110 @@ function VehicleDetailPage() {
                       required
                     />
                   </div>
-                  <div className="col-md-8 d-flex align-items-center">
+                  <div className="col-md-8 d-flex align-items-end mt-2 justify-content-end">
                     <button
                       type="submit"
-                      className="btn btn-success fw-bold ms-md-auto"
+                      className="btn btn-success px-4 fw-bold"
+                      style={{ borderRadius: 10 }}
                     >
-                      <i className="bi bi-save me-1"></i>Güncelle
+                      <i className="bi bi-save me-2"></i>Güncelle
                     </button>
                   </div>
                 </form>
               </div>
             </div>
 
-            {/* Bakım Kaydı Ekleme */}
-            <div
-              className="card shadow-sm border-0 mb-4"
-              style={{ borderRadius: 14 }}
-            >
-              <div className="card-body">
-                <h3 className="mb-3 text-info">
-                  <i className="bi bi-wrench-adjustable me-2"></i>
-                  Yeni Bakım Kaydı Ekle
-                </h3>
-                <form
-                  className="row g-3"
-                  onSubmit={handleCreateMaintenanceRecord}
-                >
-                  <div className="col-md-4">
-                    <input
-                      className="form-control"
-                      placeholder="Başlık"
-                      value={title}
-                      onChange={(e) => setTitle(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="col-md-8">
-                    <input
-                      className="form-control"
-                      placeholder="Açıklama"
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="col-md-3">
-                    <input
-                      type="number"
-                      className="form-control"
-                      placeholder="Km"
-                      value={mileage}
-                      onChange={(e) => setMileage(e.target.value)}
-                      min={0}
-                      required
-                    />
-                  </div>
-                  <div className="col-md-3">
-                    <input
-                      type="number"
-                      className="form-control"
-                      placeholder="Maliyet (₺)"
-                      value={cost}
-                      onChange={(e) => setCost(e.target.value)}
-                      min={0}
-                      required
-                    />
-                  </div>
-                  <div className="col-md-4">
-                    <input
-                      type="datetime-local"
-                      className="form-control"
-                      value={maintenanceDate}
-                      onChange={(e) => setMaintenanceDate(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="col-md-2 d-flex align-items-center">
-                    <button
-                      type="submit"
-                      className="btn btn-info w-100 fw-bold"
-                    >
-                      <i className="bi bi-plus-circle me-1"></i>Ekle
-                    </button>
-                  </div>
-                </form>
-              </div>
+            {/* Bakım Kaydı Ekleme - Daha sade: Kendi formunu yukarıda göster, default kartı kaldır */}
+            <div className="mb-4">
+              <AddMaintenanceForm onCreate={handleCreateMaintenanceRecord} />
             </div>
 
             {/* Bakım Kayıtları */}
-            <div className="card shadow border-0" style={{ borderRadius: 16 }}>
-              <div className="card-body">
-                <h2
-                  className="text-primary mb-4"
-                  style={{ fontWeight: 700, letterSpacing: ".5px" }}
+            <div
+              className="card border-0 shadow-sm"
+              style={{
+                borderRadius: 14,
+                background: "#fff",
+              }}
+            >
+              <div className="card-body px-4 py-4">
+                <h5
+                  className="text-primary mb-4 fw-bold"
+                  style={{ letterSpacing: ".5px" }}
                 >
                   <i className="bi bi-tools me-2"></i>Bakım Kayıtları
-                </h2>
-                {maintenanceRecords.length === 0 && (
-                  <div className="alert alert-info shadow-sm text-center">
+                </h5>
+                {maintenanceRecords.length === 0 ? (
+                  <div className="alert alert-info text-center rounded-3 my-3 py-3 fs-6">
                     Henüz bakım kaydı yok.
                   </div>
-                )}
-                <div className="row g-4">
-                  {maintenanceRecords.map((record) => (
-                    <div key={record.id} className="col-md-6 col-lg-4">
-                      <div
-                        className="card border-0 shadow-sm h-100"
-                        style={{ borderRadius: 13, background: "#f7faff" }}
-                      >
-                        <div className="card-body pb-3">
-                          <div className="d-flex align-items-center mb-1">
-                            <h5 className="card-title fw-bold text-info mb-0">
-                              <i className="bi bi-clipboard-check me-2"></i>
-                              {record.title}
-                            </h5>
+                ) : (
+                  <div className="row g-3">
+                    {maintenanceRecords.map((record) => (
+                      <div key={record.id} className="col-md-6 col-lg-4">
+                        <div
+                          className="card border-0 shadow-sm h-100"
+                          style={{
+                            borderRadius: 11,
+                            background: "#f7faff",
+                          }}
+                        >
+                          <div className="card-body pb-3">
+                            <div className="mb-2">
+                              <span className="fw-semibold text-info fs-6">
+                                <i className="bi bi-clipboard-check me-1"></i>
+                                {record.title}
+                              </span>
+                            </div>
+                            <div
+                              className="text-muted mb-2"
+                              style={{ fontSize: 14 }}
+                            >
+                              {record.description}
+                            </div>
+                            <ul
+                              className="list-unstyled mb-2"
+                              style={{ fontSize: 15 }}
+                            >
+                              <li>
+                                <i className="bi bi-speedometer2 me-1"></i>
+                                {record.mileage?.toLocaleString("tr-TR")} km
+                              </li>
+                              <li>
+                                <i className="bi bi-currency-exchange me-1"></i>
+                                {record.cost?.toLocaleString("tr-TR")} ₺
+                              </li>
+                              <li>
+                                <i className="bi bi-calendar3 me-1"></i>
+                                {new Date(record.maintenanceDate).toLocaleString(
+                                  "tr-TR",
+                                  {
+                                    dateStyle: "medium",
+                                    timeStyle: "short",
+                                  }
+                                )}
+                              </li>
+                            </ul>
+                            <div className="d-flex justify-content-end">
+                              <button
+                                className="btn btn-outline-danger btn-sm px-3"
+                                style={{
+                                  borderRadius: 8,
+                                  fontSize: 15,
+                                }}
+                                onClick={() =>
+                                  handleDeleteMaintenanceRecord(record.id)
+                                }
+                              >
+                                <i className="bi bi-trash me-1"></i>Sil
+                              </button>
+                            </div>
                           </div>
-                          <div
-                            className="text-muted mb-2"
-                            style={{ fontSize: 14 }}
-                          >
-                            {record.description}
-                          </div>
-                          <ul
-                            className="list-unstyled mb-2"
-                            style={{ fontSize: 15 }}
-                          >
-                            <li className="mb-1">
-                              <i className="bi bi-speedometer2 me-2"></i>Km:{" "}
-                              {record.mileage?.toLocaleString("tr-TR")}
-                            </li>
-                            <li className="mb-1">
-                              <i className="bi bi-currency-exchange me-2"></i>
-                              Maliyet: {record.cost?.toLocaleString("tr-TR")} ₺
-                            </li>
-                            <li>
-                              <i className="bi bi-calendar3 me-2"></i>
-                              {new Date(record.maintenanceDate).toLocaleString(
-                                "tr-TR",
-                                { dateStyle: "medium", timeStyle: "short" },
-                              )}
-                            </li>
-                          </ul>
-                          <button
-                            className="btn btn-outline-danger btn-sm"
-                            style={{ borderRadius: 6, fontWeight: 500 }}
-                            onClick={() =>
-                              handleDeleteMaintenanceRecord(record.id)
-                            }
-                          >
-                            <i className="bi bi-trash me-1"></i>Sil
-                          </button>
                         </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </div>
