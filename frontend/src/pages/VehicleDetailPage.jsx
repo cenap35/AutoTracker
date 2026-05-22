@@ -10,6 +10,7 @@ import {
 } from "../services/maintenanceService";
 import AddMaintenanceForm from "../components/AddMaintenanceForm";
 import MaintenanceCard from "../components/MaintenanceCard";
+import { getVehicleNotes } from "../services/vehicleNoteService";
 
 function VehicleDetailPage() {
   const { id } = useParams();
@@ -23,6 +24,8 @@ function VehicleDetailPage() {
   const [plateNumber, setPlateNumber] = useState("");
   const [currentMileage, setCurrentMileage] = useState("");
 
+  const [vehicleNotes, setVehicleNotes] = useState([]);
+
   useEffect(() => {
     const fetchVehicle = async () => {
       try {
@@ -35,6 +38,11 @@ function VehicleDetailPage() {
         setCurrentMileage(data.currentMileage);
         const records = await getMaintenanceRecords(id);
         setMaintenanceRecords(records);
+        const notes = await getVehicleNotes();
+        const filteredNotes = notes.filter(
+          (note) => note.vehicleId === Number(id),
+        );
+        setVehicleNotes(filteredNotes);
       } catch (err) {
         setError("Araç detayı yüklenemedi");
         console.error(err);
@@ -93,6 +101,23 @@ function VehicleDetailPage() {
     return <p>Loading...</p>;
   }
 
+  const totalMaintenanceCost = maintenanceRecords.reduce(
+    (sum, record) => sum + Number(record.cost || 0),
+    0,
+  );
+
+  const averageMaintenanceCost =
+    maintenanceRecords.length > 0
+      ? totalMaintenanceCost / maintenanceRecords.length
+      : 0;
+
+  const latestMaintenanceDate =
+    maintenanceRecords.length > 0
+      ? maintenanceRecords
+          .map((record) => new Date(record.maintenanceDate))
+          .sort((a, b) => b - a)[0]
+      : null;
+
   return (
     <PageWrapper>
       <div
@@ -140,6 +165,72 @@ function VehicleDetailPage() {
                     >
                       Km: {vehicle.currentMileage?.toLocaleString("tr-TR") || 0}
                     </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/*İstatistik */}
+            <div>
+              <div className="row g-3 mb-4">
+                <div className="col-md-3">
+                  <div
+                    className="card border-0 shadow-sm h-100"
+                    style={{ borderRadius: 14 }}
+                  >
+                    <div className="card-body text-center">
+                      <div className="text-muted small">Bakım Kaydı</div>
+                      <div className="h4 fw-bold mb-0">
+                        {maintenanceRecords.length}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="col-md-3">
+                  <div
+                    className="card border-0 shadow-sm h-100"
+                    style={{ borderRadius: 14 }}
+                  >
+                    <div className="card-body text-center">
+                      <div className="text-muted small">Toplam Masraf</div>
+                      <div className="h4 fw-bold mb-0">
+                        ₺{totalMaintenanceCost.toLocaleString("tr-TR")}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="col-md-3">
+                  <div
+                    className="card border-0 shadow-sm h-100"
+                    style={{ borderRadius: 14 }}
+                  >
+                    <div className="card-body text-center">
+                      <div className="text-muted small">Ortalama Masraf</div>
+                      <div className="h4 fw-bold mb-0">
+                        ₺
+                        {averageMaintenanceCost.toLocaleString("tr-TR", {
+                          maximumFractionDigits: 0,
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="col-md-3">
+                  <div
+                    className="card border-0 shadow-sm h-100"
+                    style={{ borderRadius: 14 }}
+                  >
+                    <div className="card-body text-center">
+                      <div className="text-muted small">Son Bakım</div>
+                      <div className="h6 fw-bold mb-0">
+                        {latestMaintenanceDate
+                          ? latestMaintenanceDate.toLocaleDateString("tr-TR")
+                          : "-"}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -285,6 +376,50 @@ function VehicleDetailPage() {
                           />
                         </div>
                       ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div
+              className="card border-0 shadow-sm mb-4"
+              style={{ borderRadius: 14 }}
+            >
+              <div className="card-body px-4 py-4">
+                <h5 className="text-primary mb-3 fw-bold">
+                  <i className="bi bi-clipboard-check me-2"></i>
+                  Araç Notları
+                </h5>
+
+                {vehicleNotes.length === 0 ? (
+                  <div className="alert alert-info text-center rounded-3">
+                    Bu araca ait not bulunmuyor.
+                  </div>
+                ) : (
+                  <div className="d-flex flex-column gap-2">
+                    {vehicleNotes.map((note) => (
+                      <div
+                        key={note.id}
+                        className="p-3 rounded-3 border bg-light"
+                      >
+                        <div className="d-flex justify-content-between align-items-center">
+                          <strong>{note.title}</strong>
+                          <span className="badge bg-secondary">
+                            {note.priority}
+                          </span>
+                        </div>
+
+                        {note.content && (
+                          <div className="text-muted small mt-2">
+                            {note.content}
+                          </div>
+                        )}
+
+                        <div className="small text-secondary mt-2">
+                          {note.isCompleted ? "Tamamlandı" : "Bekliyor"}
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>
