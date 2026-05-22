@@ -179,63 +179,102 @@ function ReportsPage() {
     <PageWrapper>
       <div
         className="min-vh-100 w-100 px-1 px-sm-2 px-lg-5 py-4"
-        style={{
-          background: "linear-gradient(120deg, #e0eaff 0%, #fff8f3 100%)",
-        }}
       >
         <div className="container-fluid px-0">
-          {/* Üst başlık ve filtreler */}
+          {/* Minimalist Üst başlık ve filtreler */}
           <div className="mb-4 d-flex flex-column flex-md-row align-items-center justify-content-between gap-3">
             <div>
               <h2
-                className="fw-bold text-primary mb-0"
-                style={{ fontSize: "2.15rem", letterSpacing: 0.3 }}
+                className="fw-bold mb-0"
+                style={{
+                  fontSize: "2rem",
+                  letterSpacing: 0.2,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 7,
+                  color: "#3977f5", // Mavi başlık
+                }}
               >
-                <i className="bi bi-clipboard-check me-2" />
+                <i className="bi bi-clipboard-check me-2" style={{ fontSize: 26, color: "#3977f5" }} />
                 Raporlar
               </h2>
-              <span className="fs-6 text-muted">
-                Toplam {notes.length} not kaydı
+              <span className="fs-6 text-muted" style={{ fontWeight: 400 }}>
+                {notes.length} not kaydı
               </span>
             </div>
-            {/* Filtreler */}
-            <div className="d-flex gap-2 flex-wrap justify-content-md-end w-100 w-md-auto">
-              <select
-                className="form-select border-primary"
-                value={selectedVehicleId}
-                onChange={(e) => setSelectedVehicleId(e.target.value)}
-                style={{ minWidth: 150, minHeight: 45, fontSize: 16 }}
-              >
-                <option value="all">🚗 Tüm Araçlar</option>
-                {vehicles.map((v) => (
-                  <option key={v.id} value={v.id}>
-                    {v.brand} {v.model} - {v.plateNumber}
-                  </option>
-                ))}
-              </select>
-              <select
-                className="form-select border-primary"
-                value={selectedStatus}
-                onChange={(e) => setSelectedStatus(e.target.value)}
-                style={{ minWidth: 120, minHeight: 45, fontSize: 16 }}
-              >
-                <option value="all">Tümü</option>
-                <option value="pending">Bekleyen</option>
-                <option value="completed">Tamamlanan</option>
-              </select>
-              <select
-                className="form-select border-primary"
-                value={selectedPriority}
-                onChange={(e) => setSelectedPriority(e.target.value)}
-                style={{ minWidth: 120, minHeight: 45, fontSize: 16 }}
-              >
-                <option value="all">Öncelik</option>
-                <option value="Düşük">Düşük</option>
-                <option value="Orta">Orta</option>
-                <option value="Yüksek">Yüksek</option>
-              </select>
+            {/* Minimalist Filtreler */}
+            <div className="d-flex flex-column align-items-end w-100 w-md-auto" style={{gap: 2}}>
+              <span
+                className="text-primary"
+                style={{
+                  fontSize: 13,
+                  fontWeight: 500,
+                  opacity: 0.75,
+                  marginBottom: 3,
+                  letterSpacing: 0.1,
+                  alignSelf: "flex-end"
+                }}
+              >Filtre</span>
+              <div className="d-flex gap-2 flex-wrap align-items-center justify-content-md-end" style={{ background: "none", boxShadow: "none", padding: 0 }}>
+                <select
+                  className="form-select"
+                  value={selectedVehicleId}
+                  onChange={(e) => setSelectedVehicleId(e.target.value)}
+                  style={{
+                    minWidth: 110,
+                    fontSize: 15,
+                    minHeight: 38,
+                    borderRadius: 8,
+                    borderColor: "#e5e7eb",
+                    background: "#fafeff"
+                  }}
+                >
+                  <option value="all">Tüm Araçlar</option>
+                  {vehicles.map((v) => (
+                    <option key={v.id} value={v.id}>
+                      {v.brand} {v.model} - {v.plateNumber}
+                    </option>
+                  ))}
+                </select>
+                <select
+                  className="form-select"
+                  value={selectedStatus}
+                  onChange={(e) => setSelectedStatus(e.target.value)}
+                  style={{
+                    minWidth: 90,
+                    fontSize: 15,
+                    minHeight: 38,
+                    borderRadius: 8,
+                    borderColor: "#e5e7eb",
+                    background: "#fafeff"
+                  }}
+                >
+                  <option value="all">Tümü</option>
+                  <option value="pending">Bekleyen</option>
+                  <option value="completed">Tamamlanan</option>
+                </select>
+                <select
+                  className="form-select"
+                  value={selectedPriority}
+                  onChange={(e) => setSelectedPriority(e.target.value)}
+                  style={{
+                    minWidth: 90,
+                    fontSize: 15,
+                    minHeight: 38,
+                    borderRadius: 8,
+                    borderColor: "#e5e7eb",
+                    background: "#fafeff"
+                  }}
+                >
+                  <option value="all">Öncelik</option>
+                  <option value="Düşük">Düşük</option>
+                  <option value="Orta">Orta</option>
+                  <option value="Yüksek">Yüksek</option>
+                </select>
+              </div>
             </div>
           </div>
+     
 
           {/* Hata */}
           {error && (
