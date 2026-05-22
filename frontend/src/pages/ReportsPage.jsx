@@ -286,6 +286,8 @@ function ReportsPage() {
 
           {/* Not Ekle Formu */}
           <div className="mb-4 bg-light bg-opacity-75 rounded-4 shadow p-3 p-md-4 w-100 mx-auto">
+            <span className="fw-semibold fs-6 text-secondary mb-2 d-block">Araç Seç - Rapor veya Not yaz...</span>
+       
             <form onSubmit={handleCreateNote}>
               <div className="row g-2 mb-2">
                 <div className="col-12 col-md-3">
