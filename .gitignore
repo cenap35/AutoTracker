@@ -10,3 +10,4 @@ appsettings.Production.json
 *.db
 *.sqlite
 .DS_Store
+backend/AutoTracker.Api/appsettings.Development.json
