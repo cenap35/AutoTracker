@@ -11,3 +11,4 @@ appsettings.Production.json
 *.sqlite
 .DS_Store
 backend/AutoTracker.Api/appsettings.Development.json
+!.env.example
