@@ -15,6 +15,19 @@ export const createMaintenanceRecord = async (vehicleId, recordData) => {
   return response.data;
 };
 
+export const updateMaintenanceRecord = async (
+  vehicleId,
+  recordId,
+  recordData,
+) => {
+  const response = await api.put(
+    `/vehicles/${vehicleId}/maintenance-records/${recordId}`,
+    recordData,
+  );
+
+  return response.data;
+};
+
 export const deleteMaintenanceRecord = async (vehicleId, recordId) => {
   await api.delete(`/vehicles/${vehicleId}/maintenance-records/${recordId}`);
 };

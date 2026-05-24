@@ -1,6 +1,136 @@
 import { Link } from "react-router-dom";
+import { useState } from "react";
 
-function MaintenanceCard({ record, showVehicleInfo = false, onDelete }) {
+function MaintenanceCard({
+  record,
+  showVehicleInfo = false,
+  onDelete,
+  onUpdate,
+}) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editData, setEditData] = useState({
+    title: record.title || "",
+    description: record.description || "",
+    mileage: record.mileage || "",
+    cost: record.cost || "",
+    maintenanceDate: record.maintenanceDate
+      ? record.maintenanceDate.slice(0, 16)
+      : "",
+  });
+
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+
+    setEditData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSave = async () => {
+    if (!onUpdate) return;
+    await onUpdate(record.id, {
+      title: editData.title,
+      description: editData.description,
+      mileage: Number(editData.mileage),
+      cost: Number(editData.cost),
+      maintenanceDate: new Date(editData.maintenanceDate).toISOString(),
+    });
+
+    setIsEditing(false);
+  };
+
+  const handleCancel = () => {
+    setEditData({
+      title: record.title || "",
+      description: record.description || "",
+      mileage: record.mileage || "",
+      cost: record.cost || "",
+      maintenanceDate: record.maintenanceDate
+        ? record.maintenanceDate.slice(0, 16)
+        : "",
+    });
+
+    setIsEditing(false);
+  };
+
+  if (isEditing) {
+    return (
+      <div
+        className="card border-0 shadow-sm h-100"
+        style={{ borderRadius: 13, background: "#f7faff" }}
+      >
+        <div className="card-body">
+          <div className="row g-2">
+            <div className="col-12">
+              <input
+                name="title"
+                className="form-control form-control-sm"
+                value={editData.title}
+                onChange={handleEditChange}
+                placeholder="Başlık"
+                required
+              />
+            </div>
+
+            <div className="col-12">
+              <input
+                name="description"
+                className="form-control form-control-sm"
+                value={editData.description}
+                onChange={handleEditChange}
+                placeholder="Açıklama"
+              />
+            </div>
+
+            <div className="col-6">
+              <input
+                name="mileage"
+                type="number"
+                className="form-control form-control-sm"
+                value={editData.mileage}
+                onChange={handleEditChange}
+                placeholder="Km"
+              />
+            </div>
+
+            <div className="col-6">
+              <input
+                name="cost"
+                type="number"
+                className="form-control form-control-sm"
+                value={editData.cost}
+                onChange={handleEditChange}
+                placeholder="Maliyet"
+              />
+            </div>
+
+            <div className="col-12">
+              <input
+                name="maintenanceDate"
+                type="datetime-local"
+                className="form-control form-control-sm"
+                value={editData.maintenanceDate}
+                onChange={handleEditChange}
+              />
+            </div>
+
+            <div className="col-12 d-flex justify-content-end gap-2 mt-2">
+              <button className="btn btn-sm btn-success" onClick={handleSave}>
+                Kaydet
+              </button>
+              <button
+                className="btn btn-sm btn-secondary"
+                onClick={handleCancel}
+              >
+                İptal
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
   return (
     <div
       className="card maintenance-simple-card h-100 border-0 shadow-sm"
@@ -11,18 +141,21 @@ function MaintenanceCard({ record, showVehicleInfo = false, onDelete }) {
         transition: "box-shadow 0.3s, transform 0.2s, background 0.2s",
         cursor: "pointer",
       }}
-      onMouseEnter={e => {
+      onMouseEnter={(e) => {
         e.currentTarget.style.boxShadow = "0 6px 28px -6px #4984cb46";
         e.currentTarget.style.background = "#f4f9fe";
         e.currentTarget.style.transform = "translateY(-2px) scale(1.01)";
       }}
-      onMouseLeave={e => {
+      onMouseLeave={(e) => {
         e.currentTarget.style.boxShadow = "0 2px 16px -9px #266ea922";
         e.currentTarget.style.background = "#f8fbfd";
         e.currentTarget.style.transform = "none";
       }}
     >
-      <div className="card-body pb-3 d-flex flex-column" style={{ minHeight: 190 }}>
+      <div
+        className="card-body pb-3 d-flex flex-column"
+        style={{ minHeight: 190 }}
+      >
         <div className="d-flex justify-content-between align-items-center mb-2">
           <span
             className="fw-semibold"
@@ -85,7 +218,10 @@ function MaintenanceCard({ record, showVehicleInfo = false, onDelete }) {
         <ul className="list-unstyled mb-1" style={{ fontSize: 14 }}>
           <li className="mb-1" style={{ color: "#547189" }}>
             <i className="bi bi-speedometer2 me-1"></i>
-            <span className="fw-normal">{record.mileage?.toLocaleString("tr-TR")}</span> km
+            <span className="fw-normal">
+              {record.mileage?.toLocaleString("tr-TR")}
+            </span>{" "}
+            km
           </li>
           <li style={{ color: "#789" }}>
             <i className="bi bi-calendar3 me-1"></i>
@@ -110,15 +246,26 @@ function MaintenanceCard({ record, showVehicleInfo = false, onDelete }) {
                 borderRadius: 7,
                 transition: "background 0.18s",
               }}
-              onMouseEnter={e =>
+              onMouseEnter={(e) =>
                 (e.currentTarget.style.background = "#eff7ff")
               }
-              onMouseLeave={e =>
+              onMouseLeave={(e) =>
                 (e.currentTarget.style.background = "transparent")
               }
             >
               Aracı Gör
             </Link>
+          )}
+
+          {onUpdate && (
+            <button
+              className="btn btn-outline-primary btn-sm px-3"
+              style={{ borderRadius: 8 }}
+              onClick={() => setIsEditing(true)}
+            >
+              <i className="bi bi-pencil me-1"></i>
+              Düzenle
+            </button>
           )}
 
           {onDelete && (
@@ -130,10 +277,10 @@ function MaintenanceCard({ record, showVehicleInfo = false, onDelete }) {
                 textDecoration: "none",
                 transition: "background 0.18s",
               }}
-              onMouseEnter={e =>
+              onMouseEnter={(e) =>
                 (e.currentTarget.style.background = "#fff0f0")
               }
-              onMouseLeave={e =>
+              onMouseLeave={(e) =>
                 (e.currentTarget.style.background = "transparent")
               }
               onClick={() => onDelete(record.id)}

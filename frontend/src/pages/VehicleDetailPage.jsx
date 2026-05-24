@@ -6,6 +6,7 @@ import vehicleData from "../constants/vehicleData";
 import {
   getMaintenanceRecords,
   createMaintenanceRecord,
+  updateMaintenanceRecord,
   deleteMaintenanceRecord,
 } from "../services/maintenanceService";
 import AddMaintenanceForm from "../components/AddMaintenanceForm";
@@ -68,6 +69,20 @@ function VehicleDetailPage() {
 
       setMaintenanceRecords(
         maintenanceRecords.filter((record) => record.id !== recordId),
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleUpdateMaintenanceRecord = async (recordId, recordData) => {
+    try {
+      await updateMaintenanceRecord(id, recordId, recordData);
+
+      setMaintenanceRecords(
+        maintenanceRecords.map((record) =>
+          record.id === recordId ? { ...record, ...recordData } : record,
+        ),
       );
     } catch (err) {
       console.error(err);
@@ -372,6 +387,7 @@ function VehicleDetailPage() {
                         <div key={record.id} className="col-md-6 col-lg-4">
                           <MaintenanceCard
                             record={record}
+                            onUpdate={handleUpdateMaintenanceRecord}
                             onDelete={handleDeleteMaintenanceRecord}
                           />
                         </div>
