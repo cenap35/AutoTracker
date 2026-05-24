@@ -21,11 +21,13 @@ builder.Services.AddControllers();
 
 builder.Services.AddScoped<EmailService>();
 
+var frontendBaseUrl = builder.Configuration["Frontend:BaseUrl"];
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
     {
-        policy.WithOrigins("http://localhost:5173")
+        policy.WithOrigins(frontendBaseUrl!)
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
