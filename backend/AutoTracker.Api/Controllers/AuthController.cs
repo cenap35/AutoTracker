@@ -18,11 +18,13 @@ public class AuthController : ControllerBase
 {
   private readonly AppDbContext _context;
   private readonly EmailService _emailService;
+  private readonly IConfiguration _configuration;
 
-  public AuthController(AppDbContext context, EmailService emailService)
+  public AuthController(AppDbContext context, EmailService emailService, IConfiguration configuration)
   {
     _context = context;
     _emailService = emailService;
+    _configuration = configuration;
   }
 
   [HttpPost("register")]
@@ -53,8 +55,11 @@ public class AuthController : ControllerBase
     _context.AppUsers.Add(user);
 
     await _context.SaveChangesAsync();
+
+    var frontendBaseUrl = _configuration["Frontend:BaseUrl"];
     var confirmationLink =
-    $"http://localhost:5101/api/auth/confirm-email?token={emailToken}";
+
+        $"{frontendBaseUrl}/confirm-email?token={emailToken}";
 
     try
     {
@@ -198,8 +203,9 @@ public class AuthController : ControllerBase
 
     await _context.SaveChangesAsync();
 
+    var frontendBaseUrl = _configuration["Frontend:BaseUrl"];
     var confirmationLink =
-        $"http://localhost:5101/api/auth/confirm-email?token={newToken}";
+    $"{frontendBaseUrl}/confirm-email?token={newToken}";
 
     try
     {
@@ -245,8 +251,9 @@ public class AuthController : ControllerBase
 
     await _context.SaveChangesAsync();
 
+    var frontendBaseUrl = _configuration["Frontend:BaseUrl"];
     var resetLink =
-        $"http://localhost:5173/reset-password?token={resetToken}";
+    $"{frontendBaseUrl}/reset-password?token={resetToken}";
 
     try
     {
