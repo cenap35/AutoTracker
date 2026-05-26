@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import PageWrapper from "../components/PageWrapper";
 import { getVehicles } from "../services/vehicleService";
 import {
@@ -320,7 +321,10 @@ function ReportsPage() {
 
                 <div className="row g-2 g-md-3 align-items-center">
                   <div className="col-12 col-md-6 col-lg-5">
-                    <label className="form-label mb-1 text-muted" style={{ fontSize: 13 }}>
+                    <label
+                      className="form-label mb-1 text-muted"
+                      style={{ fontSize: 13 }}
+                    >
                       Araç
                     </label>
                     <select
@@ -343,7 +347,10 @@ function ReportsPage() {
                   </div>
 
                   <div className="col-6 col-md-3 col-lg-3">
-                    <label className="form-label mb-1 text-muted" style={{ fontSize: 13 }}>
+                    <label
+                      className="form-label mb-1 text-muted"
+                      style={{ fontSize: 13 }}
+                    >
                       Durum
                     </label>
                     <select
@@ -363,7 +370,10 @@ function ReportsPage() {
                   </div>
 
                   <div className="col-6 col-md-3 col-lg-3">
-                    <label className="form-label mb-1 text-muted" style={{ fontSize: 13 }}>
+                    <label
+                      className="form-label mb-1 text-muted"
+                      style={{ fontSize: 13 }}
+                    >
                       Öncelik
                     </label>
                     <select
@@ -431,7 +441,7 @@ function ReportsPage() {
                   <i
                     className={`bi ${isCreateOpen ? "bi-chevron-up" : "bi-chevron-down"} me-1`}
                   />
-                  Not ekleme formu
+                  + Not Ekle
                 </button>
               </div>
 
@@ -439,14 +449,41 @@ function ReportsPage() {
                 id="report-create-note"
                 className={isCreateOpen ? "collapse show" : "collapse"}
               >
-                <div className="rounded-4 border p-3 mb-3" style={{ borderColor: "#e9ecef" }}>
-                  <VehicleNoteForm
-                    vehicles={vehicles}
-                    selectedVehicleId={
-                      selectedVehicleId === "all" ? undefined : selectedVehicleId
-                    }
-                    onCreate={handleCreateNote}
-                  />
+                <div
+                  className="rounded-4 border p-3 mb-3"
+                  style={{ borderColor: "#e9ecef" }}
+                >
+                  <AnimatePresence initial={false}>
+                    {isCreateOpen && (
+                      <motion.div
+                        id="report-create-note"
+                        key="create-note"
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{
+                          duration: 0.60,
+                          ease: [0.20, 0.70, 0.50, 1],
+                        }}
+                        style={{ overflow: "hidden" }}
+                      >
+                        <div
+                          className="rounded-4 border p-3 mb-3"
+                          style={{ borderColor: "#e9ecef" }}
+                        >
+                          <VehicleNoteForm
+                            vehicles={vehicles}
+                            selectedVehicleId={
+                              selectedVehicleId === "all"
+                                ? undefined
+                                : selectedVehicleId
+                            }
+                            onCreate={handleCreateNote}
+                          />
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               </div>
 
@@ -457,7 +494,9 @@ function ReportsPage() {
               ) : (
                 <div className="d-flex flex-column gap-2">
                   {filteredNotes.map((note) => {
-                    const vehicle = vehicles.find((v) => v.id === note.vehicleId);
+                    const vehicle = vehicles.find(
+                      (v) => v.id === note.vehicleId,
+                    );
 
                     return (
                       <VehicleNoteCard
