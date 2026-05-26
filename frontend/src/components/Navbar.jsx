@@ -109,14 +109,14 @@ function Navbar() {
                   }}
                   to="/login"
                 >
-                  <i className="bi bi-box-arrow-in-right me-1"></i> Login
+                  <i className="bi bi-box-arrow-in-right me-1"></i> Giriş Yap
                 </Link>
                 <Link
                   className="btn btn-warning fw-bold px-4 py-1"
                   style={{ borderRadius: 18 }}
                   to="/register"
                 >
-                  <i className="bi bi-person-plus-fill me-1"></i> Register
+                  <i className="bi bi-person-plus-fill me-1"></i> Kayıt Ol
                 </Link>
               </>
             ) : (
