@@ -11,7 +11,12 @@ import {
 } from "../services/maintenanceService";
 import AddMaintenanceForm from "../components/AddMaintenanceForm";
 import MaintenanceCard from "../components/MaintenanceCard";
-import { getVehicleNotes } from "../services/vehicleNoteService";
+import {
+  getVehicleNotes,
+  updateVehicleNote,
+  deleteVehicleNote,
+} from "../services/vehicleNoteService";
+import VehicleNoteCard from "../components/VehicleNoteCard";
 
 function VehicleDetailPage() {
   const { id } = useParams();
@@ -52,6 +57,51 @@ function VehicleDetailPage() {
 
     fetchVehicle();
   }, [id]);
+
+  const handleToggleVehicleNote = async (note) => {
+    try {
+      await updateVehicleNote(note.id, {
+        title: note.title,
+        content: note.content,
+        priority: note.priority,
+        isCompleted: !note.isCompleted,
+      });
+
+      setVehicleNotes(
+        vehicleNotes.map((item) =>
+          item.id === note.id
+            ? { ...item, isCompleted: !item.isCompleted }
+            : item,
+        ),
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleDeleteVehicleNote = async (noteId) => {
+    try {
+      await deleteVehicleNote(noteId);
+
+      setVehicleNotes(vehicleNotes.filter((note) => note.id !== noteId));
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleUpdateVehicleNote = async (noteId, updatedData) => {
+    try {
+      await updateVehicleNote(noteId, updatedData);
+
+      setVehicleNotes(
+        vehicleNotes.map((note) =>
+          note.id === noteId ? { ...note, ...updatedData } : note,
+        ),
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const handleCreateMaintenanceRecord = async (recordData) => {
     try {
@@ -398,7 +448,7 @@ function VehicleDetailPage() {
             </div>
 
             <div
-              className="card border-0 shadow-sm mb-4"
+              className="card border-0 shadow-sm mb-4 mt-4"
               style={{ borderRadius: 14 }}
             >
               <div className="card-body px-4 py-4">
@@ -414,27 +464,13 @@ function VehicleDetailPage() {
                 ) : (
                   <div className="d-flex flex-column gap-2">
                     {vehicleNotes.map((note) => (
-                      <div
+                      <VehicleNoteCard
                         key={note.id}
-                        className="p-3 rounded-3 border bg-light"
-                      >
-                        <div className="d-flex justify-content-between align-items-center">
-                          <strong>{note.title}</strong>
-                          <span className="badge bg-secondary">
-                            {note.priority}
-                          </span>
-                        </div>
-
-                        {note.content && (
-                          <div className="text-muted small mt-2">
-                            {note.content}
-                          </div>
-                        )}
-
-                        <div className="small text-secondary mt-2">
-                          {note.isCompleted ? "Tamamlandı" : "Bekliyor"}
-                        </div>
-                      </div>
+                        note={note}
+                        onUpdate={handleUpdateVehicleNote}
+                        onToggleComplete={handleToggleVehicleNote}
+                        onDelete={handleDeleteVehicleNote}
+                      />
                     ))}
                   </div>
                 )}
