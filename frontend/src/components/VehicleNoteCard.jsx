@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function VehicleNoteCard({ note, onUpdate, onToggleComplete, onDelete }) {
+function VehicleNoteCard({ note, vehicle, onUpdate, onToggleComplete, onDelete }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState({
     title: note.title || "",
@@ -110,6 +110,29 @@ function VehicleNoteCard({ note, onUpdate, onToggleComplete, onDelete }) {
       }}
     >
       <div className="card-body p-3">
+        {vehicle && (
+          <div className="d-flex flex-wrap align-items-center gap-2 mb-2">
+            <span
+              className="badge rounded-pill"
+              style={{
+                background: "rgba(57,119,245,0.12)",
+                color: "#245fe0",
+                border: "1px solid rgba(57,119,245,0.18)",
+                fontWeight: 600,
+              }}
+            >
+              <i className="bi bi-car-front me-1" />
+              {vehicle.brand} {vehicle.model}
+            </span>
+            {vehicle.plateNumber && (
+              <span className="badge rounded-pill text-bg-light border">
+                <i className="bi bi-hash me-1" />
+                {vehicle.plateNumber}
+              </span>
+            )}
+          </div>
+        )}
+
         <div className="d-flex justify-content-between align-items-start mb-2">
           <div className="d-flex align-items-center gap-2">
             <h5

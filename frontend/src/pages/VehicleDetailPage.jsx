@@ -13,10 +13,11 @@ import AddMaintenanceForm from "../components/AddMaintenanceForm";
 import MaintenanceCard from "../components/MaintenanceCard";
 import {
   getVehicleNotes,
+  createVehicleNote,
   updateVehicleNote,
   deleteVehicleNote,
 } from "../services/vehicleNoteService";
-import VehicleNoteCard from "../components/VehicleNoteCard";
+import VehicleNotesSection from "../components/VehicleNotesSection";
 
 function VehicleDetailPage() {
   const { id } = useParams();
@@ -74,6 +75,15 @@ function VehicleDetailPage() {
             : item,
         ),
       );
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  const handleCreateVehicleNote = async (noteData) => {
+    try {
+      const newNote = await createVehicleNote(noteData);
+
+      setVehicleNotes([...vehicleNotes, newNote]);
     } catch (err) {
       console.error(err);
     }
@@ -447,35 +457,15 @@ function VehicleDetailPage() {
               </div>
             </div>
 
-            <div
-              className="card border-0 shadow-sm mb-4 mt-4"
-              style={{ borderRadius: 14 }}
-            >
-              <div className="card-body px-4 py-4">
-                <h5 className="text-primary mb-3 fw-bold">
-                  <i className="bi bi-clipboard-check me-2"></i>
-                  Araç Notları
-                </h5>
-
-                {vehicleNotes.length === 0 ? (
-                  <div className="alert alert-info text-center rounded-3">
-                    Bu araca ait not bulunmuyor.
-                  </div>
-                ) : (
-                  <div className="d-flex flex-column gap-2">
-                    {vehicleNotes.map((note) => (
-                      <VehicleNoteCard
-                        key={note.id}
-                        note={note}
-                        onUpdate={handleUpdateVehicleNote}
-                        onToggleComplete={handleToggleVehicleNote}
-                        onDelete={handleDeleteVehicleNote}
-                      />
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
+            <VehicleNotesSection
+              notes={vehicleNotes}
+              vehicle={vehicle}
+              selectedVehicleId={id}
+              onCreate={handleCreateVehicleNote}
+              onUpdate={handleUpdateVehicleNote}
+              onToggleComplete={handleToggleVehicleNote}
+              onDelete={handleDeleteVehicleNote}
+            />
           </div>
         </div>
       </div>
