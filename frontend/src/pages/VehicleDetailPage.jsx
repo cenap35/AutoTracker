@@ -555,15 +555,17 @@ function VehicleDetailPage() {
             </div>
           ) : (
             <div className="row g-3">
-              {vehicleReminders.map((reminder) => (
-                <div className="col-md-6 col-lg-4" key={reminder.id}>
-                  <ReminderCard
-                    reminder={reminder}
-                    onToggleComplete={handleToggleVehicleReminder}
-                    onDelete={handleDeleteVehicleReminder}
-                  />
-                </div>
-              ))}
+              {[...vehicleReminders]
+                .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+                .map((reminder) => (
+                  <div className="col-md-6 col-lg-4" key={reminder.id}>
+                    <ReminderCard
+                      reminder={reminder}
+                      onToggleComplete={handleToggleVehicleReminder}
+                      onDelete={handleDeleteVehicleReminder}
+                    />
+                  </div>
+                ))}
             </div>
           )}
         </div>

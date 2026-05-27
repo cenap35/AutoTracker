@@ -106,66 +106,17 @@ function ReminderPage() {
               </div>
             </div>
           ) : (
-            reminders.map((reminder) => (
-              <div className="col-md-6 col-lg-4" key={reminder.id}>
-                <div
-                  className="card border-0 shadow-sm h-100"
-                  style={{ borderRadius: 16 }}
-                >
-                  <div className="card-body">
-                    <div className="d-flex justify-content-between align-items-start mb-2">
-                      <h5 className="fw-bold mb-0">{reminder.type}</h5>
-                      <span
-                        className={`badge ${
-                          reminder.isCompleted
-                            ? "bg-success"
-                            : "bg-warning text-dark"
-                        }`}
-                      >
-                        {reminder.isCompleted ? "Tamamlandı" : "Bekliyor"}
-                      </span>
-                    </div>
-
-                    <div className="text-muted small mb-2">
-                      <i className="bi bi-car-front me-1"></i>
-                      {reminder.vehicleName} - {reminder.plateNumber}
-                    </div>
-
-                    <p className="mb-1">
-                      <strong>Son tarih:</strong>{" "}
-                      {new Date(reminder.dueDate).toLocaleDateString("tr-TR")}
-                    </p>
-
-                    {reminder.amount && (
-                      <p className="mb-1">
-                        <strong>Tutar:</strong> ₺
-                        {Number(reminder.amount).toLocaleString("tr-TR")}
-                      </p>
-                    )}
-
-                    {reminder.description && (
-                      <p className="text-muted small">{reminder.description}</p>
-                    )}
-
-                    <div className="d-flex gap-2 mt-3">
-                      <button
-                        className="btn btn-sm btn-outline-success"
-                        onClick={() => handleToggleCompleted(reminder)}
-                      >
-                        {reminder.isCompleted ? "Geri Al" : "Tamamla"}
-                      </button>
-
-                      <button
-                        className="btn btn-sm btn-outline-danger"
-                        onClick={() => handleDeleteReminder(reminder.id)}
-                      >
-                        Sil
-                      </button>
-                    </div>
-                  </div>
+            [...reminders]
+              .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+              .map((reminder) => (
+                <div className="col-md-6 col-lg-4" key={reminder.id}>
+                  <ReminderCard
+                    reminder={reminder}
+                    onToggleComplete={handleToggleCompleted}
+                    onDelete={handleDeleteReminder}
+                  />
                 </div>
-              </div>
-            ))
+              ))
           )}
         </div>
       </div>

@@ -1,17 +1,40 @@
 function ReminderCard({ reminder, onToggleComplete, onDelete }) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const dueDate = new Date(reminder.dueDate);
+  dueDate.setHours(0, 0, 0, 0);
+
+  const diffTime = dueDate - today;
+  const daysLeft = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  let statusText = "Zaman var";
+  let statusClass = "bg-primary";
+
+  if (reminder.isCompleted) {
+    statusText = "Tamamlandı";
+    statusClass = "bg-success";
+  } else if (daysLeft < 0) {
+    statusText = `${Math.abs(daysLeft)} gün gecikti`;
+    statusClass = "bg-danger";
+  } else if (daysLeft === 0) {
+    statusText = "Bugün son gün";
+    statusClass = "bg-danger";
+  } else if (daysLeft <= 7) {
+    statusText = `${daysLeft} gün kaldı`;
+    statusClass = "bg-warning text-dark";
+  } else if (daysLeft <= 30) {
+    statusText = `${daysLeft} gün kaldı`;
+    statusClass = "bg-info text-dark";
+  }
+
   return (
     <div className="card border-0 shadow-sm h-100" style={{ borderRadius: 16 }}>
       <div className="card-body">
         <div className="d-flex justify-content-between align-items-start mb-2">
           <h5 className="fw-bold mb-0">{reminder.type}</h5>
 
-          <span
-            className={`badge ${
-              reminder.isCompleted ? "bg-success" : "bg-warning text-dark"
-            }`}
-          >
-            {reminder.isCompleted ? "Tamamlandı" : "Bekliyor"}
-          </span>
+          <span className={`badge ${statusClass}`}>{statusText}</span>
         </div>
 
         <div className="text-muted small mb-2">
@@ -21,7 +44,7 @@ function ReminderCard({ reminder, onToggleComplete, onDelete }) {
 
         <p className="mb-1">
           <strong>Son tarih:</strong>{" "}
-          {new Date(reminder.dueDate).toLocaleDateString("tr-TR")}
+          {dueDate.toLocaleDateString("tr-TR")}
         </p>
 
         {reminder.amount && (
