@@ -18,6 +18,14 @@ import {
   deleteVehicleNote,
 } from "../services/vehicleNoteService";
 import VehicleNotesSection from "../components/VehicleNotesSection";
+import ReminderForm from "../components/ReminderForm";
+import {
+  getVehicleReminders,
+  createVehicleReminder,
+  updateVehicleReminder,
+  deleteVehicleReminder,
+} from "../services/vehicleReminderService";
+import ReminderCard from "../components/ReminderCard";
 
 function VehicleDetailPage() {
   const { id } = useParams();
@@ -32,6 +40,8 @@ function VehicleDetailPage() {
   const [currentMileage, setCurrentMileage] = useState("");
 
   const [vehicleNotes, setVehicleNotes] = useState([]);
+
+  const [vehicleReminders, setVehicleReminders] = useState([]);
 
   useEffect(() => {
     const fetchVehicle = async () => {
@@ -50,6 +60,11 @@ function VehicleDetailPage() {
           (note) => note.vehicleId === Number(id),
         );
         setVehicleNotes(filteredNotes);
+        const reminders = await getVehicleReminders();
+        const filteredReminders = reminders.filter(
+          (reminder) => reminder.vehicleId === Number(id),
+        );
+        setVehicleReminders(filteredReminders);
       } catch (err) {
         setError("Araç detayı yüklenemedi");
         console.error(err);
@@ -164,6 +179,18 @@ function VehicleDetailPage() {
       const updatedVehicle = await getVehicleById(id);
       setVehicle(updatedVehicle);
     } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleCreateVehicleReminder = async (reminderData) => {
+    try {
+      const newReminder = await createVehicleReminder(reminderData);
+
+      setVehicleReminders([newReminder, ...vehicleReminders]);
+      setError("");
+    } catch (err) {
+      setError("Takip eklenemedi.");
       console.error(err);
     }
   };
@@ -467,6 +494,38 @@ function VehicleDetailPage() {
               onDelete={handleDeleteVehicleNote}
             />
           </div>
+        </div>
+      </div>
+      {/*düzenle  */}
+      <div>
+        <ReminderForm
+          selectedVehicleId={id}
+          onCreate={handleCreateVehicleReminder}
+        />
+      </div>
+      <div
+        className="card border-0 shadow-sm mb-4"
+        style={{ borderRadius: 14 }}
+      >
+        <div className="card-body px-4 py-4">
+          <h5 className="text-primary mb-3 fw-bold">
+            <i className="bi bi-calendar-check me-2"></i>
+            Araç Takipleri
+          </h5>
+
+          {vehicleReminders.length === 0 ? (
+            <div className="alert alert-info text-center rounded-3">
+              Bu araca ait takip kaydı bulunmuyor.
+            </div>
+          ) : (
+            <div className="row g-3">
+              {vehicleReminders.map((reminder) => (
+                <div className="col-md-6 col-lg-4" key={reminder.id}>
+                  <ReminderCard reminder={reminder} />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </PageWrapper>

@@ -7,17 +7,13 @@ import {
   updateVehicleReminder,
   deleteVehicleReminder,
 } from "../services/vehicleReminderService";
+import ReminderForm from "../components/ReminderForm";
+import ReminderCard from "../components/ReminderCard";
 
 function ReminderPage() {
   const [vehicles, setVehicles] = useState([]);
   const [reminders, setReminders] = useState([]);
   const [error, setError] = useState("");
-
-  const [vehicleId, setVehicleId] = useState("");
-  const [type, setType] = useState("Sigorta");
-  const [dueDate, setDueDate] = useState("");
-  const [amount, setAmount] = useState("");
-  const [description, setDescription] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -36,24 +32,11 @@ function ReminderPage() {
     fetchData();
   }, []);
 
-  const handleCreateReminder = async (e) => {
-    e.preventDefault();
-
+  const handleCreateReminder = async (reminderData) => {
     try {
-      const newReminder = await createVehicleReminder({
-        vehicleId: Number(vehicleId),
-        type,
-        dueDate: new Date(dueDate).toISOString(),
-        amount: amount ? Number(amount) : null,
-        description,
-      });
+      const newReminder = await createVehicleReminder(reminderData);
 
       setReminders([newReminder, ...reminders]);
-      setVehicleId("");
-      setType("Sigorta");
-      setDueDate("");
-      setAmount("");
-      setDescription("");
       setError("");
     } catch (err) {
       setError("Takip eklenemedi.");
@@ -77,8 +60,8 @@ function ReminderPage() {
         reminders.map((item) =>
           item.id === reminder.id
             ? { ...item, isCompleted: !item.isCompleted }
-            : item
-        )
+            : item,
+        ),
       );
     } catch (err) {
       setError("Takip güncellenemedi.");
@@ -110,79 +93,9 @@ function ReminderPage() {
 
         {error && <div className="alert alert-danger">{error}</div>}
 
-        <div className="card border-0 shadow-sm mb-4" style={{ borderRadius: 16 }}>
-          <div className="card-body">
-            <h5 className="fw-bold mb-3">Yeni Takip Ekle</h5>
-
-            <form onSubmit={handleCreateReminder}>
-              <div className="row g-2">
-                <div className="col-md-3">
-                  <select
-                    className="form-select"
-                    value={vehicleId}
-                    onChange={(e) => setVehicleId(e.target.value)}
-                    required
-                  >
-                    <option value="">Araç seç...</option>
-                    {vehicles.map((vehicle) => (
-                      <option key={vehicle.id} value={vehicle.id}>
-                        {vehicle.brand} {vehicle.model} - {vehicle.plateNumber}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="col-md-2">
-                  <select
-                    className="form-select"
-                    value={type}
-                    onChange={(e) => setType(e.target.value)}
-                  >
-                    <option value="Sigorta">Sigorta</option>
-                    <option value="Kasko">Kasko</option>
-                    <option value="MTV">MTV</option>
-                    <option value="Muayene">Muayene</option>
-                  </select>
-                </div>
-
-                <div className="col-md-2">
-                  <input
-                    type="date"
-                    className="form-control"
-                    value={dueDate}
-                    onChange={(e) => setDueDate(e.target.value)}
-                    required
-                  />
-                </div>
-
-                <div className="col-md-2">
-                  <input
-                    type="number"
-                    className="form-control"
-                    placeholder="Tutar"
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                  />
-                </div>
-
-                <div className="col-md-3">
-                  <input
-                    className="form-control"
-                    placeholder="Açıklama"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                  />
-                </div>
-
-                <div className="col-12 text-end mt-3">
-                  <button className="btn btn-primary fw-bold" type="submit">
-                    <i className="bi bi-plus-circle me-1"></i>
-                    Ekle
-                  </button>
-                </div>
-              </div>
-            </form>
-          </div>
+        {/*Ekleme formu */}
+        <div className="mb-4">
+          <ReminderForm vehicles={vehicles} onCreate={handleCreateReminder} />
         </div>
 
         <div className="row g-3">
@@ -195,13 +108,18 @@ function ReminderPage() {
           ) : (
             reminders.map((reminder) => (
               <div className="col-md-6 col-lg-4" key={reminder.id}>
-                <div className="card border-0 shadow-sm h-100" style={{ borderRadius: 16 }}>
+                <div
+                  className="card border-0 shadow-sm h-100"
+                  style={{ borderRadius: 16 }}
+                >
                   <div className="card-body">
                     <div className="d-flex justify-content-between align-items-start mb-2">
                       <h5 className="fw-bold mb-0">{reminder.type}</h5>
                       <span
                         className={`badge ${
-                          reminder.isCompleted ? "bg-success" : "bg-warning text-dark"
+                          reminder.isCompleted
+                            ? "bg-success"
+                            : "bg-warning text-dark"
                         }`}
                       >
                         {reminder.isCompleted ? "Tamamlandı" : "Bekliyor"}
