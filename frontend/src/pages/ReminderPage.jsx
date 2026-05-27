@@ -15,6 +15,10 @@ function ReminderPage() {
   const [reminders, setReminders] = useState([]);
   const [error, setError] = useState("");
 
+  const [selectedVehicleId, setSelectedVehicleId] = useState("all");
+  const [selectedStatus, setSelectedStatus] = useState("all");
+  const [selectedType, setSelectedType] = useState("all");
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -79,6 +83,21 @@ function ReminderPage() {
     }
   };
 
+  const filteredReminders = reminders.filter((reminder) => {
+    const vehicleMatch =
+      selectedVehicleId === "all" ||
+      reminder.vehicleId === Number(selectedVehicleId);
+
+    const statusMatch =
+      selectedStatus === "all" ||
+      (selectedStatus === "completed" && reminder.isCompleted) ||
+      (selectedStatus === "pending" && !reminder.isCompleted);
+
+    const typeMatch = selectedType === "all" || reminder.type === selectedType;
+
+    return vehicleMatch && statusMatch && typeMatch;
+  });
+
   return (
     <PageWrapper>
       <div className="container py-5">
@@ -89,7 +108,61 @@ function ReminderPage() {
 
         <p className="text-muted mb-4">
           Sigorta, kasko, MTV ve muayene tarihlerini araç bazlı takip edin.
+          <br />
+          <span className="small">
+            {filteredReminders.length} / {reminders.length} takip gösteriliyor
+          </span>
         </p>
+        {/*filtreleme */}
+        <div
+          className="card border-0 shadow-sm mb-4"
+          style={{ borderRadius: 14 }}
+        >
+          <div className="card-body">
+            <div className="row g-2">
+              <div className="col-md-4">
+                <select
+                  className="form-select"
+                  value={selectedVehicleId}
+                  onChange={(e) => setSelectedVehicleId(e.target.value)}
+                >
+                  <option value="all">Tüm Araçlar</option>
+                  {vehicles.map((vehicle) => (
+                    <option key={vehicle.id} value={vehicle.id}>
+                      {vehicle.brand} {vehicle.model} - {vehicle.plateNumber}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="col-md-4">
+                <select
+                  className="form-select"
+                  value={selectedStatus}
+                  onChange={(e) => setSelectedStatus(e.target.value)}
+                >
+                  <option value="all">Tüm Durumlar</option>
+                  <option value="pending">Bekleyen</option>
+                  <option value="completed">Tamamlanan</option>
+                </select>
+              </div>
+
+              <div className="col-md-4">
+                <select
+                  className="form-select"
+                  value={selectedType}
+                  onChange={(e) => setSelectedType(e.target.value)}
+                >
+                  <option value="all">Tüm Türler</option>
+                  <option value="Sigorta">Sigorta</option>
+                  <option value="Kasko">Kasko</option>
+                  <option value="MTV">MTV</option>
+                  <option value="Muayene">Muayene</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
 
         {error && <div className="alert alert-danger">{error}</div>}
 
@@ -99,14 +172,14 @@ function ReminderPage() {
         </div>
 
         <div className="row g-3">
-          {reminders.length === 0 ? (
+          {filteredReminders.length === 0 ? (
             <div className="col-12">
               <div className="alert alert-info text-center">
                 Henüz takip kaydı yok.
               </div>
             </div>
           ) : (
-            [...reminders]
+            [...filteredReminders]
               .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
               .map((reminder) => (
                 <div className="col-md-6 col-lg-4" key={reminder.id}>
