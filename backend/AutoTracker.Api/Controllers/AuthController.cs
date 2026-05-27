@@ -9,6 +9,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using AutoTracker.Api.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AutoTracker.Api.Controllers;
 
@@ -306,4 +307,49 @@ public class AuthController : ControllerBase
 
     return Ok("Şifre başarıyla güncellendi.");
   }
+
+
+  [HttpPost("change-password")]
+  [Authorize]
+  public async Task<ActionResult> ChangePassword(ChangePasswordDto dto)
+  {
+    var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+    var user = await _context.AppUsers.FindAsync(userId);
+
+    if (user == null)
+    {
+      return Unauthorized("Kullanıcı bulunamadı.");
+    }
+
+    if (dto.NewPassword != dto.ConfirmNewPassword)
+    {
+      return BadRequest("Yeni şifreler eşleşmiyor.");
+    }
+
+    if (dto.NewPassword.Length < 6)
+    {
+      return BadRequest("Yeni şifre en az 6 karakter olmalıdır.");
+    }
+
+    var passwordHasher = new PasswordHasher<AppUser>();
+
+    var result = passwordHasher.VerifyHashedPassword(
+        user,
+        user.PasswordHash,
+        dto.CurrentPassword
+    );
+
+    if (result == PasswordVerificationResult.Failed)
+    {
+      return BadRequest("Mevcut şifre hatalı.");
+    }
+
+    user.PasswordHash = passwordHasher.HashPassword(user, dto.NewPassword);
+
+    await _context.SaveChangesAsync();
+
+    return Ok("Şifre başarıyla güncellendi.");
+  }
+
 }

@@ -19,6 +19,7 @@ function LoginPage() {
 
       localStorage.setItem("token", data.token);
       localStorage.setItem("fullName", data.fullName);
+      localStorage.setItem("email", data.email);
 
       navigate("/vehicles");
     } catch (err) {

@@ -15,6 +15,7 @@ import MaintenancePage from "./pages/MaintenancePage";
 import ReportsPage from "./pages/ReportsPage";
 import ConfirmEmailPage from "./pages/ConfirmEmailPage";
 import ReminderPage from "./pages/ReminderPage";
+import AccountPage from "./pages/AccountPage";
 
 function App() {
   return (
@@ -34,6 +35,8 @@ function App() {
         <Route path="/confirm-email" element={<ConfirmEmailPage />} />
 
         <Route path="/reminders" element={<ReminderPage />} />
+
+        <Route path="/account" element={<AccountPage />} />
 
         <Route
           path="/vehicles"

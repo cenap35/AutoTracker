@@ -151,8 +151,9 @@ function Navbar() {
               </>
             ) : (
               <>
-                <span
-                  className="navbar-text fw-semibold me-2 text-white d-none d-lg-inline"
+                <NavLink
+                  to="/account"
+                  className="navbar-text fw-semibold me-2 text-white d-none d-lg-inline text-decoration-none"
                   style={{
                     letterSpacing: ".5px",
                     background: "rgba(255,255,255,0.08)",
@@ -162,7 +163,7 @@ function Navbar() {
                 >
                   <i className="bi bi-person-circle me-1"></i>
                   {fullName}
-                </span>
+                </NavLink>
 
                 <button
                   className="btn btn-outline-light btn-sm ms-lg-2 px-4 py-1"
