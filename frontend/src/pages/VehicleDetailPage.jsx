@@ -194,6 +194,41 @@ function VehicleDetailPage() {
       console.error(err);
     }
   };
+  const handleToggleVehicleReminder = async (reminder) => {
+    try {
+      await updateVehicleReminder(reminder.id, {
+        type: reminder.type,
+        dueDate: reminder.dueDate,
+        amount: reminder.amount,
+        description: reminder.description,
+        isCompleted: !reminder.isCompleted,
+      });
+
+      setVehicleReminders(
+        vehicleReminders.map((item) =>
+          item.id === reminder.id
+            ? { ...item, isCompleted: !item.isCompleted }
+            : item,
+        ),
+      );
+    } catch (err) {
+      setError("Takip güncellenemedi.");
+      console.error(err);
+    }
+  };
+
+  const handleDeleteVehicleReminder = async (id) => {
+    try {
+      await deleteVehicleReminder(id);
+
+      setVehicleReminders(
+        vehicleReminders.filter((reminder) => reminder.id !== id),
+      );
+    } catch (err) {
+      setError("Takip silinemedi.");
+      console.error(err);
+    }
+  };
 
   if (error) {
     return <p>{error}</p>;
@@ -497,12 +532,13 @@ function VehicleDetailPage() {
         </div>
       </div>
       {/*düzenle  */}
-      <div>
+      <div className="mb-4">
         <ReminderForm
           selectedVehicleId={id}
           onCreate={handleCreateVehicleReminder}
         />
       </div>
+
       <div
         className="card border-0 shadow-sm mb-4"
         style={{ borderRadius: 14 }}
@@ -521,7 +557,11 @@ function VehicleDetailPage() {
             <div className="row g-3">
               {vehicleReminders.map((reminder) => (
                 <div className="col-md-6 col-lg-4" key={reminder.id}>
-                  <ReminderCard reminder={reminder} />
+                  <ReminderCard
+                    reminder={reminder}
+                    onToggleComplete={handleToggleVehicleReminder}
+                    onDelete={handleDeleteVehicleReminder}
+                  />
                 </div>
               ))}
             </div>
