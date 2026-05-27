@@ -21,14 +21,14 @@ function Navbar() {
         background: "linear-gradient(90deg, #3b60c5 55%, #314286 100%)",
         borderBottom: "3px solid #f7d358",
         boxShadow: "0 5px 36px -16px #3b60c588",
-        minHeight: 72,
+        minHeight: 70,
       }}
     >
       <div className="container-fluid px-4">
         <Link
           className="navbar-brand fw-bold d-flex align-items-center gap-2"
           to="/"
-          style={{ fontSize: 25 }}
+          style={{ fontSize: 20 }}
         >
           <Logo />
           <span

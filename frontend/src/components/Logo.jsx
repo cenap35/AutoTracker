@@ -7,7 +7,7 @@ function Logo({ size = 40 }) {
         display: "flex",
         alignItems: "center",
         fontWeight: "bold",
-        fontSize: size * 0.7,
+        fontSize: size * 0.6,
         cursor: "pointer"
       }}
       className="logo-animated"

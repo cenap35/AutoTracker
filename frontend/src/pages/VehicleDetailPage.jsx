@@ -261,45 +261,34 @@ function VehicleDetailPage() {
         className="py-4"
         style={{
           minHeight: "100vh",
-          background: "#f4f7fa",
+          background: "#f7fafd",
         }}
       >
         <div className="row justify-content-center">
-          <div className="col-12 col-lg-9">
+          <div className="col-12 col-lg-8">
+
             {/* Araç Bilgisi */}
             <div
-              className="card border-0 shadow-sm mb-4"
+              className="card border-0 shadow-sm mb-3"
               style={{
-                borderRadius: 18,
+                borderRadius: 14,
                 background: "#fff",
               }}
             >
-              <div className="card-body d-flex flex-column flex-md-row align-items-md-center py-3 px-4">
+              <div className="card-body d-flex flex-column flex-md-row gap-3 align-items-md-center py-3 px-4">
                 <div>
-                  <h2
-                    className="fw-semibold mb-2"
-                    style={{ letterSpacing: ".5px", color: "#2563eb" }}
-                  >
+                  <h3 className="fw-semibold mb-2" style={{ color: "#2563eb" }}>
                     <i className="bi bi-car-front-fill me-2"></i>
                     {vehicle.brand} {vehicle.model}
-                  </h2>
-                  <div className="mb-2">
-                    <span
-                      className="badge bg-primary me-2"
-                      style={{ fontSize: 17 }}
-                    >
+                  </h3>
+                  <div className="mb-2 d-flex flex-wrap gap-2">
+                    <span className="badge bg-primary text-white" style={{ fontSize: 16 }}>
                       {vehicle.plateNumber}
                     </span>
-                    <span
-                      className="badge bg-light text-dark border me-2"
-                      style={{ fontSize: 15 }}
-                    >
+                    <span className="badge bg-light text-dark border" style={{ fontSize: 15 }}>
                       Yıl: {vehicle.year}
                     </span>
-                    <span
-                      className="badge bg-light text-dark border"
-                      style={{ fontSize: 15 }}
-                    >
+                    <span className="badge bg-light text-dark border" style={{ fontSize: 15 }}>
                       Km: {vehicle.currentMileage?.toLocaleString("tr-TR") || 0}
                     </span>
                   </div>
@@ -307,66 +296,38 @@ function VehicleDetailPage() {
               </div>
             </div>
 
-            {/*İstatistik */}
-            <div>
-              <div className="row g-3 mb-4">
-                <div className="col-md-3">
-                  <div
-                    className="card border-0 shadow-sm h-100"
-                    style={{ borderRadius: 14 }}
-                  >
-                    <div className="card-body text-center">
-                      <div className="text-muted small">Bakım Kaydı</div>
-                      <div className="h4 fw-bold mb-0">
-                        {maintenanceRecords.length}
-                      </div>
+            {/* İstatistikler */}
+            <div className="mb-3">
+              <div className="row g-2">
+                <div className="col-6 col-md-3">
+                  <div className="text-center p-3 bg-white border rounded-3 h-100">
+                    <div className="text-muted" style={{ fontSize: 13 }}>Bakım Kaydı</div>
+                    <div className="fw-bold" style={{ fontSize: 22 }}>{maintenanceRecords.length}</div>
+                  </div>
+                </div>
+                <div className="col-6 col-md-3">
+                  <div className="text-center p-3 bg-white border rounded-3 h-100">
+                    <div className="text-muted" style={{ fontSize: 13 }}>Toplam Masraf</div>
+                    <div className="fw-bold" style={{ fontSize: 22 }}>
+                      ₺{totalMaintenanceCost.toLocaleString("tr-TR")}
                     </div>
                   </div>
                 </div>
-
-                <div className="col-md-3">
-                  <div
-                    className="card border-0 shadow-sm h-100"
-                    style={{ borderRadius: 14 }}
-                  >
-                    <div className="card-body text-center">
-                      <div className="text-muted small">Toplam Masraf</div>
-                      <div className="h4 fw-bold mb-0">
-                        ₺{totalMaintenanceCost.toLocaleString("tr-TR")}
-                      </div>
+                <div className="col-6 col-md-3">
+                  <div className="text-center p-3 bg-white border rounded-3 h-100">
+                    <div className="text-muted" style={{ fontSize: 13 }}>Ortalama Masraf</div>
+                    <div className="fw-bold" style={{ fontSize: 22 }}>
+                      ₺{averageMaintenanceCost.toLocaleString("tr-TR", { maximumFractionDigits: 0 })}
                     </div>
                   </div>
                 </div>
-
-                <div className="col-md-3">
-                  <div
-                    className="card border-0 shadow-sm h-100"
-                    style={{ borderRadius: 14 }}
-                  >
-                    <div className="card-body text-center">
-                      <div className="text-muted small">Ortalama Masraf</div>
-                      <div className="h4 fw-bold mb-0">
-                        ₺
-                        {averageMaintenanceCost.toLocaleString("tr-TR", {
-                          maximumFractionDigits: 0,
-                        })}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="col-md-3">
-                  <div
-                    className="card border-0 shadow-sm h-100"
-                    style={{ borderRadius: 14 }}
-                  >
-                    <div className="card-body text-center">
-                      <div className="text-muted small">Son Bakım</div>
-                      <div className="h6 fw-bold mb-0">
-                        {latestMaintenanceDate
-                          ? latestMaintenanceDate.toLocaleDateString("tr-TR")
-                          : "-"}
-                      </div>
+                <div className="col-6 col-md-3">
+                  <div className="text-center p-3 bg-white border rounded-3 h-100">
+                    <div className="text-muted" style={{ fontSize: 13 }}>Son Bakım</div>
+                    <div className="fw-bold" style={{ fontSize: 18 }}>
+                      {latestMaintenanceDate
+                        ? latestMaintenanceDate.toLocaleDateString("tr-TR")
+                        : "-"}
                     </div>
                   </div>
                 </div>
@@ -375,18 +336,18 @@ function VehicleDetailPage() {
 
             {/* Araç Güncelleme Formu */}
             <div
-              className="card border-0 shadow-sm mb-4"
+              className="card border-0 shadow-sm mb-3"
               style={{
-                borderRadius: 14,
+                borderRadius: 10,
                 background: "#fff",
               }}
             >
               <div className="card-body p-4">
-                <h5 className="mb-3 text-secondary fw-normal">
+                <div className="mb-3 text-secondary fw-normal" style={{ fontSize: 17 }}>
                   <i className="bi bi-pencil-square me-2"></i>
                   Araç Bilgisini Güncelle
-                </h5>
-                <form className="row g-3 mb-1" onSubmit={handleUpdateVehicle}>
+                </div>
+                <form className="row g-2 mb-1" onSubmit={handleUpdateVehicle}>
                   <div className="col-md-4">
                     <select
                       className="form-select"
@@ -463,8 +424,8 @@ function VehicleDetailPage() {
                   <div className="col-md-8 d-flex align-items-end mt-2 justify-content-end">
                     <button
                       type="submit"
-                      className="btn btn-success px-4 fw-bold"
-                      style={{ borderRadius: 10 }}
+                      className="btn btn-primary px-4 fw-bold"
+                      style={{ borderRadius: 8, fontSize: 16 }}
                     >
                       <i className="bi bi-save me-2"></i>Güncelle
                     </button>
@@ -473,32 +434,29 @@ function VehicleDetailPage() {
               </div>
             </div>
 
-            {/* Bakım Kaydı Ekleme - Daha sade: Kendi formunu yukarıda göster, default kartı kaldır */}
-            <div className="mb-4">
+            {/* Bakım Kaydı Ekleme */}
+            <div className="mb-3">
               <AddMaintenanceForm onCreate={handleCreateMaintenanceRecord} />
             </div>
 
             {/* Bakım Kayıtları */}
             <div
-              className="card border-0 shadow-sm"
+              className="card border-0 shadow-sm mb-3"
               style={{
-                borderRadius: 14,
+                borderRadius: 10,
                 background: "#fff",
               }}
             >
-              <div className="card-body px-4 py-4">
-                <h5
-                  className="text-primary mb-4 fw-bold"
-                  style={{ letterSpacing: ".5px" }}
-                >
+              <div className="card-body px-4 py-3">
+                <div className="text-primary mb-3 fw-bold" style={{ fontSize: 18 }}>
                   <i className="bi bi-tools me-2"></i>Bakım Kayıtları
-                </h5>
+                </div>
                 {maintenanceRecords.length === 0 ? (
                   <div className="alert alert-info text-center rounded-3 my-3 py-3 fs-6">
                     Henüz bakım kaydı yok.
                   </div>
                 ) : (
-                  <div className="row g-3">
+                  <div className="row g-2">
                     {[...maintenanceRecords]
                       .sort(
                         (a, b) =>
@@ -528,46 +486,47 @@ function VehicleDetailPage() {
               onToggleComplete={handleToggleVehicleNote}
               onDelete={handleDeleteVehicleNote}
             />
-          </div>
-        </div>
-      </div>
-      {/*düzenle  */}
-      <div className="mb-4">
-        <ReminderForm
-          selectedVehicleId={id}
-          onCreate={handleCreateVehicleReminder}
-        />
-      </div>
 
-      <div
-        className="card border-0 shadow-sm mb-4"
-        style={{ borderRadius: 14 }}
-      >
-        <div className="card-body px-4 py-4">
-          <h5 className="text-primary mb-3 fw-bold">
-            <i className="bi bi-calendar-check me-2"></i>
-            Araç Takipleri
-          </h5>
-
-          {vehicleReminders.length === 0 ? (
-            <div className="alert alert-info text-center rounded-3">
-              Bu araca ait takip kaydı bulunmuyor.
+            {/* Takip Formu */}
+            <div className="mb-3">
+              <ReminderForm
+                selectedVehicleId={id}
+                onCreate={handleCreateVehicleReminder}
+              />
             </div>
-          ) : (
-            <div className="row g-3">
-              {[...vehicleReminders]
-                .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
-                .map((reminder) => (
-                  <div className="col-md-6 col-lg-4" key={reminder.id}>
-                    <ReminderCard
-                      reminder={reminder}
-                      onToggleComplete={handleToggleVehicleReminder}
-                      onDelete={handleDeleteVehicleReminder}
-                    />
+
+            {/* Araç Takipleri */}
+            <div
+              className="card border-0 shadow-sm mb-2"
+              style={{ borderRadius: 10 }}
+            >
+              <div className="card-body px-4 py-3">
+                <div className="text-primary mb-2 fw-bold" style={{ fontSize: 18 }}>
+                  <i className="bi bi-calendar-check me-2"></i>
+                  Araç Takipleri
+                </div>
+                {vehicleReminders.length === 0 ? (
+                  <div className="alert alert-info text-center rounded-3">
+                    Bu araca ait takip kaydı bulunmuyor.
                   </div>
-                ))}
+                ) : (
+                  <div className="row g-2">
+                    {[...vehicleReminders]
+                      .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+                      .map((reminder) => (
+                        <div className="col-md-6 col-lg-4" key={reminder.id}>
+                          <ReminderCard
+                            reminder={reminder}
+                            onToggleComplete={handleToggleVehicleReminder}
+                            onDelete={handleDeleteVehicleReminder}
+                          />
+                        </div>
+                      ))}
+                  </div>
+                )}
+              </div>
             </div>
-          )}
+          </div>
         </div>
       </div>
     </PageWrapper>
