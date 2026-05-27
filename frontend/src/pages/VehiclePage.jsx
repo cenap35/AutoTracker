@@ -11,6 +11,7 @@ import AddVehicleForm from "../components/AddVehicleForm";
 function VehiclesPage() {
   const [vehicles, setVehicles] = useState([]);
   const [error, setError] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const fetchVehicles = async () => {
@@ -47,9 +48,19 @@ function VehiclesPage() {
     }
   };
 
+  const filteredVehicles = vehicles.filter((vehicle) => {
+    const searchText = `
+      ${vehicle.brand}
+      ${vehicle.model}
+      ${vehicle.plateNumber}
+      ${vehicle.year}
+    `.toLowerCase();
+
+    return searchText.includes(searchTerm.toLowerCase());
+  });
+
   return (
     <PageWrapper>
-
       {/* Dropdawn AddFormVehicle */}
       <div className="dropdown m-2">
         <button
@@ -97,6 +108,28 @@ function VehiclesPage() {
               Araçlarınızı görüntüleyin, detaylarını inceleyin ve yönetin.
             </p>
           </div>
+          {/*arac ara*/}
+          <div>
+            <div className="row justify-content-center mb-4">
+              <div className="col-12 col-md-6">
+                <input
+                  type="text"
+                  className="form-control form-control-lg shadow-sm"
+                  placeholder="Marka, model veya plaka ara..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  style={{ borderRadius: 14 }}
+                />
+              </div>
+              <div className="justify-content-center mt-5">
+                {vehicles.length > 0 && filteredVehicles.length === 0 && (
+                  <div className="alert alert-warning text-center shadow-sm">
+                    Aramanıza uygun araç bulunamadı.
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="row g-4">
@@ -108,7 +141,7 @@ function VehiclesPage() {
               </div>
             </div>
           )}
-          {vehicles.map((vehicle) => (
+          {filteredVehicles.map((vehicle) => (
             <div className="col-md-6 col-lg-4" key={vehicle.id}>
               <Link
                 to={`/vehicles/${vehicle.id}`}
