@@ -25,9 +25,16 @@ function Navbar() {
       }}
     >
       <div className="container-fluid px-4">
-        <Link className="navbar-brand fw-bold d-flex align-items-center gap-2" to="/" style={{ fontSize: 25 }}>
+        <Link
+          className="navbar-brand fw-bold d-flex align-items-center gap-2"
+          to="/"
+          style={{ fontSize: 25 }}
+        >
           <Logo />
-          <span className="ms-1 d-none d-md-inline" style={{ letterSpacing: "1px", color: "#ffe082" }}>
+          <span
+            className="ms-1 d-none d-md-inline"
+            style={{ letterSpacing: "1px", color: "#ffe082" }}
+          >
             CarCare | Araç Takip
           </span>
         </Link>
@@ -42,10 +49,7 @@ function Navbar() {
         >
           <span className="navbar-toggler-icon"></span>
         </button>
-        <div 
-          className="collapse navbar-collapse"
-          id="navbarNavModern"
-        >
+        <div className="collapse navbar-collapse" id="navbarNavModern">
           <div className="navbar-nav me-auto gap-1 flex-wrap align-items-center">
             <Link
               className="nav-link px-2 fw-semibold rounded-pill d-flex align-items-center gap-2"
@@ -88,6 +92,16 @@ function Navbar() {
             {token && (
               <Link
                 className="nav-link px-2 fw-semibold rounded-pill d-flex align-items-center gap-2"
+                to="/reminders"
+                style={{ color: "#fff", fontSize: 15, minWidth: 40 }}
+              >
+                <i className="bi bi-calendar-check"></i>
+                <span className="d-none d-sm-inline">Takipler</span>
+              </Link>
+            )}
+            {token && (
+              <Link
+                className="nav-link px-2 fw-semibold rounded-pill d-flex align-items-center gap-2"
                 to="/reports"
                 style={{ color: "#fff", fontSize: 15, minWidth: 40 }}
               >
@@ -96,7 +110,7 @@ function Navbar() {
               </Link>
             )}
           </div>
-     
+
           <div className="navbar-nav ms-auto align-items-center gap-2">
             {!token ? (
               <>
@@ -123,7 +137,12 @@ function Navbar() {
               <>
                 <span
                   className="navbar-text fw-semibold me-2 text-white d-none d-lg-inline"
-                  style={{ letterSpacing: ".5px", background: "rgba(255,255,255,0.08)", padding: "6px 18px", borderRadius: 18 }}
+                  style={{
+                    letterSpacing: ".5px",
+                    background: "rgba(255,255,255,0.08)",
+                    padding: "6px 18px",
+                    borderRadius: 18,
+                  }}
                 >
                   <i className="bi bi-person-circle me-1"></i>
                   {fullName}

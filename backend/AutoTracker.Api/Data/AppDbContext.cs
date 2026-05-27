@@ -14,4 +14,5 @@ public class AppDbContext : DbContext
     public DbSet<AppUser> AppUsers { get; set; } = null!;
     public DbSet<MaintenanceRecord> MaintenanceRecords { get; set; } = null!;
     public DbSet<VehicleNote> VehicleNotes { get; set; }  = null!;
+    public DbSet<VehicleReminder> VehicleReminders { get; set; }
 }

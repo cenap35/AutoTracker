@@ -26,4 +26,5 @@ public class Vehicle
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public List<MaintenanceRecord> MaintenanceRecords { get; set; } = new();
+    public List<VehicleReminder> Reminders { get; set; } = new();
 }
