@@ -131,11 +131,7 @@ function MaintenancePage() {
           boxShadow: "0 4px 42px -14px #3b60c533",
         }}
       >
-        <AddMaintenanceForm
-          vehicles={vehicles}
-          showVehicleSelect={true}
-          onCreate={handleCreateMaintenance}
-        />
+      
         {/* Başlık ve Açıklama */}
         <div className="mb-4">
           <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
@@ -173,7 +169,11 @@ function MaintenancePage() {
             </div>
           </div>
         </div>
-
+        <AddMaintenanceForm
+          vehicles={vehicles}
+          showVehicleSelect={true}
+          onCreate={handleCreateMaintenance}
+        />
         {/* Filtreleme ve İstatistik Yan Yana */}
         <div className="row mb-4 g-3">
           {/* Filtreleme Card'ı */}

@@ -113,13 +113,26 @@ function ReminderPage() {
             {filteredReminders.length} / {reminders.length} takip gösteriliyor
           </span>
         </p>
+
+        {error && <div className="alert alert-danger">{error}</div>}
+
+        {/*Ekleme formu */}
+        <div className="mb-4">
+          <ReminderForm vehicles={vehicles} onCreate={handleCreateReminder} />
+        </div>
+
         {/*filtreleme */}
         <div
           className="card border-0 shadow-sm mb-4"
           style={{ borderRadius: 14 }}
         >
           <div className="card-body">
-            <div className="row g-2">
+            <span className="fw-bold" style={{ color: "#3b60c5" }}>
+              <i className="bi bi-funnel me-2"></i>
+              Filtreler
+            </span>
+
+            <div className="row g-2 mt-2">
               <div className="col-md-4">
                 <select
                   className="form-select"
@@ -162,13 +175,6 @@ function ReminderPage() {
               </div>
             </div>
           </div>
-        </div>
-
-        {error && <div className="alert alert-danger">{error}</div>}
-
-        {/*Ekleme formu */}
-        <div className="mb-4">
-          <ReminderForm vehicles={vehicles} onCreate={handleCreateReminder} />
         </div>
 
         <div className="row g-3">
