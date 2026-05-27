@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import Logo from "./Logo";
 
 function Navbar() {
@@ -13,6 +13,13 @@ function Navbar() {
 
     navigate("/login");
   };
+
+  const navLinkStyle = ({ isActive }) => ({
+    color: isActive ? "#ffe082" : "#fff",
+    fontSize: 15,
+    minWidth: 40,
+    background: isActive ? "rgba(255, 224, 130, 0.14)" : "transparent",
+  });
 
   return (
     <nav
@@ -38,6 +45,7 @@ function Navbar() {
             CarCare | Araç Takip
           </span>
         </Link>
+
         <button
           className="navbar-toggler"
           type="button"
@@ -49,72 +57,79 @@ function Navbar() {
         >
           <span className="navbar-toggler-icon"></span>
         </button>
+
         <div className="collapse navbar-collapse" id="navbarNavModern">
           <div className="navbar-nav me-auto gap-1 flex-wrap align-items-center">
-            <Link
+            <NavLink
               className="nav-link px-2 fw-semibold rounded-pill d-flex align-items-center gap-2"
               to="/"
-              style={{ color: "#ffe082", fontSize: 15, minWidth: 40 }}
+              end
+              style={navLinkStyle}
             >
               <i className="bi bi-house-door-fill"></i>
               <span className="d-none d-sm-inline">Anasayfa</span>
-            </Link>
+            </NavLink>
+
             {token && (
-              <Link
+              <NavLink
                 className="nav-link px-2 fw-semibold rounded-pill d-flex align-items-center gap-2"
                 to="/vehicles"
-                style={{ color: "#fff", fontSize: 15, minWidth: 40 }}
+                style={navLinkStyle}
               >
                 <i className="bi bi-car-front"></i>
                 <span className="d-none d-sm-inline">Araçlarım</span>
-              </Link>
+              </NavLink>
             )}
+
             {token && (
-              <Link
+              <NavLink
                 className="nav-link px-2 fw-semibold rounded-pill d-flex align-items-center gap-2"
                 to="/dashboard"
-                style={{ color: "#fff", fontSize: 15, minWidth: 40 }}
+                style={navLinkStyle}
               >
                 <i className="bi bi-speedometer2"></i>
                 <span className="d-none d-sm-inline">Panel</span>
-              </Link>
+              </NavLink>
             )}
+
             {token && (
-              <Link
+              <NavLink
                 className="nav-link px-2 fw-semibold rounded-pill d-flex align-items-center gap-2"
                 to="/maintenance"
-                style={{ color: "#fff", fontSize: 15, minWidth: 40 }}
+                style={navLinkStyle}
               >
                 <i className="bi bi-tools"></i>
                 <span className="d-none d-sm-inline">Bakım</span>
-              </Link>
+              </NavLink>
             )}
+
             {token && (
-              <Link
+              <NavLink
                 className="nav-link px-2 fw-semibold rounded-pill d-flex align-items-center gap-2"
                 to="/reminders"
-                style={{ color: "#fff", fontSize: 15, minWidth: 40 }}
+                style={navLinkStyle}
               >
                 <i className="bi bi-calendar-check"></i>
                 <span className="d-none d-sm-inline">Takipler</span>
-              </Link>
+              </NavLink>
             )}
+
             {token && (
-              <Link
+              <NavLink
                 className="nav-link px-2 fw-semibold rounded-pill d-flex align-items-center gap-2"
                 to="/reports"
-                style={{ color: "#fff", fontSize: 15, minWidth: 40 }}
+                style={navLinkStyle}
               >
                 <i className="bi bi-bar-chart-line"></i>
                 <span className="d-none d-sm-inline">Raporlar</span>
-              </Link>
+              </NavLink>
             )}
           </div>
 
           <div className="navbar-nav ms-auto align-items-center gap-2">
             {!token ? (
               <>
-                <Link
+                <NavLink
                   className="btn btn-outline-light fw-bold border-0 px-4 py-1 me-2"
                   style={{
                     borderRadius: 18,
@@ -124,14 +139,15 @@ function Navbar() {
                   to="/login"
                 >
                   <i className="bi bi-box-arrow-in-right me-1"></i> Giriş Yap
-                </Link>
-                <Link
+                </NavLink>
+
+                <NavLink
                   className="btn btn-warning fw-bold px-4 py-1"
                   style={{ borderRadius: 18 }}
                   to="/register"
                 >
                   <i className="bi bi-person-plus-fill me-1"></i> Kayıt Ol
-                </Link>
+                </NavLink>
               </>
             ) : (
               <>
@@ -147,6 +163,7 @@ function Navbar() {
                   <i className="bi bi-person-circle me-1"></i>
                   {fullName}
                 </span>
+
                 <button
                   className="btn btn-outline-light btn-sm ms-lg-2 px-4 py-1"
                   onClick={handleLogout}
