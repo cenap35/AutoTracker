@@ -352,4 +352,25 @@ public class AuthController : ControllerBase
     return Ok("Şifre başarıyla güncellendi.");
   }
 
+
+  [HttpDelete("delete-account")]
+  [Authorize]
+  public async Task<ActionResult> DeleteAccount()
+  {
+    var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+    var user = await _context.AppUsers.FindAsync(userId);
+
+    if (user == null)
+    {
+      return Unauthorized("Kullanıcı bulunamadı.");
+    }
+
+    _context.AppUsers.Remove(user);
+
+    await _context.SaveChangesAsync();
+
+    return Ok("Hesap başarıyla silindi.");
+  }
+
 }

@@ -1,6 +1,7 @@
 import PageWrapper from "../components/PageWrapper";
-import { changePassword } from "../services/authService";
 import { useState } from "react";
+import { changePassword, deleteAccount } from "../services/authService";
+import { useNavigate } from "react-router-dom";
 
 function AccountPage() {
   const fullName = localStorage.getItem("fullName") || "Kullanıcı";
@@ -11,6 +12,10 @@ function AccountPage() {
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [passwordMessage, setPasswordMessage] = useState("");
   const [passwordError, setPasswordError] = useState("");
+
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
+  const navigate = useNavigate();
 
   const handleChangePassword = async (e) => {
     e.preventDefault();
@@ -193,20 +198,87 @@ function AccountPage() {
                   Hesap Güvenliği
                 </h5>
 
-                <div className="d-flex flex-column flex-md-row justify-content-between gap-3">
-                  <div>
-                    <div className="fw-semibold">Oturum Durumu</div>
-                    <div className="text-muted small">
-                      Bu cihazda aktif olarak giriş yapılmış.
+                <div className="border-top pt-3 mt-3">
+                  <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                    <div>
+                      <div className="fw-semibold text-danger">
+                        <i className="bi bi-exclamation-triangle me-2"></i>
+                        Hesabı Sil
+                      </div>
+                      <div className="text-muted small">
+                        Bu işlem geri alınamaz. Araçlarınız, bakım kayıtlarınız,
+                        notlarınız ve takipleriniz silinir.
+                      </div>
                     </div>
+
+                    <button
+                      type="button"
+                      className="btn btn-outline-danger fw-bold"
+                      onClick={() => setShowDeleteConfirm(true)}
+                    >
+                      Hesabı Sil
+                    </button>
                   </div>
 
-                  <button
-                    type="button"
-                    className="btn btn-outline-danger fw-bold"
-                  >
-                    Tüm Oturumlardan Çık
-                  </button>
+                  {showDeleteConfirm && (
+                    <div className="alert alert-danger mt-3 mb-0">
+                      <div className="fw-bold mb-2">
+                        Emin misiniz? Bu işlem kalıcıdır.
+                      </div>
+
+                      <p className="small mb-2">
+                        Devam etmek için aşağıya <strong>HESABIMI SIL</strong>{" "}
+                        yazın.
+                      </p>
+
+                      <input
+                        className="form-control mb-3"
+                        placeholder="HESABIMI SIL"
+                        value={deleteConfirmText}
+                        onChange={(e) => setDeleteConfirmText(e.target.value)}
+                      />
+
+                      <div className="d-flex gap-2 justify-content-end">
+                        <button
+                          type="button"
+                          className="btn btn-outline-secondary"
+                          onClick={() => {
+                            setShowDeleteConfirm(false);
+                            setDeleteConfirmText("");
+                          }}
+                        >
+                          Vazgeç
+                        </button>
+
+                        <button
+                          type="button"
+                          className="btn btn-danger fw-bold"
+                          disabled={deleteConfirmText !== "HESABIMI SIL"}
+                          onClick={async () => {
+                            const secondConfirm = window.confirm(
+                              "Son kez soruyorum: Hesabınızı kalıcı olarak silmek istediğinize emin misiniz?",
+                            );
+
+                            if (!secondConfirm) return;
+
+                            try {
+                              await deleteAccount();
+
+                              localStorage.removeItem("token");
+                              localStorage.removeItem("fullName");
+                              localStorage.removeItem("email");
+
+                              navigate("/login");
+                            } catch (err) {
+                              alert(err.response?.data || "Hesap silinemedi.");
+                            }
+                          }}
+                        >
+                          Kalıcı Olarak Sil
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
