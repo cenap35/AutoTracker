@@ -25,6 +25,13 @@ public class VehicleNotesController : ControllerBase
     return int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
   }
 
+  private bool IsValidPriority(string priority)
+  {
+    var allowedPriorities = new[] { "Düşük", "Orta", "Yüksek" };
+
+    return allowedPriorities.Contains(priority);
+  }
+
   [HttpGet]
   public async Task<ActionResult<List<VehicleNoteDto>>> GetNotes()
   {
@@ -62,6 +69,11 @@ public class VehicleNotesController : ControllerBase
     if (vehicle == null)
     {
       return NotFound("Araç bulunamadı.");
+    }
+
+    if (!IsValidPriority(dto.Priority))
+    {
+      return BadRequest("Geçersiz öncelik değeri.");
     }
 
     var note = new VehicleNote
@@ -104,6 +116,11 @@ public class VehicleNotesController : ControllerBase
     if (note == null)
     {
       return NotFound("Not bulunamadı.");
+    }
+
+    if (!IsValidPriority(dto.Priority))
+    {
+      return BadRequest("Geçersiz öncelik değeri.");
     }
 
     note.Title = dto.Title;
