@@ -1,4 +1,8 @@
+import { useState } from "react";
+
 function ReminderCard({ reminder, onToggleComplete, onDelete }) {
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -38,12 +42,12 @@ function ReminderCard({ reminder, onToggleComplete, onDelete }) {
     reminder.type === "Sigorta"
       ? "bi bi-shield-check"
       : reminder.type === "Kasko"
-      ? "bi bi-shield-shaded"
-      : reminder.type === "MTV"
-      ? "bi bi-cash-stack"
-      : reminder.type === "Muayene"
-      ? "bi bi-clipboard2-check"
-      : "bi bi-bell";
+        ? "bi bi-shield-shaded"
+        : reminder.type === "MTV"
+          ? "bi bi-cash-stack"
+          : reminder.type === "Muayene"
+            ? "bi bi-clipboard2-check"
+            : "bi bi-bell";
 
   return (
     <div
@@ -190,19 +194,45 @@ function ReminderCard({ reminder, onToggleComplete, onDelete }) {
               </button>
             )}
 
-            {onDelete && (
-              <button
-                className="btn btn-sm btn-outline-danger fw-semibold px-3 shadow-none"
-                style={{
-                  borderRadius: 12,
-                  minWidth: 72,
-                }}
-                onClick={() => onDelete(reminder.id)}
-              >
-                <i className="bi bi-trash me-1" />
-                Sil
-              </button>
-            )}
+            {onDelete &&
+              (!showDeleteConfirm ? (
+                <button
+                  className="btn btn-sm btn-outline-danger fw-semibold px-3 shadow-none"
+                  style={{
+                    borderRadius: 12,
+                    minWidth: 72,
+                  }}
+                  onClick={() => setShowDeleteConfirm(true)}
+                >
+                  <i className="bi bi-trash me-1" />
+                  Sil
+                </button>
+              ) : (
+                <div className="d-flex align-items-center gap-2 flex-wrap">
+                  <span className="small text-danger fw-semibold">
+                    Emin misin?
+                  </span>
+
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-outline-secondary"
+                    onClick={() => setShowDeleteConfirm(false)}
+                  >
+                    Vazgeç
+                  </button>
+
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-danger fw-bold"
+                    onClick={() => {
+                      onDelete(reminder.id);
+                      setShowDeleteConfirm(false);
+                    }}
+                  >
+                    Sil
+                  </button>
+                </div>
+              ))}
           </div>
         )}
       </div>

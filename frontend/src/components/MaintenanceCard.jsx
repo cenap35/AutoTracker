@@ -17,6 +17,7 @@ function MaintenanceCard({
       ? record.maintenanceDate.slice(0, 16)
       : "",
   });
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const handleEditChange = (e) => {
     const { name, value } = e.target;
@@ -267,27 +268,52 @@ function MaintenanceCard({
               Düzenle
             </button>
           )}
+          {onDelete &&
+            (!showDeleteConfirm ? (
+              <button
+                className="btn btn-link text-danger px-2 py-0 fw-semibold"
+                style={{
+                  fontSize: 14,
+                  borderRadius: 7,
+                  textDecoration: "none",
+                  transition: "background 0.18s",
+                }}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.background = "#fff0f0")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.background = "transparent")
+                }
+                onClick={() => setShowDeleteConfirm(true)}
+              >
+                <i className="bi bi-trash me-1"></i>Sil
+              </button>
+            ) : (
+              <div className="d-flex align-items-center gap-2 flex-wrap">
+                <span className="small text-danger fw-semibold">
+                  Emin misin?
+                </span>
 
-          {onDelete && (
-            <button
-              className="btn btn-link text-danger px-2 py-0 fw-semibold"
-              style={{
-                fontSize: 14,
-                borderRadius: 7,
-                textDecoration: "none",
-                transition: "background 0.18s",
-              }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.background = "#fff0f0")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.background = "transparent")
-              }
-              onClick={() => onDelete(record.id)}
-            >
-              <i className="bi bi-trash me-1"></i>Sil
-            </button>
-          )}
+                <button
+                  type="button"
+                  className="btn btn-sm btn-outline-secondary"
+                  onClick={() => setShowDeleteConfirm(false)}
+                >
+                  Vazgeç
+                </button>
+
+                <button
+                  type="button"
+                  className="btn btn-sm btn-danger fw-bold"
+                  onClick={() => {
+                    onDelete(record.id);
+                    setShowDeleteConfirm(false);
+                  }}
+                >
+                  Sil
+                </button>
+              </div>
+            ))}
         </div>
       </div>
     </div>

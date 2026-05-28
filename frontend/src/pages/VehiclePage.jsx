@@ -12,6 +12,7 @@ function VehiclesPage() {
   const [vehicles, setVehicles] = useState([]);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [deleteConfirmVehicleId, setDeleteConfirmVehicleId] = useState(null);
 
   useEffect(() => {
     const fetchVehicles = async () => {
@@ -195,17 +196,49 @@ function VehiclesPage() {
                       <i className="bi bi-speedometer2 me-1"></i>
                       {vehicle.currentMileage?.toLocaleString("tr-TR") || 0} km
                     </div>
-                    <div className="d-flex mt-3 gap-2">
-                      <button
-                        className="btn btn-sm btn-outline-danger px-3"
-                        style={{ borderRadius: 5 }}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handleDeleteVehicle(vehicle.id);
-                        }}
-                      >
-                        <i className="bi bi-trash me-1"></i> Sil
-                      </button>
+                    <div className="d-flex mt-3 gap-2 align-items-center flex-wrap">
+                      {deleteConfirmVehicleId !== vehicle.id ? (
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-outline-danger px-3"
+                          style={{ borderRadius: 5 }}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setDeleteConfirmVehicleId(vehicle.id);
+                          }}
+                        >
+                          <i className="bi bi-trash me-1"></i> Sil
+                        </button>
+                      ) : (
+                        <>
+                          <span className="small text-danger fw-semibold">
+                            Emin misin?
+                          </span>
+
+                          <button
+                            type="button"
+                            className="btn btn-sm btn-outline-secondary"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setDeleteConfirmVehicleId(null);
+                            }}
+                          >
+                            Vazgeç
+                          </button>
+
+                          <button
+                            type="button"
+                            className="btn btn-sm btn-danger fw-bold"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              handleDeleteVehicle(vehicle.id);
+                              setDeleteConfirmVehicleId(null);
+                            }}
+                          >
+                            Sil
+                          </button>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>

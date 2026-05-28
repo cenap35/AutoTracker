@@ -48,9 +48,21 @@ function themeFrom({ isCompleted, priority }) {
         : "linear-gradient(118deg, rgba(57,119,245,0.11), #fff 50%, rgba(248,250,252,1))";
 
   const badgeByPriority = {
-    Yüksek: { bg: "rgba(220,53,69,0.12)", color: "#b02a37", border: "1px solid rgba(220,53,69,0.22)" },
-    Düşük: { bg: "rgba(25,135,84,0.12)", color: "#146c43", border: "1px solid rgba(25,135,84,0.22)" },
-    Orta: { bg: "rgba(255,193,7,0.18)", color: "#856404", border: "1px solid rgba(255,193,7,0.35)" },
+    Yüksek: {
+      bg: "rgba(220,53,69,0.12)",
+      color: "#b02a37",
+      border: "1px solid rgba(220,53,69,0.22)",
+    },
+    Düşük: {
+      bg: "rgba(25,135,84,0.12)",
+      color: "#146c43",
+      border: "1px solid rgba(25,135,84,0.22)",
+    },
+    Orta: {
+      bg: "rgba(255,193,7,0.18)",
+      color: "#856404",
+      border: "1px solid rgba(255,193,7,0.35)",
+    },
   };
 
   const status = done
@@ -69,7 +81,12 @@ function themeFrom({ isCompleted, priority }) {
         icon: "bi-hourglass-split",
       };
 
-  return { accent, topBar, priorityBadge: badgeByPriority[p] || badgeByPriority.Orta, status };
+  return {
+    accent,
+    topBar,
+    priorityBadge: badgeByPriority[p] || badgeByPriority.Orta,
+    status,
+  };
 }
 
 function SoftPill({ bg, color, border, icon, children }) {
@@ -104,8 +121,15 @@ function NoteCardSurface({ accent, shadow, hovered, children }) {
   );
 }
 
-function VehicleNoteCard({ note, vehicle, onUpdate, onToggleComplete, onDelete }) {
+function VehicleNoteCard({
+  note,
+  vehicle,
+  onUpdate,
+  onToggleComplete,
+  onDelete,
+}) {
   const [isEditing, setIsEditing] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [lifted, setLifted] = useState(false);
   const [editData, setEditData] = useState({
     title: note.title || "",
@@ -115,11 +139,23 @@ function VehicleNoteCard({ note, vehicle, onUpdate, onToggleComplete, onDelete }
 
   const shadows = shadowsFor(note);
   const viewTheme = themeFrom(note);
-  const editTheme = themeFrom({ ...note, isCompleted: false, priority: editData.priority });
+  const editTheme = themeFrom({
+    ...note,
+    isCompleted: false,
+    priority: editData.priority,
+  });
 
   const accent = isEditing ? editTheme.accent : viewTheme.accent;
   const currentShadow =
-    shadows[isEditing ? (lifted ? "hoverEdit" : "restEdit") : lifted ? "hover" : "rest"];
+    shadows[
+      isEditing
+        ? lifted
+          ? "hoverEdit"
+          : "restEdit"
+        : lifted
+          ? "hover"
+          : "rest"
+    ];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -166,7 +202,12 @@ function VehicleNoteCard({ note, vehicle, onUpdate, onToggleComplete, onDelete }
       </span>
       <div className="d-flex flex-wrap gap-2 justify-content-end">
         <SoftPill {...viewTheme.priorityBadge}>{note.priority}</SoftPill>
-        <SoftPill bg={viewTheme.status.bg} color={viewTheme.status.color} border={viewTheme.status.border} icon={viewTheme.status.icon}>
+        <SoftPill
+          bg={viewTheme.status.bg}
+          color={viewTheme.status.color}
+          border={viewTheme.status.border}
+          icon={viewTheme.status.icon}
+        >
           {viewTheme.status.label}
         </SoftPill>
       </div>
@@ -175,8 +216,15 @@ function VehicleNoteCard({ note, vehicle, onUpdate, onToggleComplete, onDelete }
 
   if (isEditing) {
     return (
-      <div onMouseEnter={() => setLifted(true)} onMouseLeave={() => setLifted(false)}>
-        <NoteCardSurface accent={accent} shadow={currentShadow} hovered={lifted}>
+      <div
+        onMouseEnter={() => setLifted(true)}
+        onMouseLeave={() => setLifted(false)}
+      >
+        <NoteCardSurface
+          accent={accent}
+          shadow={currentShadow}
+          hovered={lifted}
+        >
           <div
             className="px-3 py-2 border-bottom"
             style={{ borderColor: "#eef2f7", background: editTheme.topBar }}
@@ -184,9 +232,16 @@ function VehicleNoteCard({ note, vehicle, onUpdate, onToggleComplete, onDelete }
             <span className="small text-muted d-inline-flex align-items-center gap-2">
               <span
                 className="d-inline-flex align-items-center justify-content-center rounded-2 flex-shrink-0"
-                style={{ ...iconSq, background: "rgba(57,119,245,0.12)", color: PRIMARY_DEEP }}
+                style={{
+                  ...iconSq,
+                  background: "rgba(57,119,245,0.12)",
+                  color: PRIMARY_DEEP,
+                }}
               >
-                <i className="bi bi-journal-text" style={{ fontSize: "0.9rem" }} />
+                <i
+                  className="bi bi-journal-text"
+                  style={{ fontSize: "0.9rem" }}
+                />
               </span>
               Notu düzenle
             </span>
@@ -194,7 +249,9 @@ function VehicleNoteCard({ note, vehicle, onUpdate, onToggleComplete, onDelete }
           <div className="card-body p-3">
             <div className="row g-2">
               <div className="col-md-8">
-                <label className="form-label small text-muted mb-1">Başlık</label>
+                <label className="form-label small text-muted mb-1">
+                  Başlık
+                </label>
                 <input
                   name="title"
                   className="form-control rounded-3"
@@ -205,8 +262,15 @@ function VehicleNoteCard({ note, vehicle, onUpdate, onToggleComplete, onDelete }
                 />
               </div>
               <div className="col-md-4">
-                <label className="form-label small text-muted mb-1">Öncelik</label>
-                <select name="priority" className="form-select rounded-3" value={editData.priority} onChange={handleChange}>
+                <label className="form-label small text-muted mb-1">
+                  Öncelik
+                </label>
+                <select
+                  name="priority"
+                  className="form-select rounded-3"
+                  value={editData.priority}
+                  onChange={handleChange}
+                >
                   {PRIORITY_KEYS.map((opt) => (
                     <option key={opt} value={opt}>
                       {opt}
@@ -215,7 +279,9 @@ function VehicleNoteCard({ note, vehicle, onUpdate, onToggleComplete, onDelete }
                 </select>
               </div>
               <div className="col-12">
-                <label className="form-label small text-muted mb-1">İçerik</label>
+                <label className="form-label small text-muted mb-1">
+                  İçerik
+                </label>
                 <textarea
                   name="content"
                   className="form-control rounded-3"
@@ -226,7 +292,11 @@ function VehicleNoteCard({ note, vehicle, onUpdate, onToggleComplete, onDelete }
                 />
               </div>
               <div className="col-12 d-flex flex-wrap gap-2 justify-content-end pt-1">
-                <button type="button" className="btn btn-outline-secondary btn-sm rounded-3 px-3" onClick={handleCancel}>
+                <button
+                  type="button"
+                  className="btn btn-outline-secondary btn-sm rounded-3 px-3"
+                  onClick={handleCancel}
+                >
                   İptal
                 </button>
                 <button
@@ -246,20 +316,36 @@ function VehicleNoteCard({ note, vehicle, onUpdate, onToggleComplete, onDelete }
   }
 
   return (
-    <div onMouseEnter={() => setLifted(true)} onMouseLeave={() => setLifted(false)}>
+    <div
+      onMouseEnter={() => setLifted(true)}
+      onMouseLeave={() => setLifted(false)}
+    >
       <NoteCardSurface accent={accent} shadow={currentShadow} hovered={lifted}>
-        <div className="px-3 py-2 border-bottom" style={{ borderColor: "#eef2f7", background: viewTheme.topBar }}>
+        <div
+          className="px-3 py-2 border-bottom"
+          style={{ borderColor: "#eef2f7", background: viewTheme.topBar }}
+        >
           {topBarLeadingView}
         </div>
 
         <div className="card-body p-3">
           {vehicle && (
             <div className="d-flex flex-wrap align-items-center gap-2 mb-3">
-              <SoftPill bg="rgba(57,119,245,0.12)" color={PRIMARY_DEEP} border="1px solid rgba(57,119,245,0.18)" icon="bi-car-front">
+              <SoftPill
+                bg="rgba(57,119,245,0.12)"
+                color={PRIMARY_DEEP}
+                border="1px solid rgba(57,119,245,0.18)"
+                icon="bi-car-front"
+              >
                 {vehicle.brand} {vehicle.model}
               </SoftPill>
               {vehicle.plateNumber ? (
-                <SoftPill bg="#f8f9fa" color="#495057" border="1px solid #dee2e6" icon="bi-hash">
+                <SoftPill
+                  bg="#f8f9fa"
+                  color="#495057"
+                  border="1px solid #dee2e6"
+                  icon="bi-hash"
+                >
                   {vehicle.plateNumber}
                 </SoftPill>
               ) : null}
@@ -268,7 +354,10 @@ function VehicleNoteCard({ note, vehicle, onUpdate, onToggleComplete, onDelete }
 
           <h6
             className={`fw-bold mb-2 ${note.isCompleted ? "text-success text-decoration-line-through" : ""}`}
-            style={{ color: note.isCompleted ? undefined : "#1e293b", letterSpacing: "0.01em" }}
+            style={{
+              color: note.isCompleted ? undefined : "#1e293b",
+              letterSpacing: "0.01em",
+            }}
           >
             {note.title}
           </h6>
@@ -277,7 +366,9 @@ function VehicleNoteCard({ note, vehicle, onUpdate, onToggleComplete, onDelete }
             <div
               className="rounded-3 mb-3 px-3 py-2"
               style={{
-                background: note.isCompleted ? "#f8fafc" : "linear-gradient(180deg,#f8fafc,#fff)",
+                background: note.isCompleted
+                  ? "#f8fafc"
+                  : "linear-gradient(180deg,#f8fafc,#fff)",
                 border: "1px solid #eef2f7",
                 boxShadow: "inset 0 1px 0 rgba(255,255,255,0.95)",
               }}
@@ -293,7 +384,10 @@ function VehicleNoteCard({ note, vehicle, onUpdate, onToggleComplete, onDelete }
             <p className="small text-muted fst-italic mb-3">İçerik yok.</p>
           )}
 
-          <div className="d-flex flex-wrap gap-2 justify-content-end pt-2 mt-1" style={{ borderTop: "1px solid #f1f5f9" }}>
+          <div
+            className="d-flex flex-wrap gap-2 justify-content-end pt-2 mt-1"
+            style={{ borderTop: "1px solid #f1f5f9" }}
+          >
             <button
               type="button"
               className="btn btn-outline-primary btn-sm rounded-3 px-3 fw-semibold"
@@ -311,13 +405,46 @@ function VehicleNoteCard({ note, vehicle, onUpdate, onToggleComplete, onDelete }
               className={`btn btn-sm px-3 rounded-3 fw-semibold ${note.isCompleted ? "btn-outline-warning" : "btn-outline-success"}`}
               onClick={() => onToggleComplete(note)}
             >
-              <i className={`bi ${note.isCompleted ? "bi-arrow-counterclockwise" : "bi-check2-circle"} me-1`} />
+              <i
+                className={`bi ${note.isCompleted ? "bi-arrow-counterclockwise" : "bi-check2-circle"} me-1`}
+              />
               {note.isCompleted ? "Geri Al" : "Tamamla"}
             </button>
-            <button type="button" className="btn btn-outline-danger btn-sm rounded-3 px-3 fw-semibold" onClick={() => onDelete(note.id)}>
-              <i className="bi bi-trash me-1" />
-              Sil
-            </button>
+            {!showDeleteConfirm ? (
+              <button
+                type="button"
+                className="btn btn-outline-danger btn-sm rounded-3 px-3 fw-semibold"
+                onClick={() => setShowDeleteConfirm(true)}
+              >
+                <i className="bi bi-trash me-1" />
+                Sil
+              </button>
+            ) : (
+              <div className="d-flex align-items-center gap-2 flex-wrap">
+                <span className="small text-danger fw-semibold">
+                  Emin misin?
+                </span>
+
+                <button
+                  type="button"
+                  className="btn btn-sm btn-outline-secondary"
+                  onClick={() => setShowDeleteConfirm(false)}
+                >
+                  Vazgeç
+                </button>
+
+                <button
+                  type="button"
+                  className="btn btn-sm btn-danger fw-bold"
+                  onClick={() => {
+                    onDelete(note.id);
+                    setShowDeleteConfirm(false);
+                  }}
+                >
+                  Sil
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </NoteCardSurface>
