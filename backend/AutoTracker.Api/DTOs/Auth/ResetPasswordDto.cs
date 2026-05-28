@@ -10,4 +10,8 @@ public class ResetPasswordDto
     [Required]
     [MinLength(6)]
     public string NewPassword { get; set; } = string.Empty;
+    
+    [Required]
+    [MinLength(6)]
+    public string ConfirmNewPassword { get; set; } = string.Empty;
 }

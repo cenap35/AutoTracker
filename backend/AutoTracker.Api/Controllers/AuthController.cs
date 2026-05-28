@@ -297,6 +297,22 @@ public class AuthController : ControllerBase
       return BadRequest("Şifre sıfırlama linkinin süresi dolmuş.");
     }
 
+    if (dto.NewPassword != dto.ConfirmNewPassword)
+
+    {
+
+      return BadRequest("Yeni şifreler eşleşmiyor.");
+
+    }
+
+    if (dto.NewPassword.Length < 6)
+
+    {
+
+      return BadRequest("Yeni şifre en az 6 karakter olmalıdır.");
+
+    }
+
     user.PasswordHash = new PasswordHasher<AppUser>()
         .HashPassword(user, dto.NewPassword);
 

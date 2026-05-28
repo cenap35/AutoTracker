@@ -35,10 +35,11 @@ export const forgotPassword = async (email) => {
   return response.data;
 };
 
-export const resetPassword = async (token, newPassword) => {
+export const resetPassword = async (token, newPassword, confirmNewPassword) => {
   const response = await api.post("/auth/reset-password", {
     token,
     newPassword,
+    confirmNewPassword,
   });
 
   return response.data;
@@ -48,7 +49,6 @@ export const changePassword = async (passwordData) => {
   const response = await api.post("/auth/change-password", passwordData);
   return response.data;
 };
-
 
 export const deleteAccount = async () => {
   const response = await api.delete("/auth/delete-account");
