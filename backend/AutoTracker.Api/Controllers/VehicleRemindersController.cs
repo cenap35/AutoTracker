@@ -25,6 +25,14 @@ public class VehicleRemindersController : ControllerBase
         return int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
     }
 
+    private bool IsValidReminderType(string type)
+    {
+        var allowedTypes = new[] { "Sigorta", "Kasko", "MTV", "Muayene" };
+
+        return allowedTypes.Contains(type);
+    }
+
+
     [HttpGet]
     public async Task<ActionResult<List<VehicleReminderDto>>> GetReminders()
     {
@@ -65,6 +73,11 @@ public class VehicleRemindersController : ControllerBase
         if (vehicle == null)
         {
             return NotFound("Araç bulunamadı.");
+        }
+
+        if (!IsValidReminderType(dto.Type))
+        {
+            return BadRequest("Geçersiz takip türü.");
         }
 
         var reminder = new VehicleReminder
@@ -112,6 +125,11 @@ public class VehicleRemindersController : ControllerBase
         if (reminder == null)
         {
             return NotFound("Hatırlatma bulunamadı.");
+        }
+
+        if (!IsValidReminderType(dto.Type))
+        {
+            return BadRequest("Geçersiz takip türü.");
         }
 
         reminder.Type = dto.Type;
