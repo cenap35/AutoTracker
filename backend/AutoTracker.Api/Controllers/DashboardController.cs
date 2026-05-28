@@ -85,4 +85,81 @@ public class DashboardController : ControllerBase
 
         return Ok(data);
     }
+
+
+    [HttpGet("monthly-expenses")]
+    public async Task<IActionResult> GetMonthlyExpenses()
+    {
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        var now = DateTime.UtcNow;
+        var startDate = new DateTime(
+            now.Year,
+            now.Month,
+            1,
+            0,
+            0,
+            0,
+            DateTimeKind.Utc
+        ).AddMonths(-5);
+
+        var maintenanceExpenses = await _context.MaintenanceRecords
+            .Where(r =>
+                r.Vehicle.AppUserId == userId &&
+                r.MaintenanceDate >= startDate)
+            .GroupBy(r => new
+            {
+                r.MaintenanceDate.Year,
+                r.MaintenanceDate.Month
+            })
+            .Select(g => new
+            {
+                g.Key.Year,
+                g.Key.Month,
+                MaintenanceCost = g.Sum(r => r.Cost)
+            })
+            .ToListAsync();
+
+        var reminderExpenses = await _context.VehicleReminders
+            .Where(r =>
+                r.Vehicle.AppUserId == userId &&
+                r.DueDate >= startDate)
+            .GroupBy(r => new
+            {
+                r.DueDate.Year,
+                r.DueDate.Month
+            })
+            .Select(g => new
+            {
+                g.Key.Year,
+                g.Key.Month,
+                ReminderCost = g.Sum(r => r.Amount ?? 0)
+            })
+            .ToListAsync();
+
+        var result = Enumerable.Range(0, 6)
+            .Select(i =>
+            {
+                var date = startDate.AddMonths(i);
+
+                var maintenanceCost = maintenanceExpenses
+                    .FirstOrDefault(x => x.Year == date.Year && x.Month == date.Month)
+                    ?.MaintenanceCost ?? 0;
+
+                var reminderCost = reminderExpenses
+                    .FirstOrDefault(x => x.Year == date.Year && x.Month == date.Month)
+                    ?.ReminderCost ?? 0;
+
+                return new
+                {
+                    Month = date.ToString("yyyy-MM"),
+                    MaintenanceCost = maintenanceCost,
+                    ReminderCost = reminderCost,
+                    TotalCost = maintenanceCost + reminderCost
+                };
+            })
+            .ToList();
+
+        return Ok(result);
+    }
 }

@@ -15,3 +15,8 @@ export const getCostByVehicle = async () => {
   const response = await api.get("/dashboard/cost-by-vehicle");
   return response.data;
 };
+
+export const getMonthlyExpenses = async () => {
+  const response = await api.get("/dashboard/monthly-expenses");
+  return response.data;
+};

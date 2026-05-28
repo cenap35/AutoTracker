@@ -9,8 +9,10 @@ import {
   getDashboardSummary,
   getRecentMaintenance,
   getCostByVehicle,
+  getMonthlyExpenses,
 } from "../services/dashboardService";
 import { getVehicles } from "../services/vehicleService";
+import { getVehicleReminders } from "../services/vehicleReminderService";
 
 const QUICK_ACTIONS = [
   {
@@ -77,22 +79,36 @@ function DashboardPage() {
 
   const fullName = localStorage.getItem("fullName");
 
+  const [monthlyExpenses, setMonthlyExpenses] = useState([]);
+
+  const [reminders, setReminders] = useState([]);
+
   useEffect(() => {
     const fetchDashboardData = async () => {
       setLoading(true);
       setError("");
       try {
-        const [data, maintenanceData, costData, vehiclesData] =
-          await Promise.all([
-            getDashboardSummary(),
-            getRecentMaintenance(),
-            getCostByVehicle(),
-            getVehicles(),
-          ]);
+        const [
+          data,
+          maintenanceData,
+          costData,
+          vehiclesData,
+          monthlyData,
+          remindersData,
+        ] = await Promise.all([
+          getDashboardSummary(),
+          getRecentMaintenance(),
+          getCostByVehicle(),
+          getVehicles(),
+          getMonthlyExpenses(),
+          getVehicleReminders(),
+        ]);
         setSummary(data);
         setRecentMaintenance(maintenanceData);
         setCostByVehicle(costData);
         setVehicles(vehiclesData);
+        setMonthlyExpenses(monthlyData);
+        setReminders(remindersData);
       } catch (err) {
         console.error(err);
         setError("Panel verileri yüklenemedi. Lütfen sayfayı yenileyin.");
@@ -103,6 +119,42 @@ function DashboardPage() {
 
     fetchDashboardData();
   }, []);
+
+  const totalReminderCost = monthlyExpenses.reduce(
+    (sum, item) => sum + Number(item.reminderCost || 0),
+    0,
+  );
+
+  const totalAllCost =
+    Number(summary?.totalMaintenanceCost || 0) + totalReminderCost;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const upcomingReminders = reminders
+    .filter((reminder) => !reminder.isCompleted)
+    .map((reminder) => {
+      const dueDate = new Date(reminder.dueDate);
+      dueDate.setHours(0, 0, 0, 0);
+
+      const daysLeft = Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
+
+      return {
+        ...reminder,
+        daysLeft,
+      };
+    })
+    .filter((reminder) => reminder.daysLeft <= 7)
+    .sort((a, b) => a.daysLeft - b.daysLeft)
+    .slice(0, 5);
+
+  const overdueReminderCount = upcomingReminders.filter(
+    (reminder) => reminder.daysLeft < 0,
+  ).length;
+
+  const dueTodayReminderCount = upcomingReminders.filter(
+    (reminder) => reminder.daysLeft === 0,
+  ).length;
 
   if (loading) {
     return (
@@ -195,7 +247,177 @@ function DashboardPage() {
               iconBg="#fff8e2"
               background="linear-gradient(110deg, #fff5de 67%, #fffdf6 100%)"
             />
+            <StatsCard
+              icon="bi-calendar-check"
+              title="Takip / Diğer masraf"
+              value={`₺${totalReminderCost.toLocaleString("tr-TR")}`}
+              iconColor="#6f42c1"
+              iconBg="#f4efff"
+              background="linear-gradient(110deg, #f4efff 65%, #ffffff 100%)"
+            />
+
+            <StatsCard
+              icon="bi-wallet2"
+              title="Genel toplam masraf"
+              value={`₺${totalAllCost.toLocaleString("tr-TR")}`}
+              iconColor="#dc3545"
+              iconBg="#fff0f2"
+              background="linear-gradient(110deg, #fff0f2 65%, #ffffff 100%)"
+            />
           </div>
+          {/*6ay masraf */}
+          <section className="mb-4 mb-lg-5">
+            <SectionTitle icon="bi-calendar3">
+              Son 6 Ay Masraf Özeti
+            </SectionTitle>
+
+            <div className="row g-3">
+              {monthlyExpenses.map((item) => (
+                <div className="col-md-6 col-xl-4" key={item.month}>
+                  <div
+                    className="card border-0 shadow-sm h-100"
+                    style={{
+                      borderRadius: 16,
+                      background:
+                        "linear-gradient(120deg, #ffffff 0%, #f5f8ff 100%)",
+                    }}
+                  >
+                    <div className="card-body p-4">
+                      <div
+                        className="fw-bold mb-3"
+                        style={{ color: "#284185" }}
+                      >
+                        <i className="bi bi-calendar-month me-2 text-primary"></i>
+                        {item.month}
+                      </div>
+
+                      <div className="d-flex justify-content-between small mb-2">
+                        <span className="text-muted">Bakım</span>
+                        <strong>
+                          ₺
+                          {Number(item.maintenanceCost).toLocaleString("tr-TR")}
+                        </strong>
+                      </div>
+
+                      <div className="d-flex justify-content-between small mb-2">
+                        <span className="text-muted">Takip / Diğer</span>
+                        <strong>
+                          ₺{Number(item.reminderCost).toLocaleString("tr-TR")}
+                        </strong>
+                      </div>
+
+                      <hr />
+
+                      <div className="d-flex justify-content-between">
+                        <span className="fw-semibold">Toplam</span>
+                        <strong style={{ color: "#3b60c5" }}>
+                          ₺{Number(item.totalCost).toLocaleString("tr-TR")}
+                        </strong>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Upcoming reminders */}
+          <section className="mb-4 mb-lg-5">
+            <SectionTitle
+              icon="bi-bell-fill"
+              action={
+                <Link
+                  to="/reminders"
+                  className="btn btn-outline-primary btn-sm border-2 px-3 rounded-pill fw-semibold"
+                >
+                  Tüm takipler
+                  <i className="bi bi-arrow-right-short ms-1" />
+                </Link>
+              }
+            >
+              Yaklaşan Takipler
+              <span className="badge bg-danger-subtle text-danger ms-2 fw-semibold">
+                {overdueReminderCount} geciken
+              </span>
+              <span className="badge bg-warning-subtle text-warning-emphasis ms-2 fw-semibold">
+                {dueTodayReminderCount} bugün
+              </span>
+            </SectionTitle>
+
+            {upcomingReminders.length === 0 ? (
+              <div className="alert alert-light border text-center shadow-sm rounded-3 mb-0">
+                <i className="bi bi-check-circle me-2 text-success" />
+                Önümüzdeki 7 gün içinde bekleyen takip yok.
+              </div>
+            ) : (
+              <div className="row g-3">
+                {upcomingReminders.map((reminder) => (
+                  <div className="col-md-6 col-xl-4" key={reminder.id}>
+                    <div
+                      className="card border-0 shadow-sm h-100"
+                      style={{
+                        borderRadius: 16,
+                        background:
+                          reminder.daysLeft < 0
+                            ? "linear-gradient(120deg, #fff5f5 0%, #ffffff 100%)"
+                            : reminder.daysLeft === 0
+                              ? "linear-gradient(120deg, #fff8e8 0%, #ffffff 100%)"
+                              : "linear-gradient(120deg, #ffffff 0%, #f5f8ff 100%)",
+                      }}
+                    >
+                      <div className="card-body p-4">
+                        <div className="d-flex justify-content-between align-items-start gap-2 mb-2">
+                          <div>
+                            <div
+                              className="fw-bold"
+                              style={{ color: "#284185" }}
+                            >
+                              {reminder.type}
+                            </div>
+                            <div className="text-muted small">
+                              {reminder.vehicleName} - {reminder.plateNumber}
+                            </div>
+                          </div>
+
+                          <span
+                            className={`badge ${
+                              reminder.daysLeft < 0
+                                ? "bg-danger"
+                                : reminder.daysLeft === 0
+                                  ? "bg-warning text-dark"
+                                  : "bg-primary"
+                            }`}
+                          >
+                            {reminder.daysLeft < 0
+                              ? `${Math.abs(reminder.daysLeft)} gün gecikti`
+                              : reminder.daysLeft === 0
+                                ? "Bugün"
+                                : `${reminder.daysLeft} gün kaldı`}
+                          </span>
+                        </div>
+
+                        <div className="small text-muted mt-3">
+                          <i className="bi bi-calendar-event me-1"></i>
+                          {new Date(reminder.dueDate).toLocaleDateString(
+                            "tr-TR",
+                          )}
+                        </div>
+
+                        {reminder.amount && (
+                          <div
+                            className="small fw-semibold mt-2"
+                            style={{ color: "#284185" }}
+                          >
+                            ₺{Number(reminder.amount).toLocaleString("tr-TR")}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
 
           {/* Chart + quick actions */}
           <div className="row g-4 mb-4 mb-lg-5">
