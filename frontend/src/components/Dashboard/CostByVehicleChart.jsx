@@ -21,7 +21,7 @@ function CostByVehicleChart({ data }) {
         {filteredData.length === 0 ? (
           <p className="text-muted">Henüz grafik için bakım masrafı yok.</p>
         ) : (
-          <div style={{ width: "100%", height: 240 }}>
+          <div style={{ width: "100%", height: 350 }}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={filteredData}>
                 <XAxis dataKey="vehicleName" tick={{ fontSize: 12 }} />
