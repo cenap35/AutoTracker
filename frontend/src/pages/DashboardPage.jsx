@@ -135,6 +135,16 @@ function DashboardPage() {
     0,
   );
 
+  const sixMonthMaintenanceCost = monthlyExpenses.reduce(
+    (sum, item) => sum + Number(item.maintenanceCost || 0),
+    0,
+  );
+
+  const sixMonthTotalCost = monthlyExpenses.reduce(
+    (sum, item) => sum + Number(item.totalCost || 0),
+    0,
+  );
+
   const totalAllCost =
     Number(summary?.totalMaintenanceCost || 0) + totalReminderCost;
 
@@ -280,6 +290,61 @@ function DashboardPage() {
             <SectionTitle icon="bi-calendar3">
               Son 6 Ay Masraf Özeti
             </SectionTitle>
+
+            <div className="row g-3 mb-3">
+              <div className="col-md-4">
+                <div
+                  className="card border-0 shadow-sm"
+                  style={{ borderRadius: 14 }}
+                >
+                  <div className="card-body">
+                    <div className="text-muted small">Son 6 ay bakım</div>
+                    <div
+                      className="h5 fw-bold mb-0"
+                      style={{ color: "#284185" }}
+                    >
+                      ₺{sixMonthMaintenanceCost.toLocaleString("tr-TR")}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="col-md-4">
+                <div
+                  className="card border-0 shadow-sm"
+                  style={{ borderRadius: 14 }}
+                >
+                  <div className="card-body">
+                    <div className="text-muted small">
+                      Son 6 ay takip / diğer
+                    </div>
+                    <div
+                      className="h5 fw-bold mb-0"
+                      style={{ color: "#6f42c1" }}
+                    >
+                      ₺{totalReminderCost.toLocaleString("tr-TR")}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="col-md-4">
+                <div
+                  className="card border-0 shadow-sm"
+                  style={{ borderRadius: 14 }}
+                >
+                  <div className="card-body">
+                    <div className="text-muted small">Son 6 ay toplam</div>
+                    <div
+                      className="h5 fw-bold mb-0"
+                      style={{ color: "#dc3545" }}
+                    >
+                      ₺{sixMonthTotalCost.toLocaleString("tr-TR")}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             <div className="row g-3">
               {monthlyExpenses.map((item) => (
