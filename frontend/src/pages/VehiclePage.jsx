@@ -7,6 +7,7 @@ import {
 } from "../services/vehicleService";
 import { Link } from "react-router-dom";
 import AddVehicleForm from "../components/AddVehicleForm";
+import LoadingSpinner from "../components/Common/LoadingSpinner";
 
 function VehiclesPage() {
   const [vehicles, setVehicles] = useState([]);
@@ -14,14 +15,20 @@ function VehiclesPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [deleteConfirmVehicleId, setDeleteConfirmVehicleId] = useState(null);
 
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const fetchVehicles = async () => {
+      setLoading(true);
+
       try {
         const data = await getVehicles();
         setVehicles(data);
       } catch (err) {
         setError("Araçlar yüklenemedi");
         console.error(err);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -59,6 +66,14 @@ function VehiclesPage() {
 
     return searchText.includes(searchTerm.toLowerCase());
   });
+
+  if (loading) {
+    return (
+      <PageWrapper>
+        <LoadingSpinner text="Araçlar yükleniyor..." />
+      </PageWrapper>
+    );
+  }
 
   return (
     <PageWrapper>

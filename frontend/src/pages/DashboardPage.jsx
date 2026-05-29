@@ -13,6 +13,7 @@ import {
 } from "../services/dashboardService";
 import { getVehicles } from "../services/vehicleService";
 import { getVehicleReminders } from "../services/vehicleReminderService";
+import LoadingSpinner from "../components/Common/LoadingSpinner";
 
 const QUICK_ACTIONS = [
   {
@@ -180,17 +181,7 @@ function DashboardPage() {
     return (
       <PageWrapper>
         <DashboardBackground>
-          <div
-            className="container d-flex flex-column align-items-center justify-content-center py-5"
-            style={{ minHeight: "calc(100vh - 72px)" }}
-          >
-            <div
-              className="spinner-border mb-3"
-              style={{ color: "#3b60c5", width: "2.5rem", height: "2.5rem" }}
-              role="status"
-            />
-            <p className="text-muted mb-0">Panel yükleniyor…</p>
-          </div>
+          <LoadingSpinner text="Panel yükleniyor..." />
         </DashboardBackground>
       </PageWrapper>
     );

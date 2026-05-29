@@ -9,6 +9,7 @@ import {
 } from "../services/vehicleReminderService";
 import ReminderForm from "../components/ReminderForm";
 import ReminderCard from "../components/ReminderCard";
+import LoadingSpinner from "../components/Common/LoadingSpinner";
 
 function ReminderPage() {
   const [vehicles, setVehicles] = useState([]);
@@ -19,8 +20,12 @@ function ReminderPage() {
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [selectedType, setSelectedType] = useState("all");
 
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
+
       try {
         const vehiclesData = await getVehicles();
         const remindersData = await getVehicleReminders();
@@ -30,6 +35,8 @@ function ReminderPage() {
       } catch (err) {
         setError("Takipler yüklenemedi.");
         console.error(err);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -97,6 +104,14 @@ function ReminderPage() {
 
     return vehicleMatch && statusMatch && typeMatch;
   });
+
+  if (loading) {
+    return (
+      <PageWrapper>
+        <LoadingSpinner text="Takipler yükleniyor..." />
+      </PageWrapper>
+    );
+  }
 
   return (
     <PageWrapper>

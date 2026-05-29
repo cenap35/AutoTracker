@@ -3,6 +3,7 @@ import Logo from "../components/Logo";
 import AnimatedText from "../components/deneme";
 import PageWrapper from "../components/PageWrapper";
 
+
 const FEATURES = [
   {
     icon: "bi-car-front-fill",

@@ -26,6 +26,7 @@ import {
   deleteVehicleReminder,
 } from "../services/vehicleReminderService";
 import ReminderCard from "../components/ReminderCard";
+import LoadingSpinner from "../components/Common/LoadingSpinner";
 
 function VehicleDetailPage() {
   const { id } = useParams();
@@ -231,11 +232,24 @@ function VehicleDetailPage() {
   };
 
   if (error) {
-    return <p>{error}</p>;
+    return (
+      <PageWrapper>
+        <div className="container py-5">
+          <div className="alert alert-danger text-center shadow-sm rounded-3">
+            <i className="bi bi-exclamation-triangle me-2"></i>
+            {error}
+          </div>
+        </div>
+      </PageWrapper>
+    );
   }
 
   if (!vehicle) {
-    return <p>Loading...</p>;
+    return (
+      <PageWrapper>
+        <LoadingSpinner text="Araç detayı yükleniyor..." />
+      </PageWrapper>
+    );
   }
 
   const totalMaintenanceCost = maintenanceRecords.reduce(
@@ -266,7 +280,6 @@ function VehicleDetailPage() {
       >
         <div className="row justify-content-center">
           <div className="col-12 col-lg-8">
-
             {/* Araç Bilgisi */}
             <div
               className="card border-0 shadow-sm mb-3"
@@ -282,13 +295,22 @@ function VehicleDetailPage() {
                     {vehicle.brand} {vehicle.model}
                   </h3>
                   <div className="mb-2 d-flex flex-wrap gap-2">
-                    <span className="badge bg-primary text-white" style={{ fontSize: 16 }}>
+                    <span
+                      className="badge bg-primary text-white"
+                      style={{ fontSize: 16 }}
+                    >
                       {vehicle.plateNumber}
                     </span>
-                    <span className="badge bg-light text-dark border" style={{ fontSize: 15 }}>
+                    <span
+                      className="badge bg-light text-dark border"
+                      style={{ fontSize: 15 }}
+                    >
                       Yıl: {vehicle.year}
                     </span>
-                    <span className="badge bg-light text-dark border" style={{ fontSize: 15 }}>
+                    <span
+                      className="badge bg-light text-dark border"
+                      style={{ fontSize: 15 }}
+                    >
                       Km: {vehicle.currentMileage?.toLocaleString("tr-TR") || 0}
                     </span>
                   </div>
@@ -301,13 +323,19 @@ function VehicleDetailPage() {
               <div className="row g-2">
                 <div className="col-6 col-md-3">
                   <div className="text-center p-3 bg-white border rounded-3 h-100">
-                    <div className="text-muted" style={{ fontSize: 13 }}>Bakım Kaydı</div>
-                    <div className="fw-bold" style={{ fontSize: 22 }}>{maintenanceRecords.length}</div>
+                    <div className="text-muted" style={{ fontSize: 13 }}>
+                      Bakım Kaydı
+                    </div>
+                    <div className="fw-bold" style={{ fontSize: 22 }}>
+                      {maintenanceRecords.length}
+                    </div>
                   </div>
                 </div>
                 <div className="col-6 col-md-3">
                   <div className="text-center p-3 bg-white border rounded-3 h-100">
-                    <div className="text-muted" style={{ fontSize: 13 }}>Toplam Masraf</div>
+                    <div className="text-muted" style={{ fontSize: 13 }}>
+                      Toplam Masraf
+                    </div>
                     <div className="fw-bold" style={{ fontSize: 22 }}>
                       ₺{totalMaintenanceCost.toLocaleString("tr-TR")}
                     </div>
@@ -315,15 +343,22 @@ function VehicleDetailPage() {
                 </div>
                 <div className="col-6 col-md-3">
                   <div className="text-center p-3 bg-white border rounded-3 h-100">
-                    <div className="text-muted" style={{ fontSize: 13 }}>Ortalama Masraf</div>
+                    <div className="text-muted" style={{ fontSize: 13 }}>
+                      Ortalama Masraf
+                    </div>
                     <div className="fw-bold" style={{ fontSize: 22 }}>
-                      ₺{averageMaintenanceCost.toLocaleString("tr-TR", { maximumFractionDigits: 0 })}
+                      ₺
+                      {averageMaintenanceCost.toLocaleString("tr-TR", {
+                        maximumFractionDigits: 0,
+                      })}
                     </div>
                   </div>
                 </div>
                 <div className="col-6 col-md-3">
                   <div className="text-center p-3 bg-white border rounded-3 h-100">
-                    <div className="text-muted" style={{ fontSize: 13 }}>Son Bakım</div>
+                    <div className="text-muted" style={{ fontSize: 13 }}>
+                      Son Bakım
+                    </div>
                     <div className="fw-bold" style={{ fontSize: 18 }}>
                       {latestMaintenanceDate
                         ? latestMaintenanceDate.toLocaleDateString("tr-TR")
@@ -343,7 +378,10 @@ function VehicleDetailPage() {
               }}
             >
               <div className="card-body p-4">
-                <div className="mb-3 text-secondary fw-normal" style={{ fontSize: 17 }}>
+                <div
+                  className="mb-3 text-secondary fw-normal"
+                  style={{ fontSize: 17 }}
+                >
                   <i className="bi bi-pencil-square me-2"></i>
                   Araç Bilgisini Güncelle
                 </div>
@@ -448,7 +486,10 @@ function VehicleDetailPage() {
               }}
             >
               <div className="card-body px-4 py-3">
-                <div className="text-primary mb-3 fw-bold" style={{ fontSize: 18 }}>
+                <div
+                  className="text-primary mb-3 fw-bold"
+                  style={{ fontSize: 18 }}
+                >
                   <i className="bi bi-tools me-2"></i>Bakım Kayıtları
                 </div>
                 {maintenanceRecords.length === 0 ? (
@@ -501,7 +542,10 @@ function VehicleDetailPage() {
               style={{ borderRadius: 10 }}
             >
               <div className="card-body px-4 py-3">
-                <div className="text-primary mb-2 fw-bold" style={{ fontSize: 18 }}>
+                <div
+                  className="text-primary mb-2 fw-bold"
+                  style={{ fontSize: 18 }}
+                >
                   <i className="bi bi-calendar-check me-2"></i>
                   Araç Takipleri
                 </div>

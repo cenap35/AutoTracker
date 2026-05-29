@@ -8,6 +8,7 @@ import {
 } from "../services/maintenanceService";
 import AddMaintenanceForm from "../components/AddMaintenanceForm";
 import MaintenanceCard from "../components/MaintenanceCard";
+import LoadingSpinner from "../components/Common/LoadingSpinner";
 
 function MaintenancePage() {
   const [records, setRecords] = useState([]);
@@ -16,9 +17,11 @@ function MaintenancePage() {
   const [selectedVehicleId, setSelectedVehicleId] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOption, setSortOption] = useState("newest");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchAllMaintenanceRecords = async () => {
+      setLoading(true);
       try {
         const vehicles = await getVehicles();
         setVehicles(vehicles);
@@ -40,6 +43,8 @@ function MaintenancePage() {
       } catch (err) {
         setError("Bakım kayıtları yüklenemedi.");
         console.error(err);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -120,6 +125,14 @@ function MaintenancePage() {
   const averageFilteredCost =
     filteredRecords.length > 0 ? totalFilteredCost / filteredRecords.length : 0;
 
+  if (loading) {
+    return (
+      <PageWrapper>
+        <LoadingSpinner text="Bakım kayıtları yükleniyor..." />
+      </PageWrapper>
+    );
+  }
+
   return (
     <PageWrapper>
       <div
@@ -131,7 +144,6 @@ function MaintenancePage() {
           boxShadow: "0 4px 42px -14px #3b60c533",
         }}
       >
-      
         {/* Başlık ve Açıklama */}
         <div className="mb-4">
           <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
@@ -342,10 +354,7 @@ function MaintenancePage() {
           <div className="row g-4">
             {filteredRecords.map((record) => (
               <div className="col-md-6 col-lg-4" key={record.id}>
-                <MaintenanceCard
-                  record={record}
-                  showVehicleInfo={true}
-                />
+                <MaintenanceCard record={record} showVehicleInfo={true} />
               </div>
             ))}
           </div>

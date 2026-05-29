@@ -10,6 +10,7 @@ import {
 } from "../services/vehicleNoteService";
 import VehicleNoteForm from "../components/VehicleNoteForm";
 import VehicleNoteCard from "../components/VehicleNoteCard";
+import LoadingSpinner from "../components/Common/LoadingSpinner";
 
 function ReportsPage() {
   const [vehicles, setVehicles] = useState([]);
@@ -21,8 +22,12 @@ function ReportsPage() {
   const [selectedPriority, setSelectedPriority] = useState("all");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
+
       try {
         const vehiclesData = await getVehicles();
         const notesData = await getVehicleNotes();
@@ -32,6 +37,8 @@ function ReportsPage() {
       } catch (err) {
         setError("Araç notları yüklenemedi.");
         console.error(err);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -131,6 +138,14 @@ function ReportsPage() {
     setSelectedStatus("all");
     setSelectedPriority("all");
   };
+
+  if (loading) {
+    return (
+      <PageWrapper>
+        <LoadingSpinner text="Raporlar yükleniyor..." />
+      </PageWrapper>
+    );
+  }
 
   return (
     <PageWrapper>
@@ -462,8 +477,8 @@ function ReportsPage() {
                         animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
                         transition={{
-                          duration: 0.60,
-                          ease: [0.20, 0.70, 0.50, 1],
+                          duration: 0.6,
+                          ease: [0.2, 0.7, 0.5, 1],
                         }}
                         style={{ overflow: "hidden" }}
                       >
