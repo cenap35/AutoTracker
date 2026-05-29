@@ -177,6 +177,8 @@ function DashboardPage() {
     (reminder) => reminder.daysLeft === 0,
   ).length;
 
+
+
   if (loading) {
     return (
       <PageWrapper>

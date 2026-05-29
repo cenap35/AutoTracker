@@ -17,11 +17,16 @@ import ConfirmEmailPage from "./pages/ConfirmEmailPage";
 import ReminderPage from "./pages/ReminderPage";
 import AccountPage from "./pages/AccountPage";
 import NotFoundPage from "./pages/NotFoundPage";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 function App() {
   return (
     <>
       <Navbar />
+
+      <ErrorBoundary>
+
+
       <Routes>
         <Route path="/" element={<HomePage />} />
 
@@ -88,7 +93,11 @@ function App() {
         
       </Routes>
 
+      </ErrorBoundary>
+
       <Footer />
+
+      
     </>
   );
 }
