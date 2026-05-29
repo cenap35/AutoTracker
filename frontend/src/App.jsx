@@ -16,6 +16,7 @@ import ReportsPage from "./pages/ReportsPage";
 import ConfirmEmailPage from "./pages/ConfirmEmailPage";
 import ReminderPage from "./pages/ReminderPage";
 import AccountPage from "./pages/AccountPage";
+import NotFoundPage from "./pages/NotFoundPage";
 
 function App() {
   return (
@@ -82,6 +83,9 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        <Route path="*" element={<NotFoundPage />} />
+        
       </Routes>
 
       <Footer />
