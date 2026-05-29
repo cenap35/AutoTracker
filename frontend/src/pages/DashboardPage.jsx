@@ -284,6 +284,14 @@ function DashboardPage() {
               iconBg="#fff0f2"
               background="linear-gradient(110deg, #fff0f2 65%, #ffffff 100%)"
             />
+            <StatsCard
+              icon="bi-bell-fill"
+              title="Yaklaşan takip"
+              value={upcomingReminders.length}
+              iconColor="#0dcaf0"
+              iconBg="#e8fbff"
+              background="linear-gradient(110deg, #e8fbff 65%, #ffffff 100%)"
+            />
           </div>
           {/*6ay masraf */}
           <section className="mb-4 mb-lg-5">
