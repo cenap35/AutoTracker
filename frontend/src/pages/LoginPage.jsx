@@ -21,7 +21,7 @@ function LoginPage() {
       localStorage.setItem("fullName", data.fullName);
       localStorage.setItem("email", data.email);
 
-      navigate("/vehicles");
+      navigate("/");
     } catch (err) {
       const errorMessage = err.response?.data || "Email veya şifre hatalı";
 

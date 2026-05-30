@@ -225,10 +225,14 @@ function HomePage() {
                     style={{ color: "#1c3967" }}
                   >
                     {[
-                      "Tüm araçlar için merkezi kayıt",
-                      "Bakım ve masraf geçmişi",
-                      "Görsel raporlar ve özet panel",
-                      "Mobil uyumlu, hızlı arayüz",
+                      "Araç bazlı bakım ve gider takibi",
+
+                      "Masraf analizleri ve raporlama",
+
+                      "Yaklaşan sigorta ve muayene hatırlatmaları",
+
+                      "Notlar, kayıtlar ve araç geçmişi",
+                      "Ve daha fazlası ..."
                     ].map((item) => (
                       <li
                         key={item}
