@@ -27,6 +27,7 @@ import {
 } from "../services/vehicleReminderService";
 import ReminderCard from "../components/ReminderCard";
 import LoadingSpinner from "../components/Common/LoadingSpinner";
+import { toast } from "react-toastify";
 
 function VehicleDetailPage() {
   const { id } = useParams();
@@ -91,16 +92,26 @@ function VehicleDetailPage() {
             : item,
         ),
       );
+
+      toast.success(
+        note.isCompleted
+          ? "Not tekrar bekleyen olarak işaretlendi."
+          : "Not tamamlandı.",
+      );
     } catch (err) {
+      toast.error("Not güncellenemedi.");
       console.error(err);
     }
   };
+
   const handleCreateVehicleNote = async (noteData) => {
     try {
       const newNote = await createVehicleNote(noteData);
 
       setVehicleNotes([...vehicleNotes, newNote]);
+      toast.success("Not başarıyla eklendi.");
     } catch (err) {
+      toast.error("Not eklenemedi.");
       console.error(err);
     }
   };
@@ -110,7 +121,9 @@ function VehicleDetailPage() {
       await deleteVehicleNote(noteId);
 
       setVehicleNotes(vehicleNotes.filter((note) => note.id !== noteId));
+      toast.success("Not başarıyla silindi.");
     } catch (err) {
+      toast.error("Not silinemedi.");
       console.error(err);
     }
   };
@@ -124,7 +137,10 @@ function VehicleDetailPage() {
           note.id === noteId ? { ...note, ...updatedData } : note,
         ),
       );
+
+      toast.success("Not başarıyla güncellendi.");
     } catch (err) {
+      toast.error("Not güncellenemedi.");
       console.error(err);
     }
   };
@@ -134,7 +150,9 @@ function VehicleDetailPage() {
       const newRecord = await createMaintenanceRecord(id, recordData);
 
       setMaintenanceRecords([...maintenanceRecords, newRecord]);
+      toast.success("Bakım kaydı başarıyla eklendi.");
     } catch (err) {
+      toast.error("Bakım kaydı eklenemedi.");
       console.error(err);
     }
   };
@@ -146,7 +164,10 @@ function VehicleDetailPage() {
       setMaintenanceRecords(
         maintenanceRecords.filter((record) => record.id !== recordId),
       );
+
+      toast.success("Bakım kaydı başarıyla silindi.");
     } catch (err) {
+      toast.error("Bakım kaydı silinemedi.");
       console.error(err);
     }
   };
@@ -160,7 +181,10 @@ function VehicleDetailPage() {
           record.id === recordId ? { ...record, ...recordData } : record,
         ),
       );
+
+      toast.success("Bakım kaydı başarıyla güncellendi.");
     } catch (err) {
+      toast.error("Bakım kaydı güncellenemedi.");
       console.error(err);
     }
   };
@@ -179,7 +203,10 @@ function VehicleDetailPage() {
 
       const updatedVehicle = await getVehicleById(id);
       setVehicle(updatedVehicle);
+
+      toast.success("Araç bilgileri başarıyla güncellendi.");
     } catch (err) {
+      toast.error("Araç bilgileri güncellenemedi.");
       console.error(err);
     }
   };
@@ -190,11 +217,14 @@ function VehicleDetailPage() {
 
       setVehicleReminders([newReminder, ...vehicleReminders]);
       setError("");
+      toast.success("Takip başarıyla eklendi.");
     } catch (err) {
       setError("Takip eklenemedi.");
+      toast.error("Takip eklenemedi.");
       console.error(err);
     }
   };
+
   const handleToggleVehicleReminder = async (reminder) => {
     try {
       await updateVehicleReminder(reminder.id, {
@@ -212,8 +242,15 @@ function VehicleDetailPage() {
             : item,
         ),
       );
+
+      toast.success(
+        reminder.isCompleted
+          ? "Takip tekrar bekleyen olarak işaretlendi."
+          : "Takip tamamlandı.",
+      );
     } catch (err) {
       setError("Takip güncellenemedi.");
+      toast.error("Takip güncellenemedi.");
       console.error(err);
     }
   };
@@ -225,8 +262,11 @@ function VehicleDetailPage() {
       setVehicleReminders(
         vehicleReminders.filter((reminder) => reminder.id !== id),
       );
+
+      toast.success("Takip başarıyla silindi.");
     } catch (err) {
       setError("Takip silinemedi.");
+      toast.error("Takip silinemedi.");
       console.error(err);
     }
   };

@@ -11,6 +11,7 @@ import {
 import VehicleNoteForm from "../components/VehicleNoteForm";
 import VehicleNoteCard from "../components/VehicleNoteCard";
 import LoadingSpinner from "../components/Common/LoadingSpinner";
+import { toast } from "react-toastify";
 
 function ReportsPage() {
   const [vehicles, setVehicles] = useState([]);
@@ -51,7 +52,9 @@ function ReportsPage() {
 
       setNotes([newNote, ...notes]);
       setError("");
+      toast.success("Not başarıyla eklendi.");
     } catch (err) {
+      toast.error("Not eklenemedi.");
       setError("Not eklenemedi.");
       console.error(err);
     }
@@ -77,7 +80,13 @@ function ReportsPage() {
       );
 
       setError("");
+      toast.success(
+        note.isCompleted
+          ? "Not tekrar bekleyen olarak işaretlendi."
+          : "Not tamamlandı.",
+      );
     } catch (err) {
+      toast.error("Not güncellenemedi.");
       setError("Not güncellenemedi.");
       console.error(err);
     }
@@ -94,7 +103,9 @@ function ReportsPage() {
       );
 
       setError("");
+      toast.success("Not başarıyla güncellendi.");
     } catch (err) {
+      toast.error("Not güncellenemedi.");
       setError("Not güncellenemedi.");
       console.error(err);
     }
@@ -106,7 +117,9 @@ function ReportsPage() {
 
       setNotes(notes.filter((note) => note.id !== noteId));
       setError("");
+      toast.success("Not başarıyla silindi.");
     } catch (err) {
+      toast.error("Not silinemedi.");
       setError("Not silinemedi.");
       console.error(err);
     }

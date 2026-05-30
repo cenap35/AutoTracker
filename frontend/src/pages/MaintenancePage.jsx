@@ -9,6 +9,7 @@ import {
 import AddMaintenanceForm from "../components/AddMaintenanceForm";
 import MaintenanceCard from "../components/MaintenanceCard";
 import LoadingSpinner from "../components/Common/LoadingSpinner";
+import { toast } from "react-toastify";
 
 function MaintenancePage() {
   const [records, setRecords] = useState([]);
@@ -72,7 +73,10 @@ function MaintenancePage() {
       };
 
       setRecords([recordWithVehicleInfo, ...records]);
+      setError("");
+      toast.success("Bakım kaydı başarıyla eklendi.");
     } catch (err) {
+      toast.error("Bakım kaydı eklenemedi.");
       setError("Bakım kaydı eklenemedi.");
       console.error(err);
     }

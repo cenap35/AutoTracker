@@ -10,6 +10,7 @@ import {
 import ReminderForm from "../components/ReminderForm";
 import ReminderCard from "../components/ReminderCard";
 import LoadingSpinner from "../components/Common/LoadingSpinner";
+import { toast } from "react-toastify";
 
 function ReminderPage() {
   const [vehicles, setVehicles] = useState([]);
@@ -49,7 +50,9 @@ function ReminderPage() {
 
       setReminders([newReminder, ...reminders]);
       setError("");
+      toast.success("Takip başarıyla eklendi.");
     } catch (err) {
+      toast.error("Takip eklenemedi.");
       setError("Takip eklenemedi.");
       console.error(err);
     }
@@ -74,7 +77,15 @@ function ReminderPage() {
             : item,
         ),
       );
+
+      setError("");
+      toast.success(
+        reminder.isCompleted
+          ? "Takip tekrar bekleyen olarak işaretlendi."
+          : "Takip tamamlandı.",
+      );
     } catch (err) {
+      toast.error("Takip güncellenemedi.");
       setError("Takip güncellenemedi.");
       console.error(err);
     }
@@ -83,8 +94,12 @@ function ReminderPage() {
   const handleDeleteReminder = async (id) => {
     try {
       await deleteVehicleReminder(id);
+
       setReminders(reminders.filter((reminder) => reminder.id !== id));
+      setError("");
+      toast.success("Takip başarıyla silindi.");
     } catch (err) {
+      toast.error("Takip silinemedi.");
       setError("Takip silinemedi.");
       console.error(err);
     }

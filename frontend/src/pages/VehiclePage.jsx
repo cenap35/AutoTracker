@@ -8,6 +8,7 @@ import {
 import { Link } from "react-router-dom";
 import AddVehicleForm from "../components/AddVehicleForm";
 import LoadingSpinner from "../components/Common/LoadingSpinner";
+import { toast } from "react-toastify";
 
 function VehiclesPage() {
   const [vehicles, setVehicles] = useState([]);
@@ -40,7 +41,10 @@ function VehiclesPage() {
       await deleteVehicle(id);
 
       setVehicles(vehicles.filter((vehicle) => vehicle.id !== id));
+
+      toast.success("Araç başarıyla silindi.");
     } catch (err) {
+      toast.error("Araç silinemedi.");
       console.error(err);
     }
   };
@@ -49,8 +53,10 @@ function VehiclesPage() {
     try {
       const newVehicle = await createVehicle(vehicleFormData);
       setVehicles([...vehicles, newVehicle]);
+      toast.success("Araç başarıyla eklendi.");
       setError("");
     } catch (err) {
+      toast.error("Araç eklenemedi.");
       setError("Araç eklenemedi.");
       console.error(err);
     }

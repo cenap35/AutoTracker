@@ -18,6 +18,8 @@ import ReminderPage from "./pages/ReminderPage";
 import AccountPage from "./pages/AccountPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import ErrorBoundary from "./components/ErrorBoundary";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (
@@ -25,79 +27,83 @@ function App() {
       <Navbar />
 
       <ErrorBoundary>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
 
+          <Route path="/login" element={<LoginPage />} />
 
-      <Routes>
-        <Route path="/" element={<HomePage />} />
+          <Route path="/register" element={<RegisterPage />} />
 
-        <Route path="/login" element={<LoginPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
-        <Route path="/register" element={<RegisterPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
 
-        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/confirm-email" element={<ConfirmEmailPage />} />
 
-        <Route path="/reset-password" element={<ResetPasswordPage />} />
+          <Route path="/reminders" element={<ReminderPage />} />
 
-        <Route path="/confirm-email" element={<ConfirmEmailPage />} />
+          <Route path="/account" element={<AccountPage />} />
 
-        <Route path="/reminders" element={<ReminderPage />} />
+          <Route
+            path="/vehicles"
+            element={
+              <ProtectedRoute>
+                <VehiclesPage />
+              </ProtectedRoute>
+            }
+          />
 
-        <Route path="/account" element={<AccountPage />} />
+          <Route
+            path="/vehicles/:id"
+            element={
+              <ProtectedRoute>
+                <VehicleDetailPage />
+              </ProtectedRoute>
+            }
+          />
 
-        <Route
-          path="/vehicles"
-          element={
-            <ProtectedRoute>
-              <VehiclesPage />
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <DashboardPage />
+              </ProtectedRoute>
+            }
+          />
 
-        <Route
-          path="/vehicles/:id"
-          element={
-            <ProtectedRoute>
-              <VehicleDetailPage />
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/maintenance"
+            element={
+              <ProtectedRoute>
+                <MaintenancePage />
+              </ProtectedRoute>
+            }
+          />
 
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <DashboardPage />
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/reports"
+            element={
+              <ProtectedRoute>
+                <ReportsPage />
+              </ProtectedRoute>
+            }
+          />
 
-        <Route
-          path="/maintenance"
-          element={
-            <ProtectedRoute>
-              <MaintenancePage />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/reports"
-          element={
-            <ProtectedRoute>
-              <ReportsPage />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route path="*" element={<NotFoundPage />} />
-        
-      </Routes>
-
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
       </ErrorBoundary>
 
-      <Footer />
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+        theme="light"
+      />
 
-      
+      <Footer />
     </>
   );
 }
