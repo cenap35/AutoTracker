@@ -20,6 +20,8 @@ import NotFoundPage from "./pages/NotFoundPage";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import AboutPage from "./pages/AboutPage";
+import ContactPage from "./pages/ContactPage";
 
 function App() {
   return (
@@ -43,6 +45,11 @@ function App() {
           <Route path="/reminders" element={<ReminderPage />} />
 
           <Route path="/account" element={<AccountPage />} />
+
+          <Route path="/about" element={<AboutPage />} />
+
+          <Route path="/contact" element={<ContactPage />} />
+          
 
           <Route
             path="/vehicles"
