@@ -5,6 +5,7 @@ import StatsCard from "../components/Dashboard/StatsCard";
 import CostByVehicleChart from "../components/Dashboard/CostByVehicleChart";
 import DashboardBackground from "../components/Dashboard/DashboardBackground";
 import MaintenanceCard from "../components/MaintenanceCard";
+import { motion } from "framer-motion";
 import {
   getDashboardSummary,
   getRecentMaintenance,
@@ -177,8 +178,6 @@ function DashboardPage() {
     (reminder) => reminder.daysLeft === 0,
   ).length;
 
-
-
   if (loading) {
     return (
       <PageWrapper>
@@ -210,28 +209,47 @@ function DashboardPage() {
         <div className="container py-4 py-lg-5">
           {/* Header */}
           <div className="row mb-4 mb-lg-5 align-items-center g-3">
-            <div className="col-lg-8">
-              <p
+            <motion.div
+              className="col-lg-8"
+              initial={{ opacity: 0, y: 20, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.45, ease: "easeOut" }}
+            >
+              <motion.p
                 className="small text-uppercase fw-semibold mb-1"
                 style={{ color: "#3b60c5", letterSpacing: "1px" }}
+                initial={{ opacity: 0, x: -12 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.35, delay: 0.1 }}
               >
                 Kontrol paneli
-              </p>
-              <h1 className="h2 fw-bold mb-2" style={{ color: "#284185" }}>
+              </motion.p>
+
+              <motion.h1
+                className="h2 fw-bold mb-2"
+                style={{ color: "#284185" }}
+                initial={{ opacity: 0, x: -16 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.4, delay: 0.18 }}
+              >
                 <i
                   className="bi bi-speedometer2 me-2"
                   style={{ color: "#3b60c5" }}
                 />
                 {fullName ? `Merhaba, ${fullName}` : "Hoş geldiniz"}
-              </h1>
-              <p
+              </motion.h1>
+
+              <motion.p
                 className="mb-0"
                 style={{ color: "#4a5b75", maxWidth: 560, lineHeight: 1.55 }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.45, delay: 0.28 }}
               >
                 Araçlarınızın özetini, son bakımları ve masraf dağılımını tek
                 ekranda takip edin.
-              </p>
-            </div>
+              </motion.p>
+            </motion.div>
           </div>
 
           {/* Stats */}
