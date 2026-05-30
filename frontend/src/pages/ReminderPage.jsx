@@ -12,6 +12,7 @@ import ReminderCard from "../components/ReminderCard";
 import DashboardBackground from "../components/Dashboard/DashboardBackground";
 import LoadingSpinner from "../components/Common/LoadingSpinner";
 import { toast } from "react-toastify";
+import { motion } from "framer-motion";
 
 function ReminderPage() {
   const [vehicles, setVehicles] = useState([]);
@@ -135,30 +136,47 @@ function ReminderPage() {
         <div className="container py-4 py-lg-5">
           {/* Header */}
           <div className="row mb-4 align-items-center g-3">
-            <div className="col-lg-8">
-              <p
+            <motion.div
+              className="col-lg-8"
+              initial={{ opacity: 0, y: 20, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.45, ease: "easeOut" }}
+            >
+              <motion.p
                 className="small text-uppercase fw-semibold mb-1"
                 style={{ color: "#3b60c5", letterSpacing: "1px" }}
+                initial={{ opacity: 0, x: -12 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.35, delay: 0.1 }}
               >
                 Araç takipleri
-              </p>
+              </motion.p>
 
-              <h1 className="h2 fw-bold mb-2" style={{ color: "#284185" }}>
+              <motion.h1
+                className="h2 fw-bold mb-2"
+                style={{ color: "#284185" }}
+                initial={{ opacity: 0, x: -16 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.4, delay: 0.18 }}
+              >
                 <i
                   className="bi bi-calendar-check me-2"
                   style={{ color: "#3b60c5" }}
                 />
                 Takipler
-              </h1>
+              </motion.h1>
 
-              <p
+              <motion.p
                 className="mb-0"
                 style={{ color: "#4a5b75", maxWidth: 620, lineHeight: 1.55 }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.45, delay: 0.28 }}
               >
                 Sigorta, kasko, MTV ve muayene tarihlerini araç bazlı takip
                 edin.
-              </p>
-            </div>
+              </motion.p>
+            </motion.div>
 
             <div className="col-lg-4 text-lg-end">
               <span className="badge bg-primary-subtle text-primary px-3 py-2">
