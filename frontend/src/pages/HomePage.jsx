@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import Logo from "../components/Logo";
 import AnimatedText from "../components/AnimationsEffects/AnimatedText";
 import PageWrapper from "../components/PageWrapper";
-
 
 const FEATURES = [
   {
@@ -40,9 +40,21 @@ const FEATURES = [
 ];
 
 const STEPS = [
-  { num: "1", title: "Hesap oluştur", text: "Ücretsiz kayıt olun ve e-postanızı doğrulayın." },
-  { num: "2", title: "Aracını ekle", text: "Plaka, marka ve model bilgilerini girin." },
-  { num: "3", title: "Masrafları kaydet", text: "Her bakım ve gideri tarih ve tutarla işleyin." },
+  {
+    num: "1",
+    title: "Hesap oluştur",
+    text: "Ücretsiz kayıt olun ve e-postanızı doğrulayın.",
+  },
+  {
+    num: "2",
+    title: "Aracını ekle",
+    text: "Plaka, marka ve model bilgilerini girin.",
+  },
+  {
+    num: "3",
+    title: "Masrafları kaydet",
+    text: "Her bakım ve gideri tarih ve tutarla işleyin.",
+  },
 ];
 
 function HomePage() {
@@ -55,7 +67,8 @@ function HomePage() {
         className="home-landing"
         style={{
           minHeight: "calc(100vh - 72px)",
-          background: "linear-gradient(118deg, #e8f0fe 0%, #f4f7ff 45%, #fff8eb 100%)",
+          background:
+            "linear-gradient(118deg, #e8f0fe 0%, #f4f7ff 45%, #fff8eb 100%)",
           position: "relative",
           overflow: "hidden",
         }}
@@ -69,7 +82,8 @@ function HomePage() {
             width: 420,
             height: 420,
             borderRadius: "50%",
-            background: "radial-gradient(circle, #c5dffd55 0%, transparent 70%)",
+            background:
+              "radial-gradient(circle, #c5dffd55 0%, transparent 70%)",
             pointerEvents: "none",
           }}
         />
@@ -82,27 +96,46 @@ function HomePage() {
             width: 360,
             height: 360,
             borderRadius: "50%",
-            background: "radial-gradient(circle, #f7d35833 0%, transparent 72%)",
+            background:
+              "radial-gradient(circle, #f7d35833 0%, transparent 72%)",
             pointerEvents: "none",
           }}
         />
 
-        <div className="container py-4 py-lg-5 position-relative" style={{ zIndex: 1 }}>
+        <div
+          className="container py-4 py-lg-5 position-relative"
+          style={{ zIndex: 1 }}
+        >
           {/* Hero */}
           <div className="row align-items-center g-4 g-lg-5 mb-5">
             <div className="col-lg-7 text-center text-lg-start">
-              <div className="d-flex justify-content-center justify-content-lg-start mb-3">
-                <Logo size={50} />
-              </div>
-              <div className="mb-3">
+              <motion.div
+                className="mb-3"
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8 }}
+              >
                 <AnimatedText text="AutoTracker" />
-              </div>
+
+                <p
+                  className="fw-semibold mt-2 mb-0"
+                  style={{
+                    color: "#3b60c5",
+                    letterSpacing: "0.4px",
+                    fontSize: "1.05rem",
+                  }}
+                >
+                  CarCare | Araç Takip ve Masraf Yönetimi
+                </p>
+              </motion.div>
               <p
                 className="lead mb-4 mx-auto mx-lg-0"
                 style={{ color: "#284185", maxWidth: 520, lineHeight: 1.6 }}
               >
-                Araç masraflarınızı, bakım geçmişinizi ve harcama raporlarınızı
-                tek platformda takip edin. Sade arayüz, net özetler.
+                Araçlarınızın bakım geçmişini, yaklaşan takiplerini ve tüm
+                masraflarını tek ekranda yönetin. AutoTracker; sade arayüzü, net
+                özetleri ve akıllı kontrol paneliyle araç yönetimini düzenli
+                hale getirir.
               </p>
               <div className="d-flex flex-wrap gap-2 justify-content-center justify-content-lg-start">
                 {isLoggedIn ? (
@@ -111,7 +144,8 @@ function HomePage() {
                       to="/dashboard"
                       className="btn fw-bold px-4 py-2"
                       style={{
-                        background: "linear-gradient(90deg, #3b60c5 55%, #314286 100%)",
+                        background:
+                          "linear-gradient(90deg, #3b60c5 55%, #314286 100%)",
                         color: "#ffe082",
                         borderRadius: 18,
                         border: "2px solid #f7d358",
@@ -157,7 +191,10 @@ function HomePage() {
               </div>
               {isLoggedIn && fullName && (
                 <p className="mt-3 mb-0 small" style={{ color: "#4a5b75" }}>
-                  <i className="bi bi-person-check me-1" style={{ color: "#47c172" }} />
+                  <i
+                    className="bi bi-person-check me-1"
+                    style={{ color: "#47c172" }}
+                  />
                   Tekrar hoş geldin, <strong>{fullName}</strong>
                 </p>
               )}
@@ -177,10 +214,16 @@ function HomePage() {
                     className="h5 fw-bold mb-3 d-flex align-items-center gap-2"
                     style={{ color: "#284185" }}
                   >
-                    <i className="bi bi-lightning-charge-fill" style={{ color: "#f7d358" }} />
+                    <i
+                      className="bi bi-lightning-charge-fill"
+                      style={{ color: "#f7d358" }}
+                    />
                     Neden AutoTracker?
                   </h2>
-                  <ul className="list-unstyled mb-0" style={{ color: "#1c3967" }}>
+                  <ul
+                    className="list-unstyled mb-0"
+                    style={{ color: "#1c3967" }}
+                  >
                     {[
                       "Tüm araçlar için merkezi kayıt",
                       "Bakım ve masraf geçmişi",
@@ -211,7 +254,10 @@ function HomePage() {
               className="text-center fw-bold mb-1"
               style={{ color: "#284185", letterSpacing: "0.5px" }}
             >
-              <i className="bi bi-grid-3x3-gap-fill me-2" style={{ color: "#3b60c5" }} />
+              <i
+                className="bi bi-grid-3x3-gap-fill me-2"
+                style={{ color: "#3b60c5" }}
+              />
               Uygulama özellikleri
             </h2>
             <p className="text-center text-muted mb-4">
@@ -219,7 +265,14 @@ function HomePage() {
             </p>
             <div className="row g-3 g-md-4">
               {FEATURES.map((f) => (
-                <div key={f.title} className="col-sm-6 col-lg-3">
+                <motion.div
+                  key={f.title}
+                  className="col-sm-6 col-lg-3"
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.2 }}
+                  transition={{ duration: 0.6 }}
+                >
                   <div
                     className="card h-100 border-0 shadow-sm home-feature-card"
                     style={{
@@ -242,10 +295,15 @@ function HomePage() {
                       >
                         <i className={`bi ${f.icon}`} />
                       </div>
-                      <h3 className="h6 fw-bold mb-2" style={{ color: "#284185" }}>
+                      <h3
+                        className="h6 fw-bold mb-2"
+                        style={{ color: "#284185" }}
+                      >
                         {f.title}
                       </h3>
-                      <p className="small text-muted mb-3 flex-grow-1">{f.text}</p>
+                      <p className="small text-muted mb-3 flex-grow-1">
+                        {f.text}
+                      </p>
                       {isLoggedIn ? (
                         <Link
                           to={f.link}
@@ -263,7 +321,7 @@ function HomePage() {
                       )}
                     </div>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>
@@ -277,8 +335,14 @@ function HomePage() {
               boxShadow: "0 8px 32px #c9e7ff22",
             }}
           >
-            <h2 className="h4 fw-bold text-center mb-4" style={{ color: "#284185" }}>
-              <i className="bi bi-signpost-split me-2" style={{ color: "#3b60c5" }} />
+            <h2
+              className="h4 fw-bold text-center mb-4"
+              style={{ color: "#284185" }}
+            >
+              <i
+                className="bi bi-signpost-split me-2"
+                style={{ color: "#3b60c5" }}
+              />
               3 adımda başlayın
             </h2>
             <div className="row g-3">
@@ -291,7 +355,8 @@ function HomePage() {
                         width: 40,
                         height: 40,
                         borderRadius: "50%",
-                        background: "linear-gradient(90deg, #3b60c5 55%, #314286 100%)",
+                        background:
+                          "linear-gradient(90deg, #3b60c5 55%, #314286 100%)",
                         color: "#ffe082",
                         fontSize: 18,
                         border: "2px solid #f7d358",
@@ -300,7 +365,10 @@ function HomePage() {
                       {step.num}
                     </span>
                     <div>
-                      <h3 className="h6 fw-bold mb-1" style={{ color: "#1c3967" }}>
+                      <h3
+                        className="h6 fw-bold mb-1"
+                        style={{ color: "#1c3967" }}
+                      >
                         {step.title}
                       </h3>
                       <p className="small text-muted mb-0">{step.text}</p>
