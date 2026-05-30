@@ -2,67 +2,42 @@ function DashboardBackground({ children }) {
   return (
     <div
       style={{
-        position: "relative",
-        minHeight: "100vh",
-        overflow: "hidden",
+        minHeight: "calc(100vh - 72px)",
         background:
-          "linear-gradient(135deg, #edf4ff 0%, #f8fbff 45%, #fff8e8 100%)",
+          "linear-gradient(118deg, #e8f0fe 0%, #f4f7ff 45%, #fff8eb 100%)",
+        position: "relative",
+        overflow: "hidden",
       }}
     >
-      {/* soft blue glow */}
       <div
+        aria-hidden
         style={{
           position: "absolute",
-          top: 70,
-          left: -90,
-          width: 260,
-          height: 260,
+          top: -120,
+          right: -80,
+          width: 420,
+          height: 420,
           borderRadius: "50%",
-          background:
-            "radial-gradient(circle, rgba(45,123,224,0.18), transparent 65%)",
-          filter: "blur(18px)",
+          background: "radial-gradient(circle, #c5dffd55 0%, transparent 70%)",
+          pointerEvents: "none",
         }}
       />
 
-      {/* soft yellow glow */}
       <div
+        aria-hidden
         style={{
           position: "absolute",
-          right: -100,
-          top: 260,
-          width: 300,
-          height: 300,
+          bottom: -100,
+          left: -60,
+          width: 360,
+          height: 360,
           borderRadius: "50%",
-          background:
-            "radial-gradient(circle, rgba(255,193,7,0.16), transparent 65%)",
-          filter: "blur(20px)",
+          background: "radial-gradient(circle, #f7d35833 0%, transparent 72%)",
+          pointerEvents: "none",
         }}
       />
 
-      {/* subtle grid */}
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          backgroundImage:
-            "linear-gradient(rgba(40,65,133,0.045) 1px, transparent 1px), linear-gradient(90deg, rgba(40,65,133,0.045) 1px, transparent 1px)",
-          backgroundSize: "34px 34px",
-          maskImage:
-            "linear-gradient(to bottom, rgba(0,0,0,0.85), rgba(0,0,0,0.15))",
-        }}
-      />
-
-      {/* top shine */}
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          background:
-            "radial-gradient(circle at 50% 0%, rgba(255,255,255,0.9), transparent 42%)",
-        }}
-      />
-
-      <div style={{ position: "relative", zIndex: 2 }}>{children}</div>
+      <div style={{ position: "relative", zIndex: 1 }}>{children}</div>
     </div>
   );
 }

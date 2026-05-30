@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import Logo from "../components/Logo";
 import AnimatedText from "../components/AnimationsEffects/AnimatedText";
 import PageWrapper from "../components/PageWrapper";
+import DashboardBackground from "../components/Dashboard/DashboardBackground";
 
 const FEATURES = [
   {
@@ -63,45 +64,8 @@ function HomePage() {
 
   return (
     <PageWrapper>
-      <div
-        className="home-landing"
-        style={{
-          minHeight: "calc(100vh - 72px)",
-          background:
-            "linear-gradient(118deg, #e8f0fe 0%, #f4f7ff 45%, #fff8eb 100%)",
-          position: "relative",
-          overflow: "hidden",
-        }}
-      >
-        <div
-          aria-hidden
-          style={{
-            position: "absolute",
-            top: -120,
-            right: -80,
-            width: 420,
-            height: 420,
-            borderRadius: "50%",
-            background:
-              "radial-gradient(circle, #c5dffd55 0%, transparent 70%)",
-            pointerEvents: "none",
-          }}
-        />
-        <div
-          aria-hidden
-          style={{
-            position: "absolute",
-            bottom: -100,
-            left: -60,
-            width: 360,
-            height: 360,
-            borderRadius: "50%",
-            background:
-              "radial-gradient(circle, #f7d35833 0%, transparent 72%)",
-            pointerEvents: "none",
-          }}
-        />
-
+      <DashboardBackground>
+      <div>
         <div
           className="container py-4 py-lg-5 position-relative"
           style={{ zIndex: 1 }}
@@ -232,7 +196,7 @@ function HomePage() {
                       "Yaklaşan sigorta ve muayene hatırlatmaları",
 
                       "Notlar, kayıtlar ve araç geçmişi",
-                      "Ve daha fazlası ..."
+                      "Ve daha fazlası ...",
                     ].map((item) => (
                       <li
                         key={item}
@@ -405,6 +369,7 @@ function HomePage() {
           }
         `}</style>
       </div>
+      </DashboardBackground>
     </PageWrapper>
   );
 }
