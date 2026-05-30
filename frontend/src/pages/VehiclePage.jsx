@@ -7,6 +7,7 @@ import {
 } from "../services/vehicleService";
 import { Link } from "react-router-dom";
 import AddVehicleForm from "../components/AddVehicleForm";
+import DashboardBackground from "../components/Dashboard/DashboardBackground";
 import LoadingSpinner from "../components/Common/LoadingSpinner";
 import { toast } from "react-toastify";
 
@@ -82,194 +83,230 @@ function VehiclesPage() {
   }
 
   return (
-    <PageWrapper>
-      {/* Dropdawn AddFormVehicle */}
-      <div className="dropdown m-2">
-        <button
-          className="btn btn-primary dropdown-toggle px-4 fw-bold"
-          type="button"
-          id="addVehicleDropdown"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
-          style={{ borderRadius: 6 }}
-        >
-          <i className="bi bi-plus-circle me-2"></i>Yeni Araç Ekle
-        </button>
-        <ul
-          className="dropdown-menu p-0"
-          aria-labelledby="addVehicleDropdown"
-          style={{ minWidth: 400, borderRadius: 12 }}
-        >
-          <li className="p-3" style={{ minWidth: 340, background: "#f4f7fe" }}>
-            <AddVehicleForm
-              onVehicleCreated={handleCreateVehicle}
-              error={error}
-            />
-          </li>
-        </ul>
-      </div>
-
-      {/*---- */}
-      <div
-        className="container py-5"
-        style={{ minHeight: "calc(100vh - 90px)" }}
-      >
-        <div className="row justify-content-center mb-4">
-          <div className="col-md-9 col-lg-7 text-center mb-2">
-            <h1
-              className="fw-bold display-5"
-              style={{ color: "#314286", letterSpacing: "1px" }}
-            >
-              <i
-                className="bi bi-car-front-fill me-2"
-                style={{ color: "#3b60c5" }}
-              ></i>
-              Araçlarım
-            </h1>
-            <p className="lead" style={{ color: "#456" }}>
-              Araçlarınızı görüntüleyin, detaylarını inceleyin ve yönetin.
-            </p>
-          </div>
-          {/*arac ara*/}
-          <div>
-            <div className="row justify-content-center mb-4">
-              <div className="col-12 col-md-6">
-                <input
-                  type="text"
-                  className="form-control form-control-lg shadow-sm"
-                  placeholder="Marka, model veya plaka ara..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  style={{ borderRadius: 14 }}
-                />
-              </div>
-              <div className="justify-content-center mt-5">
-                {vehicles.length > 0 && filteredVehicles.length === 0 && (
-                  <div className="alert alert-warning text-center shadow-sm">
-                    Aramanıza uygun araç bulunamadı.
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="row g-4">
-          {vehicles.length === 0 && (
-            <div className="col-12">
-              <div className="alert alert-info text-center shadow-sm">
-                Henüz bir aracınız yok. Kontrol panelinden yeni araç
-                ekleyebilirsiniz.
-              </div>
-            </div>
-          )}
-          {filteredVehicles.map((vehicle) => (
-            <div className="col-md-6 col-lg-4" key={vehicle.id}>
-              <Link
-                to={`/vehicles/${vehicle.id}`}
-                className="text-decoration-none"
-                style={{ cursor: "pointer" }}
-              >
-                <div
-                  className="card h-100 border-0 shadow-sm vehicle-card position-relative"
-                  style={{
-                    borderRadius: 16,
-                    transition:
-                      "transform 0.19s cubic-bezier(.29, 1.53, .62, 1), box-shadow 0.18s",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform =
-                      "translateY(-7px) scale(1.025)";
-                    e.currentTarget.style.boxShadow =
-                      "0 8px 32px -8px #3b60c599";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = "";
-                    e.currentTarget.style.boxShadow = "";
-                  }}
+      <PageWrapper>
+        <DashboardBackground>
+          <div className="container py-4 py-lg-5">
+            <div className="row mb-4 align-items-center g-3">
+              <div className="col-lg-8">
+                <p
+                  className="small text-uppercase fw-semibold mb-1"
+                  style={{ color: "#3b60c5", letterSpacing: "1px" }}
                 >
-                  <div className="card-body pb-3">
-                    <div className="mb-2 d-flex justify-content-between align-items-center">
-                      <span
-                        className="badge bg-primary"
-                        style={{ fontSize: 15 }}
-                      >
-                        {vehicle.plateNumber}
-                      </span>
-                      <span
-                        className="badge bg-light text-dark border"
-                        style={{ fontSize: 13 }}
-                      >
-                        {vehicle.year}
-                      </span>
-                    </div>
-                    <h5
-                      className="card-title fw-bold mb-1"
-                      style={{ color: "#345" }}
+                  Araç yönetimi
+                </p>
+    
+                <h1 className="h2 fw-bold mb-2" style={{ color: "#284185" }}>
+                  <i
+                    className="bi bi-car-front-fill me-2"
+                    style={{ color: "#3b60c5" }}
+                  />
+                  Araçlarım
+                </h1>
+    
+                <p
+                  className="mb-0"
+                  style={{ color: "#4a5b75", maxWidth: 560, lineHeight: 1.55 }}
+                >
+                  Araçlarınızı görüntüleyin, detaylarını inceleyin ve yönetin.
+                </p>
+              </div>
+    
+              <div className="col-lg-4 d-flex justify-content-lg-end">
+                <div className="dropdown">
+                  <button
+                    className="btn btn-primary dropdown-toggle px-4 fw-bold"
+                    type="button"
+                    id="addVehicleDropdown"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                    style={{ borderRadius: 12 }}
+                  >
+                    <i className="bi bi-plus-circle me-2"></i>
+                    Yeni Araç Ekle
+                  </button>
+    
+                  <ul
+                    className="dropdown-menu dropdown-menu-end p-0"
+                    aria-labelledby="addVehicleDropdown"
+                    style={{ minWidth: 400, borderRadius: 12 }}
+                  >
+                    <li
+                      className="p-3"
+                      style={{ minWidth: 340, background: "#f4f7fe" }}
                     >
-                      <i
-                        className="bi bi-car-front-fill me-2"
-                        style={{ color: "#546adc" }}
-                      ></i>
-                      {vehicle.brand} {vehicle.model}
-                    </h5>
-                    <div className="mb-2 small text-muted">
-                      <i className="bi bi-speedometer2 me-1"></i>
-                      {vehicle.currentMileage?.toLocaleString("tr-TR") || 0} km
-                    </div>
-                    <div className="d-flex mt-3 gap-2 align-items-center flex-wrap">
-                      {deleteConfirmVehicleId !== vehicle.id ? (
-                        <button
-                          type="button"
-                          className="btn btn-sm btn-outline-danger px-3"
-                          style={{ borderRadius: 5 }}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setDeleteConfirmVehicleId(vehicle.id);
-                          }}
-                        >
-                          <i className="bi bi-trash me-1"></i> Sil
-                        </button>
-                      ) : (
-                        <>
-                          <span className="small text-danger fw-semibold">
-                            Emin misin?
-                          </span>
-
-                          <button
-                            type="button"
-                            className="btn btn-sm btn-outline-secondary"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              setDeleteConfirmVehicleId(null);
-                            }}
-                          >
-                            Vazgeç
-                          </button>
-
-                          <button
-                            type="button"
-                            className="btn btn-sm btn-danger fw-bold"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              handleDeleteVehicle(vehicle.id);
-                              setDeleteConfirmVehicleId(null);
-                            }}
-                          >
-                            Sil
-                          </button>
-                        </>
-                      )}
-                    </div>
+                      <AddVehicleForm
+                        onVehicleCreated={handleCreateVehicle}
+                        error={error}
+                      />
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+    
+            <div className="card border-0 shadow-sm mb-4" style={{ borderRadius: 16 }}>
+              <div className="card-body p-3 p-md-4">
+                <div className="row align-items-center g-3">
+                  <div className="col-md-8">
+                    <input
+                      type="text"
+                      className="form-control form-control-lg shadow-none"
+                      placeholder="Marka, model veya plaka ara..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      style={{ borderRadius: 14, borderColor: "#d9e4f5" }}
+                    />
+                  </div>
+    
+                  <div className="col-md-4 text-md-end">
+                    <span className="badge bg-primary-subtle text-primary px-3 py-2">
+                      {filteredVehicles.length} / {vehicles.length} araç
+                    </span>
                   </div>
                 </div>
-              </Link>
+              </div>
             </div>
-          ))}
-        </div>
-      </div>
-    </PageWrapper>
-  );
+    
+            {vehicles.length > 0 && filteredVehicles.length === 0 && (
+              <div className="alert alert-warning text-center shadow-sm rounded-3">
+                Aramanıza uygun araç bulunamadı.
+              </div>
+            )}
+    
+            {vehicles.length === 0 ? (
+              <div className="alert alert-info text-center shadow-sm rounded-3">
+                Henüz bir aracınız yok. Kontrol panelinden yeni araç ekleyebilirsiniz.
+              </div>
+            ) : (
+              <div className="row g-4">
+                {filteredVehicles.map((vehicle) => (
+                  <div className="col-md-6 col-lg-4" key={vehicle.id}>
+                    <Link
+                      to={`/vehicles/${vehicle.id}`}
+                      className="text-decoration-none"
+                      style={{ cursor: "pointer" }}
+                    >
+                      <div
+                        className="card h-100 border-0 shadow-sm vehicle-card position-relative"
+                        style={{
+                          borderRadius: 16,
+                          transition:
+                            "transform 0.19s cubic-bezier(.29, 1.53, .62, 1), box-shadow 0.18s",
+                          background:
+                            "linear-gradient(111deg, #f3f8ff 70%, #fffef8 100%)",
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.transform =
+                            "translateY(-5px) scale(1.015)";
+                          e.currentTarget.style.boxShadow =
+                            "0 10px 28px #3b60c522";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.transform = "";
+                          e.currentTarget.style.boxShadow = "";
+                        }}
+                      >
+                        <div className="card-body p-4">
+                          <div className="mb-2 d-flex justify-content-between align-items-center">
+                            <span
+                              className="badge fw-semibold"
+                              style={{
+                                background:
+                                  "linear-gradient(90deg, #3b60c5, #314286)",
+                                color: "#ffe082",
+                                fontSize: "0.85rem",
+                                padding: "6px 12px",
+                                borderRadius: 12,
+                              }}
+                            >
+                              {vehicle.plateNumber}
+                            </span>
+    
+                            <span className="badge bg-light text-dark border">
+                              {vehicle.year}
+                            </span>
+                          </div>
+    
+                          <h5
+                            className="card-title fw-bold mb-2"
+                            style={{ color: "#274a78" }}
+                          >
+                            <i
+                              className="bi bi-car-front-fill me-2"
+                              style={{ color: "#546adc" }}
+                            ></i>
+                            {vehicle.brand} {vehicle.model}
+                          </h5>
+    
+                          <div className="mb-3 small text-muted">
+                            <i className="bi bi-speedometer2 me-1"></i>
+                            {vehicle.currentMileage?.toLocaleString("tr-TR") || 0} km
+                          </div>
+    
+                          <div className="d-flex mt-3 gap-2 align-items-center flex-wrap">
+                            {deleteConfirmVehicleId !== vehicle.id ? (
+                              <button
+                                type="button"
+                                className="btn btn-sm btn-outline-danger px-3"
+                                style={{ borderRadius: 10 }}
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  setDeleteConfirmVehicleId(vehicle.id);
+                                }}
+                              >
+                                <i className="bi bi-trash me-1"></i>
+                                Sil
+                              </button>
+                            ) : (
+                              <>
+                                <span className="small text-danger fw-semibold">
+                                  Emin misin?
+                                </span>
+    
+                                <button
+                                  type="button"
+                                  className="btn btn-sm btn-outline-secondary"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    setDeleteConfirmVehicleId(null);
+                                  }}
+                                >
+                                  Vazgeç
+                                </button>
+    
+                                <button
+                                  type="button"
+                                  className="btn btn-sm btn-danger fw-bold"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    handleDeleteVehicle(vehicle.id);
+                                    setDeleteConfirmVehicleId(null);
+                                  }}
+                                >
+                                  Sil
+                                </button>
+                              </>
+                            )}
+    
+                            <span
+                              className="small fw-semibold ms-auto"
+                              style={{ color: "#3b60c5" }}
+                            >
+                              Detaylar
+                              <i className="bi bi-arrow-right ms-1" />
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </DashboardBackground>
+      </PageWrapper>
+    );
 }
 
 export default VehiclesPage;
