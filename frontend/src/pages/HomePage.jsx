@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import Logo from "../components/Logo";
-import AnimatedText from "../components/deneme";
+import AnimatedText from "../components/AnimationsEffects/AnimatedText";
 import PageWrapper from "../components/PageWrapper";
 
 
@@ -92,9 +92,9 @@ function HomePage() {
           <div className="row align-items-center g-4 g-lg-5 mb-5">
             <div className="col-lg-7 text-center text-lg-start">
               <div className="d-flex justify-content-center justify-content-lg-start mb-3">
-                <Logo size={72} />
+                <Logo size={50} />
               </div>
-              <div className="mb-2">
+              <div className="mb-3">
                 <AnimatedText text="AutoTracker" />
               </div>
               <p

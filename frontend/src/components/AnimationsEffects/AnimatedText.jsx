@@ -6,7 +6,7 @@ function AnimatedText({ text }) {
       initial={{ backgroundPosition: "0% 50%" }}
       animate={{ backgroundPosition: "100% 50%" }}
       transition={{
-        duration: 3,
+        duration: 5,
         repeat: Infinity,
         repeatType: "reverse",
       }}
