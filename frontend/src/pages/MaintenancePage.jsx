@@ -8,6 +8,7 @@ import {
 } from "../services/maintenanceService";
 import AddMaintenanceForm from "../components/AddMaintenanceForm";
 import MaintenanceCard from "../components/MaintenanceCard";
+import DashboardBackground from "../components/Dashboard/DashboardBackground";
 import LoadingSpinner from "../components/Common/LoadingSpinner";
 import { toast } from "react-toastify";
 
@@ -138,234 +139,210 @@ function MaintenancePage() {
   }
 
   return (
-    <PageWrapper>
-      <div
-        className="container py-5"
-        style={{
-          minHeight: "calc(100vh - 90px)",
-          background: "#f8fbff",
-          borderRadius: 26,
-          boxShadow: "0 4px 42px -14px #3b60c533",
-        }}
-      >
-        {/* Başlık ve Açıklama */}
-        <div className="mb-4">
-          <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
-            <div>
-              <h1
-                className="fw-bold mb-2"
-                style={{
-                  color: "#294686",
-                  fontSize: 34,
-                  letterSpacing: "1px",
-                  textShadow: "1px 2px 12px #e0e7ff",
-                }}
-              >
-                <i
-                  className="bi bi-tools me-2"
-                  style={{
-                    color: "#3b60c5",
-                    fontSize: 28,
-                    textShadow: "2px 4px 12px #e6edff77",
-                  }}
-                ></i>
-                Bakımlar
-              </h1>
-              <p
-                style={{
-                  color: "#546e8c",
-                  fontSize: 16,
-                  opacity: 0.9,
-                  fontWeight: 500,
-                  marginBottom: 0,
-                }}
-              >
-                Araçlarınızın bakım kayıtlarını kolayca inceleyin.
-              </p>
-            </div>
-          </div>
-        </div>
-        <AddMaintenanceForm
-          vehicles={vehicles}
-          showVehicleSelect={true}
-          onCreate={handleCreateMaintenance}
-        />
-        {/* Filtreleme ve İstatistik Yan Yana */}
-        <div className="row mb-4 g-3">
-          {/* Filtreleme Card'ı */}
-          <div className="col-12 col-md-5 col-lg-4">
-            <div
-              className="card h-100 shadow-sm"
-              style={{
-                borderRadius: 14,
-                background: "#fafdff",
-                border: "1px solid #e2eaf9",
-                boxShadow: "0 1px 7px -2px #3b60c520",
-              }}
-            >
-              <div className="card-body p-4">
-                <h5
-                  className="fw-bold mb-3 text-primary"
-                  style={{ fontSize: 18, letterSpacing: "1px" }}
+      <PageWrapper>
+        <DashboardBackground>
+          <div className="container py-4 py-lg-5">
+            {/* Header */}
+            <div className="row mb-4 align-items-center g-3">
+              <div className="col-lg-8">
+                <p
+                  className="small text-uppercase fw-semibold mb-1"
+                  style={{ color: "#3b60c5", letterSpacing: "1px" }}
                 >
-                  <i className="bi bi-funnel me-2"></i>
-                  Filtrele
-                </h5>
-                <div className="d-flex flex-column gap-2">
-                  <select
-                    className="form-select form-select-sm shadow-none"
-                    style={{
-                      minWidth: 140,
-                      borderRadius: 8,
-                      borderColor: "#bfd5f7",
-                      fontWeight: 500,
-                      background: "#fff",
-                    }}
-                    value={selectedVehicleId}
-                    onChange={(e) => setSelectedVehicleId(e.target.value)}
-                    aria-label="Araç filtrele"
-                  >
-                    <option value="all" style={{ fontWeight: 600 }}>
-                      🚗 Tüm araçlar
-                    </option>
-                    {vehicles.map((vehicle) => (
-                      <option key={vehicle.id} value={vehicle.id}>
-                        {vehicle.brand} {vehicle.model} - {vehicle.plateNumber}
-                      </option>
-                    ))}
-                  </select>
-                  <input
-                    type="text"
-                    className="form-control form-control-sm"
-                    placeholder="Bakım ara..."
-                    style={{
-                      minWidth: 120,
-                      borderRadius: 8,
-                      borderColor: "#bfd5f7",
-                      fontWeight: 500,
-                      background: "#fff",
-                    }}
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    aria-label="Bakım arama"
+                  Bakım yönetimi
+                </p>
+    
+                <h1 className="h2 fw-bold mb-2" style={{ color: "#284185" }}>
+                  <i
+                    className="bi bi-tools me-2"
+                    style={{ color: "#3b60c5" }}
                   />
-                  <select
-                    className="form-select form-select-sm"
-                    style={{
-                      minWidth: 120,
-                      borderRadius: 8,
-                      borderColor: "#bfd5f7",
-                      fontWeight: 500,
-                      background: "#fff",
-                    }}
-                    value={sortOption}
-                    onChange={(e) => setSortOption(e.target.value)}
-                    aria-label="Sırala"
-                  >
-                    <option value="newest">En yeni bakım</option>
-                    <option value="oldest">En eski bakım</option>
-                    <option value="highestCost">En yüksek masraf</option>
-                    <option value="lowestCost">En düşük masraf</option>
-                    <option value="highestMileage">En yüksek KM</option>
-                  </select>
+                  Bakımlar
+                </h1>
+    
+                <p
+                  className="mb-0"
+                  style={{ color: "#4a5b75", maxWidth: 560, lineHeight: 1.55 }}
+                >
+                  Araçlarınızın bakım kayıtlarını görüntüleyin, filtreleyin ve
+                  masraf özetlerini takip edin.
+                </p>
+              </div>
+            </div>
+    
+            {/* Bakım ekleme formu */}
+            <div className="card border-0 shadow-sm mb-4" style={{ borderRadius: 16 }}>
+              <div className="card-body p-3 p-md-4">
+                <AddMaintenanceForm
+                  vehicles={vehicles}
+                  showVehicleSelect={true}
+                  onCreate={handleCreateMaintenance}
+                />
+              </div>
+            </div>
+    
+            {/* Filtreleme ve istatistik */}
+            <div className="row mb-4 g-3">
+              <div className="col-12 col-lg-4">
+                <div
+                  className="card h-100 border-0 shadow-sm"
+                  style={{
+                    borderRadius: 16,
+                    background: "rgba(255,255,255,0.97)",
+                  }}
+                >
+                  <div className="card-body p-4">
+                    <h5
+                      className="fw-bold mb-3 d-flex align-items-center gap-2"
+                      style={{ color: "#284185", fontSize: 18 }}
+                    >
+                      <i className="bi bi-funnel" style={{ color: "#3b60c5" }} />
+                      Filtrele
+                    </h5>
+    
+                    <div className="d-flex flex-column gap-2">
+                      <select
+                        className="form-select shadow-none"
+                        style={{
+                          borderRadius: 12,
+                          borderColor: "#d9e4f5",
+                          background: "#fff",
+                        }}
+                        value={selectedVehicleId}
+                        onChange={(e) => setSelectedVehicleId(e.target.value)}
+                        aria-label="Araç filtrele"
+                      >
+                        <option value="all">Tüm araçlar</option>
+                        {vehicles.map((vehicle) => (
+                          <option key={vehicle.id} value={vehicle.id}>
+                            {vehicle.brand} {vehicle.model} - {vehicle.plateNumber}
+                          </option>
+                        ))}
+                      </select>
+    
+                      <input
+                        type="text"
+                        className="form-control shadow-none"
+                        placeholder="Bakım ara..."
+                        style={{
+                          borderRadius: 12,
+                          borderColor: "#d9e4f5",
+                          background: "#fff",
+                        }}
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        aria-label="Bakım arama"
+                      />
+    
+                      <select
+                        className="form-select shadow-none"
+                        style={{
+                          borderRadius: 12,
+                          borderColor: "#d9e4f5",
+                          background: "#fff",
+                        }}
+                        value={sortOption}
+                        onChange={(e) => setSortOption(e.target.value)}
+                        aria-label="Sırala"
+                      >
+                        <option value="newest">En yeni bakım</option>
+                        <option value="oldest">En eski bakım</option>
+                        <option value="highestCost">En yüksek masraf</option>
+                        <option value="lowestCost">En düşük masraf</option>
+                        <option value="highestMileage">En yüksek KM</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+    
+              <div className="col-12 col-lg-8">
+                <div className="row g-3 h-100">
+                  <div className="col-md-4">
+                    <div
+                      className="card border-0 shadow-sm h-100"
+                      style={{
+                        borderRadius: 16,
+                        background:
+                          "linear-gradient(110deg, #eaf2ff 60%, #eff5fc 100%)",
+                      }}
+                    >
+                      <div className="card-body">
+                        <div className="text-muted small">Gösterilen kayıt</div>
+                        <div className="h4 fw-bold mb-0" style={{ color: "#284185" }}>
+                          {filteredRecords.length}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+    
+                  <div className="col-md-4">
+                    <div
+                      className="card border-0 shadow-sm h-100"
+                      style={{
+                        borderRadius: 16,
+                        background:
+                          "linear-gradient(110deg, #fff5de 67%, #fffdf6 100%)",
+                      }}
+                    >
+                      <div className="card-body">
+                        <div className="text-muted small">Toplam masraf</div>
+                        <div className="h4 fw-bold mb-0" style={{ color: "#b78b16" }}>
+                          ₺{totalFilteredCost.toLocaleString("tr-TR")}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+    
+                  <div className="col-md-4">
+                    <div
+                      className="card border-0 shadow-sm h-100"
+                      style={{
+                        borderRadius: 16,
+                        background:
+                          "linear-gradient(110deg, #eaf9ef 65%, #f8fff9 100%)",
+                      }}
+                    >
+                      <div className="card-body">
+                        <div className="text-muted small">Ortalama masraf</div>
+                        <div className="h4 fw-bold mb-0" style={{ color: "#1a906c" }}>
+                          ₺
+                          {averageFilteredCost.toLocaleString("tr-TR", {
+                            maximumFractionDigits: 0,
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
+    
+            {error && (
+              <div className="alert alert-danger text-center shadow-sm rounded-3">
+                <i className="bi bi-exclamation-triangle me-2" />
+                {error}
+              </div>
+            )}
+    
+            {filteredRecords.length === 0 ? (
+              <div className="alert alert-info shadow-sm text-center rounded-3">
+                <i className="bi bi-inbox me-2"></i>
+                Henüz bakım kaydı bulunmuyor.
+              </div>
+            ) : (
+              <div className="row g-4">
+                {filteredRecords.map((record) => (
+                  <div className="col-md-6 col-lg-4" key={record.id}>
+                    <MaintenanceCard record={record} showVehicleInfo={true} />
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
-          {/* İstatistik Kartları */}
-          <div className="col-12 col-md-7 col-lg-8 d-flex gap-3 align-items-stretch flex-wrap">
-            <div
-              className="text-center flex-fill"
-              style={{
-                background: "#fff",
-                borderRadius: 12,
-                boxShadow: "0 1px 7px -4px #3b60c528",
-                padding: "20px 24px",
-                minWidth: 110,
-              }}
-            >
-              <div className="text-muted mb-1" style={{ fontSize: 13 }}>
-                Gösterilen Kayıt
-              </div>
-              <div className="h5 mb-0 fw-bold">{filteredRecords.length}</div>
-            </div>
-            <div
-              className="text-center flex-fill"
-              style={{
-                background: "#fff",
-                borderRadius: 12,
-                boxShadow: "0 1px 7px -4px #3b60c528",
-                padding: "20px 24px",
-                minWidth: 110,
-              }}
-            >
-              <div className="text-muted mb-1" style={{ fontSize: 13 }}>
-                Toplam Masraf
-              </div>
-              <div className="h5 mb-0 fw-bold">
-                ₺{totalFilteredCost.toLocaleString("tr-TR")}
-              </div>
-            </div>
-            <div
-              className="text-center flex-fill"
-              style={{
-                background: "#fff",
-                borderRadius: 12,
-                boxShadow: "0 1px 7px -4px #3b60c528",
-                padding: "20px 24px",
-                minWidth: 110,
-              }}
-            >
-              <div className="text-muted mb-1" style={{ fontSize: 13 }}>
-                Ortalama Masraf
-              </div>
-              <div className="h5 mb-0 fw-bold">
-                ₺
-                {averageFilteredCost.toLocaleString("tr-TR", {
-                  maximumFractionDigits: 0,
-                })}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Hata veya Bilgi Mesajı */}
-        {error && (
-          <div
-            className="alert alert-danger text-center"
-            style={{ borderRadius: 11 }}
-          >
-            {error}
-          </div>
-        )}
-
-        {filteredRecords.length === 0 ? (
-          <div
-            className="alert alert-info shadow-sm mt-4 text-center"
-            style={{
-              borderRadius: 14,
-              background: "#f6fbff",
-              color: "#265",
-              fontWeight: 500,
-              fontSize: 17,
-              letterSpacing: ".2px",
-            }}
-          >
-            <i className="bi bi-emoji-frown me-2"></i>
-            Henüz bakım kaydı bulunmuyor.
-          </div>
-        ) : (
-          <div className="row g-4">
-            {filteredRecords.map((record) => (
-              <div className="col-md-6 col-lg-4" key={record.id}>
-                <MaintenanceCard record={record} showVehicleInfo={true} />
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </PageWrapper>
-  );
+        </DashboardBackground>
+      </PageWrapper>
+    );
 }
 
 export default MaintenancePage;
