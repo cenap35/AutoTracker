@@ -273,6 +273,9 @@ function VehicleDetailPage() {
     }
   };
 
+  {
+    /*General PDF REPORT */
+  }
   const handleDownloadVehicleReport = () => {
     const doc = new jsPDF();
     const reportDate = new Date().toLocaleDateString("tr-TR");
@@ -455,6 +458,130 @@ function VehicleDetailPage() {
     doc.save(`AutoTracker-${vehicle.plateNumber}-Arac-Raporu.pdf`);
   };
 
+  {
+    /*Maintanence Report */
+  }
+
+  const handleDownloadMaintenanceInvoice = () => {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const invoiceDate = new Date().toLocaleDateString("tr-TR");
+
+    doc.setFillColor(40, 65, 133);
+    doc.rect(0, 0, pageWidth, 34, "F");
+
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(20);
+    doc.text("AutoTracker", 14, 14);
+
+    doc.setFontSize(11);
+    doc.text("Bakim Faturasi / Servis Özeti", 14, 23);
+
+    doc.setFontSize(9);
+    doc.text(`Tarih: ${invoiceDate}`, pageWidth - 14, 14, {
+      align: "right",
+    });
+
+    doc.setTextColor(40, 65, 133);
+    doc.setFontSize(13);
+    doc.text("Araç Bilgileri", 14, 48);
+
+    autoTable(doc, {
+      startY: 54,
+      theme: "plain",
+      styles: {
+        fontSize: 10,
+        cellPadding: 3,
+      },
+      columnStyles: {
+        0: { fontStyle: "bold", textColor: [40, 65, 133], cellWidth: 45 },
+        1: { textColor: [70, 85, 105] },
+      },
+      body: [
+        ["Araç", `${vehicle.brand} ${vehicle.model}`],
+        ["Plaka", vehicle.plateNumber],
+        ["Yil", vehicle.year],
+        [
+          "Güncel KM",
+          `${vehicle.currentMileage?.toLocaleString("tr-TR") || 0} km`,
+        ],
+      ],
+    });
+
+    doc.setTextColor(40, 65, 133);
+    doc.setFontSize(13);
+    doc.text("Bakim Kalemleri", 14, doc.lastAutoTable.finalY + 14);
+
+    autoTable(doc, {
+      startY: doc.lastAutoTable.finalY + 20,
+      head: [["Islem", "Açiklama", "Tarih", "KM", "Tutar"]],
+      body:
+        maintenanceRecords.length > 0
+          ? [...maintenanceRecords]
+              .sort(
+                (a, b) =>
+                  new Date(b.maintenanceDate) - new Date(a.maintenanceDate),
+              )
+              .map((record) => [
+                record.title || "-",
+                record.description || "-",
+                record.maintenanceDate
+                  ? new Date(record.maintenanceDate).toLocaleDateString("tr-TR")
+                  : "-",
+                `${Number(record.mileage || 0).toLocaleString("tr-TR")} km`,
+                `TL ${Number(record.cost || 0).toLocaleString("tr-TR")}`,
+              ])
+          : [["Bakim kaydi bulunmuyor", "-", "-", "-", "-"]],
+      headStyles: {
+        fillColor: [40, 65, 133],
+        textColor: 255,
+      },
+      styles: {
+        fontSize: 8.5,
+        cellPadding: 3,
+      },
+    });
+
+    const invoiceTotal = maintenanceRecords.reduce(
+      (sum, record) => sum + Number(record.cost || 0),
+      0,
+    );
+
+    autoTable(doc, {
+      startY: doc.lastAutoTable.finalY + 10,
+      theme: "plain",
+      styles: {
+        fontSize: 11,
+        cellPadding: 3,
+      },
+      columnStyles: {
+        0: { fontStyle: "bold", halign: "right", textColor: [40, 65, 133] },
+        1: { fontStyle: "bold", halign: "right", textColor: [220, 53, 69] },
+      },
+      body: [["Genel Toplam", `TL ${invoiceTotal.toLocaleString("tr-TR")}`]],
+    });
+
+    const finalY = doc.lastAutoTable.finalY + 18;
+
+    doc.setTextColor(120, 130, 150);
+    doc.setFontSize(8);
+    doc.text(
+      "Bu belge AutoTracker tarafindan bakim faturasi / servis özeti olarak olusturulmustur.",
+      14,
+      finalY,
+    );
+
+    doc.setTextColor(40, 65, 133);
+    doc.setFontSize(10);
+    doc.text("Servis / Yetkili imza", pageWidth - 14, finalY + 18, {
+      align: "right",
+    });
+
+    doc.line(pageWidth - 70, finalY + 28, pageWidth - 14, finalY + 28);
+
+    doc.save(`AutoTracker-${vehicle.plateNumber}-Bakim-Faturasi.pdf`);
+  };
+
   if (error) {
     return (
       <PageWrapper>
@@ -546,7 +673,18 @@ function VehicleDetailPage() {
                       style={{ borderRadius: 10 }}
                     >
                       <i className="bi bi-file-earmark-pdf me-2"></i>
-                      Araç Genel Raporu PDF 
+                      Araç Genel Raporu PDF
+                    </button>
+                  </div>
+                  <div>
+                    <button
+                      type="button"
+                      className="btn btn-outline-danger btn-sm fw-semibold mt-2 ms-2"
+                      onClick={handleDownloadMaintenanceInvoice}
+                      style={{ borderRadius: 10 }}
+                    >
+                      <i className="bi bi-receipt me-2"></i>
+                      Bakım Faturası
                     </button>
                   </div>
                 </div>
