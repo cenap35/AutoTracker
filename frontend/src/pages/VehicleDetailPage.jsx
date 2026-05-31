@@ -546,7 +546,7 @@ function VehicleDetailPage() {
                       style={{ borderRadius: 10 }}
                     >
                       <i className="bi bi-file-earmark-pdf me-2"></i>
-                      Araç Genel Raporu PDF
+                      Araç Genel Raporu PDF 
                     </button>
                   </div>
                 </div>
