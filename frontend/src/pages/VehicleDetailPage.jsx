@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 import { getVehicleById, updateVehicle } from "../services/vehicleService";
 import PageWrapper from "../components/PageWrapper";
 import vehicleData from "../constants/vehicleData";
@@ -271,6 +273,188 @@ function VehicleDetailPage() {
     }
   };
 
+  const handleDownloadVehicleReport = () => {
+    const doc = new jsPDF();
+    const reportDate = new Date().toLocaleDateString("tr-TR");
+
+    const pageWidth = doc.internal.pageSize.getWidth();
+
+    doc.setFillColor(40, 65, 133);
+    doc.rect(0, 0, pageWidth, 34, "F");
+
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(20);
+    doc.text("AutoTracker", 14, 14);
+
+    doc.setFontSize(11);
+    doc.text("Araç Durum ve Bakım Raporu", 14, 23);
+
+    doc.setFontSize(9);
+    doc.text(`Rapor Tarihi: ${reportDate}`, pageWidth - 14, 14, {
+      align: "right",
+    });
+
+    doc.setTextColor(40, 65, 133);
+    doc.setFontSize(14);
+    doc.text("Araç Bilgileri", 14, 48);
+
+    autoTable(doc, {
+      startY: 54,
+      theme: "plain",
+      styles: {
+        fontSize: 10,
+        cellPadding: 3,
+      },
+      columnStyles: {
+        0: { fontStyle: "bold", textColor: [40, 65, 133], cellWidth: 45 },
+        1: { textColor: [70, 85, 105] },
+      },
+      body: [
+        ["Marka", vehicle.brand],
+        ["Model", vehicle.model],
+        ["Plaka", vehicle.plateNumber],
+        ["Yıl", vehicle.year],
+        [
+          "Güncel KM",
+          `${vehicle.currentMileage?.toLocaleString("tr-TR") || 0} km`,
+        ],
+      ],
+    });
+
+    autoTable(doc, {
+      startY: doc.lastAutoTable.finalY + 8,
+      head: [["Bakım Kaydı", "Toplam Masraf", "Ortalama Masraf", "Son Bakım"]],
+      body: [
+        [
+          maintenanceRecords.length,
+          `TL ${totalMaintenanceCost.toLocaleString("tr-TR")}`,
+          `TL ${averageMaintenanceCost.toLocaleString("tr-TR", {
+            maximumFractionDigits: 0,
+          })}`,
+          latestMaintenanceDate
+            ? latestMaintenanceDate.toLocaleDateString("tr-TR")
+            : "-",
+        ],
+      ],
+      styles: {
+        fontSize: 9,
+        halign: "center",
+        cellPadding: 4,
+      },
+      headStyles: {
+        fillColor: [59, 96, 197],
+        textColor: 255,
+        fontStyle: "bold",
+      },
+      bodyStyles: {
+        textColor: [40, 65, 133],
+        fontStyle: "bold",
+      },
+    });
+
+    doc.setTextColor(40, 65, 133);
+    doc.setFontSize(13);
+    doc.text("Bakım Geçmişi", 14, doc.lastAutoTable.finalY + 14);
+
+    autoTable(doc, {
+      startY: doc.lastAutoTable.finalY + 20,
+      head: [["İşlem", "Tarih", "KM", "Tutar"]],
+      body:
+        maintenanceRecords.length > 0
+          ? [...maintenanceRecords]
+              .sort(
+                (a, b) =>
+                  new Date(b.maintenanceDate) - new Date(a.maintenanceDate),
+              )
+              .map((record) => [
+                record.title || "-",
+                record.maintenanceDate
+                  ? new Date(record.maintenanceDate).toLocaleDateString("tr-TR")
+                  : "-",
+                `${Number(record.mileage || 0).toLocaleString("tr-TR")} km`,
+                `TL ${Number(record.cost || 0).toLocaleString("tr-TR")}`,
+              ])
+          : [["Bakım kaydı bulunmuyor", "-", "-", "-"]],
+      headStyles: {
+        fillColor: [40, 65, 133],
+        textColor: 255,
+      },
+      styles: {
+        fontSize: 9,
+        cellPadding: 3,
+      },
+    });
+
+    doc.setTextColor(40, 65, 133);
+    doc.setFontSize(13);
+    doc.text("Araç Takipleri", 14, doc.lastAutoTable.finalY + 14);
+
+    autoTable(doc, {
+      startY: doc.lastAutoTable.finalY + 20,
+      head: [["Takip", "Tarih", "Tutar", "Durum"]],
+      body:
+        vehicleReminders.length > 0
+          ? [...vehicleReminders]
+              .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+              .map((reminder) => [
+                reminder.type || "-",
+                reminder.dueDate
+                  ? new Date(reminder.dueDate).toLocaleDateString("tr-TR")
+                  : "-",
+                reminder.amount
+                  ? `TL ${Number(reminder.amount).toLocaleString("tr-TR")}`
+                  : "-",
+                reminder.isCompleted ? "Tamamlandı" : "Bekliyor",
+              ])
+          : [["Takip kaydı bulunmuyor", "-", "-", "-"]],
+      headStyles: {
+        fillColor: [40, 65, 133],
+        textColor: 255,
+      },
+      styles: {
+        fontSize: 9,
+        cellPadding: 3,
+      },
+    });
+
+    doc.setTextColor(40, 65, 133);
+    doc.setFontSize(13);
+    doc.text("Araç Notları", 14, doc.lastAutoTable.finalY + 14);
+
+    autoTable(doc, {
+      startY: doc.lastAutoTable.finalY + 20,
+      head: [["Not", "Öncelik", "Durum"]],
+      body:
+        vehicleNotes.length > 0
+          ? vehicleNotes.map((note) => [
+              note.title || "-",
+              note.priority || "-",
+              note.isCompleted ? "Tamamlandı" : "Bekliyor",
+            ])
+          : [["Not bulunmuyor", "-", "-"]],
+      headStyles: {
+        fillColor: [40, 65, 133],
+        textColor: 255,
+      },
+      styles: {
+        fontSize: 9,
+        cellPadding: 3,
+      },
+    });
+
+    const finalY = doc.lastAutoTable.finalY + 14;
+
+    doc.setTextColor(120, 130, 150);
+    doc.setFontSize(8);
+    doc.text(
+      "Bu rapor AutoTracker tarafından otomatik olarak oluşturulmuştur.",
+      14,
+      finalY,
+    );
+
+    doc.save(`AutoTracker-${vehicle.plateNumber}-Arac-Raporu.pdf`);
+  };
+
   if (error) {
     return (
       <PageWrapper>
@@ -353,6 +537,17 @@ function VehicleDetailPage() {
                     >
                       Km: {vehicle.currentMileage?.toLocaleString("tr-TR") || 0}
                     </span>
+                  </div>
+                  <div>
+                    <button
+                      type="button"
+                      className="btn btn-outline-primary btn-sm fw-semibold mt-2"
+                      onClick={handleDownloadVehicleReport}
+                      style={{ borderRadius: 10 }}
+                    >
+                      <i className="bi bi-file-earmark-pdf me-2"></i>
+                      Araç Genel Raporu PDF
+                    </button>
                   </div>
                 </div>
               </div>
