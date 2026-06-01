@@ -142,7 +142,7 @@ function Footer() {
         <hr className="my-3" />
 
         <div className="text-center small" style={{ color: "#7c8aa5" }}>
-          © {new Date().getFullYear()} AutoTracker • Version 1.0
+          © {new Date().getFullYear()} AutoTracker • Version 1.3
         </div>
       </div>
     </footer>
