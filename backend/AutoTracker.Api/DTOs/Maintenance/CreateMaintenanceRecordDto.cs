@@ -5,10 +5,10 @@ namespace AutoTracker.Api.DTOs.Maintenance;
 public class CreateMaintenanceRecordDto
 {
     [Required]
-    [MaxLength(100)]
+    [MaxLength(80)]
     public string Title { get; set; } = string.Empty;
 
-    [MaxLength(500)]
+    [MaxLength(300)]
     public string? Description { get; set; }
 
     [Range(0, 2000000)]
