@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 const PRIMARY = "#3977f5";
 const PRIMARY_DEEP = "#245fe0";
@@ -163,14 +164,40 @@ function VehicleNoteCard({
   };
 
   const handleSave = async () => {
-    await onUpdate(note.id, {
-      title: editData.title,
-      content: editData.content,
-      priority: editData.priority,
-      isCompleted: note.isCompleted,
-    });
-    setIsEditing(false);
-    setLifted(false);
+    if (editData.title.trim().length === 0) {
+      toast.error("Başlık boş olamaz.");
+      return;
+    }
+
+    if (editData.title.length > 80) {
+      toast.error("Başlık en fazla 80 karakter olabilir.");
+      return;
+    }
+
+    if (editData.content.length > 300) {
+      toast.error("İçerik en fazla 300 karakter olabilir.");
+      return;
+    }
+
+    if (editData.priority.length > 20) {
+      toast.error("Öncelik en fazla 20 karakter olabilir.");
+      return;
+    }
+
+    try {
+      await onUpdate(note.id, {
+        title: editData.title,
+        content: editData.content,
+        priority: editData.priority,
+        isCompleted: note.isCompleted,
+      });
+
+      setIsEditing(false);
+      setLifted(false);
+    } catch (err) {
+      toast.error("Not güncellenemedi.");
+      console.error(err);
+    }
   };
 
   const handleCancel = () => {
@@ -258,8 +285,22 @@ function VehicleNoteCard({
                   value={editData.title}
                   onChange={handleChange}
                   placeholder="Not başlığı"
+                  maxLength={80}
                   required
                 />
+
+                <div
+                  className={`text-end small mt-1 ${
+                    editData.title.length >= 80
+                      ? "text-danger fw-semibold"
+                      : "text-muted"
+                  }`}
+                >
+                  {editData.title.length}/80
+                  {editData.title.length >= 80 && (
+                    <span className="ms-2">Karakter sınırına ulaşıldı.</span>
+                  )}
+                </div>
               </div>
               <div className="col-md-4">
                 <label className="form-label small text-muted mb-1">
@@ -289,7 +330,21 @@ function VehicleNoteCard({
                   value={editData.content}
                   onChange={handleChange}
                   placeholder="Not içeriği..."
+                  maxLength={300}
                 />
+
+                <div
+                  className={`text-end small mt-1 ${
+                    editData.content.length >= 300
+                      ? "text-danger fw-semibold"
+                      : "text-muted"
+                  }`}
+                >
+                  {editData.content.length}/300
+                  {editData.content.length >= 300 && (
+                    <span className="ms-2">Karakter sınırına ulaşıldı.</span>
+                  )}
+                </div>
               </div>
               <div className="col-12 d-flex flex-wrap gap-2 justify-content-end pt-1">
                 <button
