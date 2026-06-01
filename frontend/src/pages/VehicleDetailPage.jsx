@@ -47,6 +47,8 @@ function VehicleDetailPage() {
 
   const [vehicleReminders, setVehicleReminders] = useState([]);
 
+  const [selectedMaintenanceIds, setSelectedMaintenanceIds] = useState([]);
+
   useEffect(() => {
     const fetchVehicle = async () => {
       try {
@@ -189,6 +191,14 @@ function VehicleDetailPage() {
       toast.error("Bakım kaydı güncellenemedi.");
       console.error(err);
     }
+  };
+
+  const handleToggleMaintenanceSelection = (recordId) => {
+    setSelectedMaintenanceIds((prev) =>
+      prev.includes(recordId)
+        ? prev.filter((id) => id !== recordId)
+        : [...prev, recordId],
+    );
   };
 
   const handleUpdateVehicle = async (e) => {
@@ -462,10 +472,15 @@ function VehicleDetailPage() {
     /*Maintanence Report */
   }
 
-  const handleDownloadMaintenanceInvoice = () => {
+  const generateMaintenanceInvoicePdf = (records, fileSuffix) => {
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
     const invoiceDate = new Date().toLocaleDateString("tr-TR");
+
+    const invoiceTotal = records.reduce(
+      (sum, record) => sum + Number(record.cost || 0),
+      0,
+    );
 
     doc.setFillColor(40, 65, 133);
     doc.rect(0, 0, pageWidth, 34, "F");
@@ -514,38 +529,32 @@ function VehicleDetailPage() {
 
     autoTable(doc, {
       startY: doc.lastAutoTable.finalY + 20,
-      head: [["Islem", "Açiklama", "Tarih", "KM", "Tutar"]],
+      head: [["Islem", "Tarih", "KM", "Tutar"]],
       body:
-        maintenanceRecords.length > 0
-          ? [...maintenanceRecords]
+        records.length > 0
+          ? [...records]
               .sort(
                 (a, b) =>
                   new Date(b.maintenanceDate) - new Date(a.maintenanceDate),
               )
               .map((record) => [
                 record.title || "-",
-                record.description || "-",
                 record.maintenanceDate
                   ? new Date(record.maintenanceDate).toLocaleDateString("tr-TR")
                   : "-",
                 `${Number(record.mileage || 0).toLocaleString("tr-TR")} km`,
                 `TL ${Number(record.cost || 0).toLocaleString("tr-TR")}`,
               ])
-          : [["Bakim kaydi bulunmuyor", "-", "-", "-", "-"]],
+          : [["Bakim kaydi bulunmuyor", "-", "-", "-"]],
       headStyles: {
         fillColor: [40, 65, 133],
         textColor: 255,
       },
       styles: {
-        fontSize: 8.5,
+        fontSize: 9,
         cellPadding: 3,
       },
     });
-
-    const invoiceTotal = maintenanceRecords.reduce(
-      (sum, record) => sum + Number(record.cost || 0),
-      0,
-    );
 
     autoTable(doc, {
       startY: doc.lastAutoTable.finalY + 10,
@@ -579,7 +588,25 @@ function VehicleDetailPage() {
 
     doc.line(pageWidth - 70, finalY + 28, pageWidth - 14, finalY + 28);
 
-    doc.save(`AutoTracker-${vehicle.plateNumber}-Bakim-Faturasi.pdf`);
+    doc.save(`AutoTracker-${vehicle.plateNumber}-${fileSuffix}.pdf`);
+  };
+
+  const handleDownloadMaintenanceInvoice = () => {
+    generateMaintenanceInvoicePdf(maintenanceRecords, "Bakim-Faturasi");
+  };
+
+  const handleDownloadSelectedMaintenanceInvoice = () => {
+    const selectedRecords = maintenanceRecords.filter((record) =>
+      selectedMaintenanceIds.includes(record.id),
+    );
+
+    if (selectedRecords.length === 0) {
+      toast.warning("Fatura oluşturmak için bakım seçmelisiniz.");
+      return;
+    }
+
+    generateMaintenanceInvoicePdf(selectedRecords, "Secili-Bakim-Faturasi");
+    setSelectedMaintenanceIds([]);
   };
 
   if (error) {
@@ -665,26 +692,25 @@ function VehicleDetailPage() {
                       Km: {vehicle.currentMileage?.toLocaleString("tr-TR") || 0}
                     </span>
                   </div>
-                  <div>
+                  <div className="d-flex flex-wrap gap-2 mt-2">
                     <button
                       type="button"
-                      className="btn btn-outline-primary btn-sm fw-semibold mt-2"
+                      className="btn btn-outline-primary btn-sm fw-semibold"
                       onClick={handleDownloadVehicleReport}
                       style={{ borderRadius: 10 }}
                     >
                       <i className="bi bi-file-earmark-pdf me-2"></i>
                       Araç Genel Raporu PDF
                     </button>
-                  </div>
-                  <div>
+
                     <button
                       type="button"
-                      className="btn btn-outline-danger btn-sm fw-semibold mt-2 ms-2"
+                      className="btn btn-outline-danger btn-sm fw-semibold"
                       onClick={handleDownloadMaintenanceInvoice}
                       style={{ borderRadius: 10 }}
                     >
                       <i className="bi bi-receipt me-2"></i>
-                      Bakım Faturası
+                      Tüm Bakımları Faturala
                     </button>
                   </div>
                 </div>
@@ -859,11 +885,26 @@ function VehicleDetailPage() {
               }}
             >
               <div className="card-body px-4 py-3">
-                <div
-                  className="text-primary mb-3 fw-bold"
-                  style={{ fontSize: 18 }}
-                >
-                  <i className="bi bi-tools me-2"></i>Bakım Kayıtları
+                <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2 mb-3">
+                  <div
+                    className="text-primary fw-bold"
+                    style={{ fontSize: 18 }}
+                  >
+                    <i className="bi bi-tools me-2"></i>
+                    Bakım Kayıtları
+                  </div>
+
+                  <button
+                    type="button"
+                    className="btn btn-outline-danger btn-sm fw-semibold"
+                    onClick={handleDownloadSelectedMaintenanceInvoice}
+                    disabled={selectedMaintenanceIds.length === 0}
+                    style={{ borderRadius: 10 }}
+                  >
+                    <i className="bi bi-receipt me-2"></i>
+                    Seçilenlerden Fatura Oluştur (
+                    {selectedMaintenanceIds.length})
+                  </button>
                 </div>
                 {maintenanceRecords.length === 0 ? (
                   <div className="alert alert-info text-center rounded-3 my-3 py-3 fs-6">
@@ -879,11 +920,34 @@ function VehicleDetailPage() {
                       )
                       .map((record) => (
                         <div key={record.id} className="col-md-6 col-lg-4">
-                          <MaintenanceCard
-                            record={record}
-                            onUpdate={handleUpdateMaintenanceRecord}
-                            onDelete={handleDeleteMaintenanceRecord}
-                          />
+                          <div className="border rounded-3 p-2 h-100 bg-white">
+                            <div className="form-check mb-2">
+                              <input
+                                className="form-check-input"
+                                type="checkbox"
+                                checked={selectedMaintenanceIds.includes(
+                                  record.id,
+                                )}
+                                onChange={() =>
+                                  handleToggleMaintenanceSelection(record.id)
+                                }
+                                id={`maintenance-${record.id}`}
+                              />
+                              <label
+                                className="form-check-label small fw-semibold"
+                                htmlFor={`maintenance-${record.id}`}
+                                style={{ color: "#284185" }}
+                              >
+                                Faturaya ekle
+                              </label>
+                            </div>
+
+                            <MaintenanceCard
+                              record={record}
+                              onUpdate={handleUpdateMaintenanceRecord}
+                              onDelete={handleDeleteMaintenanceRecord}
+                            />
+                          </div>
                         </div>
                       ))}
                   </div>
