@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 function VehicleNoteForm({ vehicles = [], selectedVehicleId, onCreate }) {
   const [vehicleId, setVehicleId] = useState(selectedVehicleId || "");
@@ -9,19 +10,49 @@ function VehicleNoteForm({ vehicles = [], selectedVehicleId, onCreate }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    await onCreate({
-      vehicleId: Number(selectedVehicleId || vehicleId),
-      title,
-      content,
-      priority,
-    });
+    if (!selectedVehicleId && !vehicleId) {
+      toast.error("Lütfen araç seçin.");
+      return;
+    }
 
-    setTitle("");
-    setContent("");
-    setPriority("Orta");
+    if (title.trim().length === 0) {
+      toast.error("Başlık boş olamaz.");
+      return;
+    }
 
-    if (!selectedVehicleId) {
-      setVehicleId("");
+    if (title.length > 80) {
+      toast.error("Başlık en fazla 80 karakter olabilir.");
+      return;
+    }
+
+    if (content.length > 300) {
+      toast.error("İçerik en fazla 300 karakter olabilir.");
+      return;
+    }
+
+    if (priority.length > 20) {
+      toast.error("Öncelik en fazla 20 karakter olabilir.");
+      return;
+    }
+
+    try {
+      await onCreate({
+        vehicleId: Number(selectedVehicleId || vehicleId),
+        title,
+        content,
+        priority,
+      });
+
+      setTitle("");
+      setContent("");
+      setPriority("Orta");
+
+      if (!selectedVehicleId) {
+        setVehicleId("");
+      }
+    } catch (err) {
+      toast.error("Not eklenemedi.");
+      console.error(err);
     }
   };
 
@@ -31,7 +62,8 @@ function VehicleNoteForm({ vehicles = [], selectedVehicleId, onCreate }) {
         className="border rounded-4 p-3 p-md-4 bg-body-tertiary shadow-sm"
         style={{
           borderColor: "rgba(13,110,253,.15)",
-          transition: "transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease",
+          transition:
+            "transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease",
           transform: "translateY(0px)",
         }}
         onMouseEnter={(e) => {
@@ -55,7 +87,9 @@ function VehicleNoteForm({ vehicles = [], selectedVehicleId, onCreate }) {
             </span>
             <div>
               <div className="fw-semibold text-dark">Yeni Not</div>
-              <div className="text-muted small">Aracın için hızlıca not ekle.</div>
+              <div className="text-muted small">
+                Aracın için hızlıca not ekle.
+              </div>
             </div>
           </div>
         </div>
@@ -90,8 +124,20 @@ function VehicleNoteForm({ vehicles = [], selectedVehicleId, onCreate }) {
             placeholder="Örn: Yağ değişimi hatırlatması"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+            maxLength={80}
             required
           />
+
+          <div
+            className={`text-end small mt-1 ${
+              title.length >= 80 ? "text-danger fw-semibold" : "text-muted"
+            }`}
+          >
+            {title.length}/80
+            {title.length >= 80 && (
+              <span className="ms-2">Karakter sınırına ulaşıldı.</span>
+            )}
+          </div>
         </div>
 
         <div className="mb-3">
@@ -104,7 +150,19 @@ function VehicleNoteForm({ vehicles = [], selectedVehicleId, onCreate }) {
             placeholder="Detay ekleyebilirsin (opsiyonel)"
             value={content}
             onChange={(e) => setContent(e.target.value)}
+            maxLength={300}
           />
+
+          <div
+            className={`text-end small mt-1 ${
+              content.length >= 300 ? "text-danger fw-semibold" : "text-muted"
+            }`}
+          >
+            {content.length}/300
+            {content.length >= 300 && (
+              <span className="ms-2">Karakter sınırına ulaşıldı.</span>
+            )}
+          </div>
         </div>
 
         <div className="d-flex flex-column flex-sm-row gap-2 align-items-stretch align-items-sm-end">
