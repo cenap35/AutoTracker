@@ -920,8 +920,18 @@ function VehicleDetailPage() {
                       )
                       .map((record) => (
                         <div key={record.id} className="col-md-6 col-lg-4">
-                          <div className="border rounded-3 p-2 h-100 bg-white">
-                            <div className="form-check mb-2">
+                          <div className="position-relative h-100">
+                            <div
+                              className="form-check position-absolute z-1"
+                              style={{
+                                top: 12,
+                                left: 14,
+                                background: "rgba(255,255,255,0.9)",
+                                borderRadius: 10,
+                                padding: "6px 10px 6px 30px",
+                                border: "1px solid #e3eafb",
+                              }}
+                            >
                               <input
                                 className="form-check-input"
                                 type="checkbox"
@@ -942,11 +952,13 @@ function VehicleDetailPage() {
                               </label>
                             </div>
 
-                            <MaintenanceCard
-                              record={record}
-                              onUpdate={handleUpdateMaintenanceRecord}
-                              onDelete={handleDeleteMaintenanceRecord}
-                            />
+                            <div style={{ paddingTop: 42 }}>
+                              <MaintenanceCard
+                                record={record}
+                                onUpdate={handleUpdateMaintenanceRecord}
+                                onDelete={handleDeleteMaintenanceRecord}
+                              />
+                            </div>
                           </div>
                         </div>
                       ))}
