@@ -19,6 +19,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddControllers();
 
+builder.Services.AddHealthChecks();
+
 builder.Services.AddScoped<EmailService>();
 
 var frontendBaseUrl = builder.Configuration["Frontend:BaseUrl"];
@@ -72,6 +74,10 @@ app.UseCors("AllowReactApp");
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapHealthChecks("/health");
+
 app.MapControllers();
+
+
 
 app.Run();
