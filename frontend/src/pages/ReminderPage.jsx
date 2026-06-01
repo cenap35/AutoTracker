@@ -12,7 +12,7 @@ import ReminderCard from "../components/ReminderCard";
 import DashboardBackground from "../components/Dashboard/DashboardBackground";
 import LoadingSpinner from "../components/Common/LoadingSpinner";
 import { toast } from "react-toastify";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 function ReminderPage() {
   const [vehicles, setVehicles] = useState([]);
@@ -24,6 +24,8 @@ function ReminderPage() {
   const [selectedType, setSelectedType] = useState("all");
 
   const [loading, setLoading] = useState(true);
+
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -53,6 +55,7 @@ function ReminderPage() {
       setReminders([newReminder, ...reminders]);
       setError("");
       toast.success("Takip başarıyla eklendi.");
+      setIsCreateOpen(false);
     } catch (err) {
       toast.error("Takip eklenemedi.");
       setError("Takip eklenemedi.");
@@ -193,16 +196,67 @@ function ReminderPage() {
             </div>
           )}
 
-          {/* Ekleme formu */}
+          {/*Takip ekleme formu  */}
           <div
             className="card border-0 shadow-sm mb-4"
-            style={{ borderRadius: 16 }}
+            style={{
+              borderRadius: 16,
+              background: "rgba(255,255,255,0.97)",
+              border: "1.3px solid #e3eafb",
+            }}
           >
             <div className="card-body p-3 p-md-4">
-              <ReminderForm
-                vehicles={vehicles}
-                onCreate={handleCreateReminder}
-              />
+              <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
+                <div>
+                  <h5 className="fw-bold mb-1" style={{ color: "#284185" }}>
+                    <i
+                      className="bi bi-plus-circle me-2"
+                      style={{ color: "#3b60c5" }}
+                    />
+                    Yeni takip kaydı
+                  </h5>
+
+                  <p className="text-muted small mb-0">
+                    Sigorta, kasko, MTV ve muayene tarihlerini buradan
+                    ekleyebilirsiniz.
+                  </p>
+                </div>
+
+                <motion.button
+                  type="button"
+                  className="btn btn-outline-primary fw-semibold"
+                  onClick={() => setIsCreateOpen((prev) => !prev)}
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  style={{ borderRadius: 12 }}
+                >
+                  <i
+                    className={`bi ${
+                      isCreateOpen ? "bi-chevron-up" : "bi-plus-circle"
+                    } me-2`}
+                  />
+                  {isCreateOpen ? "Formu Kapat" : "Takip Ekle"}
+                </motion.button>
+              </div>
+
+              <AnimatePresence>
+                {isCreateOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0, y: -10 }}
+                    animate={{ opacity: 1, height: "auto", y: 0 }}
+                    exit={{ opacity: 0, height: 0, y: -10 }}
+                    transition={{ duration: 0.3 }}
+                    style={{ overflow: "hidden" }}
+                  >
+                    <div className="mt-4">
+                      <ReminderForm
+                        vehicles={vehicles}
+                        onCreate={handleCreateReminder}
+                      />
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
 
