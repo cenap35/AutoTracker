@@ -29,7 +29,17 @@ services:
       MailSettings__Email: "0a0bd94e873298"
       MailSettings__Password: "1e419ca8e1f82c"
       
-
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: "http://localhost:8080/api"
+    container_name: autotracker-frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - api
 
 volumes:
   autotracker_postgres_data:
