@@ -1,40 +1,25 @@
 # 🚗 AutoTracker
 
-AutoTracker is a modern full-stack vehicle management platform designed to help individuals and businesses organize maintenance history, mileage records, expenses, reminders, reports, and vehicle-related information in one centralized system.
+AutoTracker is a full-stack vehicle management platform that helps individuals and businesses track maintenance history, mileage, expenses, reminders, reports, and vehicle-related records from a centralized dashboard.
 
-Built with React, ASP.NET Core Web API, PostgreSQL, and Docker, the project focuses on clean architecture, secure authentication, scalable backend design, and real-world software engineering practices.
+Built with React, ASP.NET Core Web API, PostgreSQL, and Docker, the project focuses on secure authentication, scalable architecture, and real-world software engineering practices.
 
-Instead of relying on spreadsheets, paper records, scattered notes, or memory, AutoTracker provides a centralized dashboard where users can manage the complete lifecycle of their vehicles.
+Designed for vehicle owners, service centers, repair shops, fleet operators, and rental companies, AutoTracker simplifies vehicle lifecycle management by organizing maintenance records, costs, notes, reminders, and reporting in a single platform.
 
-The platform is suitable for both personal and commercial use cases, including individual vehicle owners, automotive service centers, repair shops, fleet operators, rental car companies, insurance-related vehicle tracking processes, and businesses that require organized vehicle maintenance and operational records.
+## ✨ Key Highlights
 
-AutoTracker enables users to maintain detailed service histories, track maintenance costs, monitor mileage, manage reminders, store vehicle-specific notes, and generate structured records that can support reporting, inspections, and long-term vehicle management processes.
+| Category                     | Technologies & Features                                                                                                    |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| 🔐 Security & Authentication | JWT Authentication & Authorization, Password Hashing, Email Verification, Password Recovery, User-Based Data Isolation     |
+| 🚗 Vehicle Management        | Vehicle Registration, Vehicle Tracking, Mileage Monitoring, Vehicle Lifecycle Management                                   |
+| 🔧 Maintenance & Operations  | Maintenance Records, Service History, Cost Tracking, Maintenance Scheduling, Vehicle Reminders                             |
+| 📝 Documentation & Reporting | Vehicle Notes, Operational Records, PDF Reporting, Long-Term Record Keeping                                                |
+| ⚛️ Full-Stack Engineering    | React, React Router, Axios, Bootstrap, ASP.NET Core Web API, RESTful API Architecture, SPA Routing                         |
+| 🗄️ Data Management          | PostgreSQL, Relational Database Design, Entity Framework Core ORM, Automated Database Migrations                           |
+| 🐳 DevOps & Deployment       | Dockerized Frontend, Backend & Database, Docker Compose, Nginx, Persistent Volumes, Containerized Deployment               |
+| 🏗️ Architecture             | Modular Project Structure, Environment-Based Configuration, Scalable Full-Stack Architecture, Production-Ready Environment |
 
-The long-term vision of the project is to evolve into a comprehensive vehicle management ecosystem that combines operational tracking, reporting, analytics, and intelligent decision support tools within a modern web-based platform.
 
-
-### Key Highlights
-
-- Secure JWT Authentication & Authorization
-- Password Hashing & Identity Security
-- Email Verification and Password Recovery
-- User-Specific Data Isolation
-- Vehicle Management & Mileage Tracking
-- Maintenance History and Cost Tracking
-- Vehicle Notes and Reminder System
-- Relational Database Design with PostgreSQL
-- Entity Framework Core ORM Integration
-- RESTful API Architecture
-- Full-Stack React & ASP.NET Core Application
-- Dockerized Frontend, Backend, and Database
-- Docker Compose Orchestration
-- Persistent Database Storage with Docker Volumes
-- Nginx-Powered Frontend Delivery
-- SPA Routing Support for React Applications
-- Environment-Based Configuration Management
-- Automated Database Migration Support
-- Scalable and Modular Project Structure
-- Production-Ready Containerized Environment
 
 ## Why AutoTracker?
 
@@ -42,50 +27,40 @@ Vehicle-related information is often scattered across spreadsheets, notes, paper
 
 In addition to solving a real-world problem, the project serves as a portfolio-grade full-stack application showcasing modern software engineering practices such as secure authentication, RESTful APIs, relational database design, and Docker-based deployment.
 
-
-
-
 ## 🚀 Core Features
 
-### 🔐 Authentication & Account Security
+| Feature Area                         | Description                                                                                                                                    |
+| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| 🔐 Authentication & Security         | User registration, login, JWT authentication, password hashing, email verification, password recovery, and account protection mechanisms.      |
+| 🚘 Vehicle Management                | Create, update, and manage vehicle records with detailed vehicle information, mileage tracking, and ownership history.                         |
+| 🔧 Maintenance & Service Management  | Track maintenance operations, repair history, service details, maintenance costs, and mileage-based service records.                           |
+| 💰 Expense Tracking                  | Monitor vehicle-related expenses and maintenance costs to maintain a clear financial overview of vehicle ownership and operations.             |
+| 📝 Notes & Documentation             | Store vehicle-specific notes, observations, operational records, and important vehicle information.                                            |
+| ⏰ Reminder Management                | Create and manage reminders for maintenance schedules, inspections, service intervals, and other vehicle-related tasks.                        |
+| 📄 Reporting & PDF Export            | Generate downloadable PDF reports containing vehicle information, maintenance history, mileage records, expenses, notes, and operational data. |
+| 👥 User-Based Data Isolation         | Ensure secure access control by allowing users to access and manage only their own data.                                                       |
+| 🏗️ Scalable Full-Stack Architecture | Built with React, ASP.NET Core Web API, PostgreSQL, Docker, and Nginx using a scalable and maintainable architecture.                          |
 
-Secure account management with user registration, login, JWT authentication, password hashing, email verification, password recovery, and account protection mechanisms.
 
-### 🚘 Vehicle Management
-Create, update, and manage vehicle records while maintaining detailed vehicle information, mileage tracking, and ownership history in a centralized dashboard.
-
-### 🔧 Maintenance & Service Management
-Track maintenance operations, repair history, service details, maintenance costs, and mileage-based service records to maintain a complete vehicle lifecycle history.
-
-### 💰 Expense Tracking
-Monitor vehicle-related expenses and maintenance costs to maintain a clear financial overview of vehicle ownership and operations.
-
-### 📝 Notes & Documentation
-Store custom notes, observations, important vehicle information, and operational documentation related to each vehicle.
-
-### ⏰ Reminder Management
-Create and manage reminders for maintenance schedules, inspections, service intervals, and other vehicle-related tasks.
-
-### 📄 Reporting & PDF Export
-Generate downloadable PDF reports containing vehicle information, maintenance history, mileage records, expenses, notes, and operational data for documentation, record keeping, and business workflows.
-
-### 👥 User-Based Data Isolation
-Ensure secure access control by allowing users to manage and view only their own vehicles, maintenance records, notes, reminders, and related data.
-
-### 🏗️ Scalable Full-Stack Architecture
-Built with React, ASP.NET Core Web API, PostgreSQL, Docker, and Nginx using a modular architecture designed for maintainability, scalability, and future expansion.
 
 ## 🏗️ System Architecture
 
-text ┌─────────────────────────┐ │      React Frontend     │ │      (Vite + Nginx)     │ └───────────┬─────────────┘             │             │ HTTP / REST API             ▼ ┌─────────────────────────┐ │ ASP.NET Core Web API    │ │ JWT Authentication      │ │ Business Logic Layer    │ │ Entity Framework Core   │ └───────────┬─────────────┘             │             │ ORM             ▼ ┌─────────────────────────┐ │      PostgreSQL DB      │ │ Relational Data Storage │ └───────────┬─────────────┘             │             ▼ ┌─────────────────────────┐ │     Docker Volume       │ │ Persistent Data Storage │ └─────────────────────────┘ 
+| Layer             | Technology                         |
+| ----------------- | ---------------------------------- |
+| 🎨 Frontend       | React, Vite, Nginx                 |
+| ⚙️ Backend        | ASP.NET Core Web API               |
+| 🔐 Authentication | JWT Authentication & Authorization |
+| 🗄️ Database      | PostgreSQL                         |
+| 🔄 ORM            | Entity Framework Core              |
+| 🐳 Infrastructure | Docker & Docker Compose            |
+| 💾 Persistence    | Docker Volumes                     |
 
 ### Architecture Overview
 
-AutoTracker follows a modern full-stack architecture where the React frontend communicates with an ASP.NET Core Web API through RESTful endpoints. Authentication and authorization are handled using JWT-based security mechanisms, while Entity Framework Core manages database operations and object-relational mapping.
+AutoTracker follows a modern full-stack architecture where a React frontend communicates with an ASP.NET Core Web API through RESTful endpoints. Authentication is handled using JWT, data access is managed with Entity Framework Core, and PostgreSQL provides persistent relational storage.
 
-All application services are containerized using Docker and orchestrated through Docker Compose. The frontend is served through Nginx, the backend runs as an independent API service, and PostgreSQL provides persistent relational data storage through Docker volumes.
+The entire application stack is containerized with Docker and orchestrated through Docker Compose, creating a scalable, maintainable, and deployment-ready environment.
 
-This architecture provides a clean separation of concerns, scalability, maintainability, and a deployment-ready development environment.
 
 
 ## 🛠️ Technology Stack
@@ -161,9 +136,15 @@ The application is orchestrated with Docker Compose and consists of multiple ind
 - Docker Volumes — Database persistence across container restarts
 - Docker Network — Internal communication between services
 
-### Deployment Architecture
+### Deployment Flow
 
-text Frontend (React + Nginx)           │           ▼ ASP.NET Core Web API           │           ▼      PostgreSQL           │           ▼    Docker Volume 
+| Stage        | Component            |
+| ------------ | -------------------- |
+| 🎨 Frontend  | React + Nginx        |
+| ⚙️ API Layer | ASP.NET Core Web API |
+| 🗄️ Database | PostgreSQL           |
+| 💾 Storage   | Docker Volumes       |
+
 
 ### Key Benefits
 
@@ -188,7 +169,45 @@ Once started, all required services are automatically created, configured, and c
 
 ## 📂 Project Structure
 
-text AutoTracker │ ├── frontend │   ├── src │   │   ├── pages │   │   ├── components │   │   ├── services │   │   ├── routes │   │   └── assets │   │ │   ├── public │   └── Dockerfile │ ├── backend │   └── AutoTracker.Api │       ├── Controllers │       ├── Models │       ├── DTOs │       ├── Data │       ├── Services │       ├── Migrations │       ├── Helpers │       └── Program.cs │ ├── docker-compose.yml ├── README.md └── .gitignore 
+```text
+AutoTracker
+│
+├── frontend
+│   ├── src
+│   │   ├── api
+│   │   ├── assets
+│   │   ├── components
+│   │   ├── constants
+│   │   ├── pages
+│   │   ├── services
+│   │   ├── styles
+│   │   ├── App.jsx
+│   │   └── main.jsx
+│   │
+│   ├── public
+│   ├── Dockerfile
+│   ├── nginx.conf
+│   └── package.json
+│
+├── backend
+│   └── AutoTracker.Api
+│       ├── Controllers
+│       ├── DTOs
+│       ├── Data
+│       ├── Models
+│       ├── Services
+│       ├── Migrations
+│       ├── Properties
+│       ├── Program.cs
+│       ├── Dockerfile
+│       └── AutoTracker.Api.csproj
+│
+├── docker-compose.yml
+├── README.md
+└── .gitignore
+```
+
+
 
 ### Structure Overview
 
@@ -198,53 +217,75 @@ text AutoTracker │ ├── frontend │   ├── src │   │   ├─�
 - docker-compose.yml — Multi-container application orchestration and service configuration.
 - README.md — Project documentation and setup instructions.
 
-## 🚀 Getting Started
 
-Follow the steps below to set up and run AutoTracker in your local environment.
+## 🚀 Getting Started
 
 ### Prerequisites
 
-Before getting started, make sure the following tools are installed:
+Before running the application, make sure the following tools are installed:
 
-- Docker
-- Docker Compose
-- Git
+* Docker
+* Docker Compose
+* Git
 
-### Clone the Repository
+### Clone Repository
 
-bash git clone <repository-url> cd AutoTracker 
+```bash
+git clone <repository-url>
+cd AutoTracker
+```
 
-### Run the Application
+### Configure Environment Files
+
+Create the required local configuration files using the provided examples:
+
+```text
+frontend/.env
+backend/AutoTracker.Api/appsettings.Development.json
+```
+
+Use the following template files as references:
+
+```text
+frontend/.env.example
+backend/AutoTracker.Api/appsettings.Development.example.json
+```
+
+Update your local configuration values such as:
+
+* PostgreSQL Credentials
+* JWT Secret Key
+* Mailtrap SMTP Settings
+* Frontend URL Configuration
+
+### Start the Application
 
 Build and start all services:
 
-bash docker compose up --build 
+```bash
+docker compose up --build
+```
 
-Docker Compose will automatically:
+### Available Services
 
-- Create the PostgreSQL database container
-- Build the ASP.NET Core API container
-- Build the React frontend container
-- Configure networking between services
-- Mount persistent database volumes
+| Service        | URL                   |
+| -------------- | --------------------- |
+| 🚗 Frontend    | http://localhost:5173 |
+| ⚙️ Backend API | http://localhost:8080 |
+| 🗄️ PostgreSQL | Docker Container      |
 
-### Access the Application
+### Stop the Application
 
-Frontend:
+```bash
+docker compose down
+```
 
-text http://localhost:5173 
+### Rebuild Containers
 
-Backend API:
+```bash
+docker compose up --build
+```
 
-text http://localhost:8080 
-
-### Stopping the Application
-
-bash docker compose down 
-
-### Rebuilding After Changes
-
-bash docker compose up --build 
 
 ## 🔒 Security Features
 
@@ -337,65 +378,3 @@ The project reflects a long-term interest in building scalable software solution
 - GitHub: https://github.com/cenap35
 - LinkedIn: https://www.linkedin.com/in/cenapbayram-dev/
 
-
-
-
-## 📸 Screenshots
-
-The following screenshots demonstrate the main features and user experience of AutoTracker.
-
-### 🔐 Authentication & Account Security
-
-> User registration, login, email verification, and password recovery workflows.
-
-Authentication
-
----
-
-### 🚘 Vehicle Dashboard
-
-> Centralized vehicle management dashboard with mileage tracking and vehicle information.
-
-Vehicle Dashboard
-
----
-
-### 🔧 Maintenance & Service Management
-
-> Maintenance history, service records, cost tracking, and vehicle lifecycle management.
-
-Maintenance Management
-
----
-
-### 📝 Notes & Documentation
-
-> Vehicle-specific notes, documentation, and operational records.
-
-Vehicle Notes
-
----
-
-### ⏰ Reminder Management
-
-> Maintenance reminders, inspections, and scheduled vehicle tasks.
-
-Reminders
-
----
-
-### 📄 Reporting & PDF Export
-
-> Downloadable PDF reports containing vehicle information, maintenance history, mileage records, expenses, and documentation.
-
-PDF Reports
-
----
-
-### 🐳 Dockerized Full-Stack Architecture
-
-> React frontend, ASP.NET Core Web API, PostgreSQL database, and Docker-based deployment environment.
-
-Docker Architecture
-
-![AutoTracker Banner](./screenshots/banner.png)
