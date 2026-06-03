@@ -42,14 +42,27 @@ function App() {
 
           <Route path="/confirm-email" element={<ConfirmEmailPage />} />
 
-          <Route path="/reminders" element={<ReminderPage />} />
-
-          <Route path="/account" element={<AccountPage />} />
-
           <Route path="/about" element={<AboutPage />} />
 
           <Route path="/contact" element={<ContactPage />} />
-          
+
+          <Route
+            path="/reminders"
+            element={
+              <ProtectedRoute>
+                <ReminderPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/account"
+            element={
+              <ProtectedRoute>
+                <AccountPage />
+              </ProtectedRoute>
+            }
+          />
 
           <Route
             path="/vehicles"
