@@ -80,7 +80,7 @@ function ProductTourPage() {
                 letterSpacing: "0.8px",
               }}
             >
-              PRODUCT TOUR
+              AutoTracker'ı Keşfet
             </span>
 
             <h1
