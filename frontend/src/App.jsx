@@ -20,6 +20,7 @@ import NotFoundPage from "./pages/NotFoundPage";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ScrollToTop from "./components/ScrollToTop";
 import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
 import ProductTourPage from "./pages/ProductTourPage";
@@ -28,6 +29,8 @@ function App() {
   return (
     <>
       <Navbar />
+
+      <ScrollToTop />
 
       <ErrorBoundary>
         <Routes>
