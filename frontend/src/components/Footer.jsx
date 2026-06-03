@@ -42,6 +42,29 @@ function Footer() {
           {/* Orta */}
           <div className="col-lg-4">
             <div className="d-flex justify-content-center gap-4 flex-wrap">
+
+
+            <Link
+                to="/product-tour"
+                className="text-decoration-none fw-semibold"
+                style={{
+                  color: "#284185",
+                  padding: "6px 12px",
+                  borderRadius: "6px",
+                  transition: "background 0.18s, color 0.18s",
+                }}
+                onMouseEnter={e => {
+                  e.target.style.background = "#f0f4ff";
+                  e.target.style.color = "#3b60c5";
+                }}
+                onMouseLeave={e => {
+                  e.target.style.background = "none";
+                  e.target.style.color = "#284185";
+                }}
+              >
+                AutoTracker'ı Keşfet
+              </Link>
+
               <Link
                 to="/about"
                 className="text-decoration-none fw-semibold"
