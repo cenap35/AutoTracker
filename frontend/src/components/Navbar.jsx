@@ -19,9 +19,11 @@ function Navbar() {
     fontSize: 15,
     minWidth: 40,
     background: isActive ? "rgba(255, 224, 130, 0.14)" : "transparent",
+    transition: "all .18s ease",
   });
 
   return (
+    <>
     <nav
       className="navbar navbar-expand-lg shadow-sm "
       style={{
@@ -61,7 +63,7 @@ function Navbar() {
         <div className="collapse navbar-collapse" id="navbarNavModern">
           <div className="navbar-nav me-auto gap-1 flex-wrap align-items-center">
             <NavLink
-              className="nav-link px-2 fw-semibold rounded-pill d-flex align-items-center gap-2"
+              className="nav-link nav-hover px-2 fw-semibold rounded-pill d-flex align-items-center gap-2"
               to="/"
               end
               style={navLinkStyle}
@@ -72,7 +74,7 @@ function Navbar() {
 
             {token && (
               <NavLink
-                className="nav-link px-2 fw-semibold rounded-pill d-flex align-items-center gap-2"
+                className="nav-link nav-hover px-2 fw-semibold rounded-pill d-flex align-items-center gap-2"
                 to="/vehicles"
                 style={navLinkStyle}
               >
@@ -83,7 +85,7 @@ function Navbar() {
 
             {token && (
               <NavLink
-                className="nav-link px-2 fw-semibold rounded-pill d-flex align-items-center gap-2"
+                className="nav-link nav-hover px-2 fw-semibold rounded-pill d-flex align-items-center gap-2"
                 to="/dashboard"
                 style={navLinkStyle}
               >
@@ -94,7 +96,7 @@ function Navbar() {
 
             {token && (
               <NavLink
-                className="nav-link px-2 fw-semibold rounded-pill d-flex align-items-center gap-2"
+                className="nav-link nav-hover px-2 fw-semibold rounded-pill d-flex align-items-center gap-2"
                 to="/maintenance"
                 style={navLinkStyle}
               >
@@ -105,7 +107,7 @@ function Navbar() {
 
             {token && (
               <NavLink
-                className="nav-link px-2 fw-semibold rounded-pill d-flex align-items-center gap-2"
+                className="nav-link nav-hover px-2 fw-semibold rounded-pill d-flex align-items-center gap-2"
                 to="/reminders"
                 style={navLinkStyle}
               >
@@ -116,7 +118,7 @@ function Navbar() {
 
             {token && (
               <NavLink
-                className="nav-link px-2 fw-semibold rounded-pill d-flex align-items-center gap-2"
+                className="nav-link nav-hover px-2 fw-semibold rounded-pill d-flex align-items-center gap-2"
                 to="/reports"
                 style={navLinkStyle}
               >
@@ -185,6 +187,20 @@ function Navbar() {
         </div>
       </div>
     </nav>
+    <style>{`
+  .nav-hover {
+    transition: all .18s ease;
+  }
+
+ .nav-hover:hover {
+
+  background: rgba(255,255,255,0.12) !important;
+
+  color: #ffffff !important;
+
+}
+`}</style>
+    </>
   );
 }
 
