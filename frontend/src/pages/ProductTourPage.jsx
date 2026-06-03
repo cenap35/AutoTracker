@@ -6,7 +6,7 @@ function ProductTourPage() {
   const sections = [
     {
       icon: "bi-speedometer2",
-      label: "Dashboard",
+      label: "Panel",
       title: "Kontrol Paneli",
       subtitle: "Araçlarınızın genel durumunu tek ekrandan takip edin.",
       description:
@@ -15,7 +15,7 @@ function ProductTourPage() {
     },
     {
       icon: "bi-car-front-fill",
-      label: "Vehicles",
+      label: "Araçlarım",
       title: "Araç Yönetimi",
       subtitle: "Tüm araç kayıtlarınızı merkezi olarak yönetin.",
       description:
@@ -24,7 +24,7 @@ function ProductTourPage() {
     },
     {
       icon: "bi-tools",
-      label: "Maintenance",
+      label: "Bakım",
       title: "Bakım ve Servis Takibi",
       subtitle: "Araç bakım geçmişini düzenli ve izlenebilir hale getirin.",
       description:
@@ -33,7 +33,7 @@ function ProductTourPage() {
     },
     {
       icon: "bi-bell-fill",
-      label: "Reminders",
+      label: "Takipler",
       title: "Hatırlatma Sistemi",
       subtitle: "Bakım, muayene ve önemli araç işlemlerini kaçırmayın.",
       description:
@@ -42,7 +42,7 @@ function ProductTourPage() {
     },
     {
       icon: "bi-journal-text",
-      label: "Notes",
+      label: "Notlar",
       title: "Araç Notları",
       subtitle: "Araçlara özel önemli bilgileri saklayın.",
       description:
@@ -51,7 +51,7 @@ function ProductTourPage() {
     },
     {
       icon: "bi-file-earmark-pdf-fill",
-      label: "Reports",
+      label: "Raporlar",
       title: "Raporlama ve PDF Export",
       subtitle: "Araç bilgilerini raporlanabilir hale getirin.",
       description:
@@ -59,6 +59,7 @@ function ProductTourPage() {
       imageLabel: "PDF rapor ekran görüntüsü",
     },
   ];
+
 
   return (
     <PageWrapper>
