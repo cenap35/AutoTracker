@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import Logo from "../components/Logo";
 import AnimatedText from "../components/AnimationsEffects/AnimatedText";
 import PageWrapper from "../components/PageWrapper";
 import DashboardBackground from "../components/Dashboard/DashboardBackground";
@@ -23,7 +22,7 @@ const FEATURES = [
     label: "Bakıma git",
   },
   {
-    icon: "bi bi-calendar-check",
+    icon: "bi-calendar-check",
     color: "#ff7c3c",
     title: "Takipler",
     text: "Sigorta, kasko, MTV ve muayene tarihlerini araç bazlı takip edin.",
@@ -374,6 +373,34 @@ function HomePage() {
               )}
             </div>
 
+            {/* Why AutoTracker? */}
+            <motion.div
+              className="text-center mb-5"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+            >
+              <h2 className="fw-bold mb-3" style={{ color: "#284185" }}>
+                AutoTracker ile araç sahipliği daha kolay
+              </h2>
+
+              <p
+                className="mx-auto"
+                style={{
+                  maxWidth: 800,
+                  color: "#4a5b75",
+                  lineHeight: 1.8,
+                  fontSize: "1.05rem",
+                }}
+              >
+                AutoTracker; araçlarınızı, bakım geçmişinizi, masraflarınızı,
+                yaklaşan işlemlerinizi ve önemli notlarınızı tek bir platformda
+                toplar. Dağınık notlar, unutulan bakım tarihleri ve kontrolü zor
+                masraflar yerine tüm araç verilerinize düzenli ve erişilebilir
+                şekilde ulaşabilirsiniz.
+              </p>
+            </motion.div>
+
             {/* Product Tour */}
             <div
               className="card border-0 shadow-sm mb-4"
@@ -416,34 +443,6 @@ function HomePage() {
                 </Link>
               </div>
             </div>
-
-            {/* Why AutoTracker? */}
-            <motion.div
-              className="text-center mb-5"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-            >
-              <h2 className="fw-bold mb-3" style={{ color: "#284185" }}>
-                AutoTracker ile araç sahipliği daha kolay
-              </h2>
-
-              <p
-                className="mx-auto"
-                style={{
-                  maxWidth: 800,
-                  color: "#4a5b75",
-                  lineHeight: 1.8,
-                  fontSize: "1.05rem",
-                }}
-              >
-                AutoTracker; araçlarınızı, bakım geçmişinizi, masraflarınızı,
-                yaklaşan işlemlerinizi ve önemli notlarınızı tek bir platformda
-                toplar. Dağınık notlar, unutulan bakım tarihleri ve kontrolü zor
-                masraflar yerine tüm araç verilerinize düzenli ve erişilebilir
-                şekilde ulaşabilirsiniz.
-              </p>
-            </motion.div>
           </div>
 
           <style>{`
