@@ -210,6 +210,9 @@ function HomePage() {
                         "Yaklaşan sigorta ve muayene hatırlatmaları",
 
                         "Notlar, kayıtlar ve araç geçmişi",
+
+                        "PDF raporları, masraf dağılımı ve daha fazlası",
+
                         "Ve daha fazlası ...",
                       ].map((item) => (
                         <li
