@@ -30,7 +30,7 @@ const FEATURES = [
     link: "/reminders",
     label: "Takiplere git",
   },
- 
+
   {
     icon: "bi-bar-chart-line",
     color: "#9b59b6",
@@ -373,6 +373,77 @@ function HomePage() {
                 </div>
               )}
             </div>
+
+            {/* Product Tour */}
+            <div
+              className="card border-0 shadow-sm mb-4"
+              style={{
+                borderRadius: 22,
+                background: "rgba(255,255,255,0.96)",
+                border: "1.3px solid #e3eafb",
+              }}
+            >
+              <div className="card-body p-4 p-lg-5 text-center">
+                <h2 className="h4 fw-bold mb-3" style={{ color: "#284185" }}>
+                  AutoTracker'ı keşfet
+                </h2>
+
+                <p
+                  className="mx-auto mb-4"
+                  style={{
+                    maxWidth: 650,
+                    color: "#4a5b75",
+                    lineHeight: 1.7,
+                  }}
+                >
+                  Panel, araç yönetimi, bakım kayıtları, hatırlatmalar ve
+                  raporlama ekranlarını giriş yapmadan inceleyin.
+                </p>
+
+                <Link
+                  to="/product-tour"
+                  className="btn fw-bold px-4 py-2 product-tour-btn"
+                  style={{
+                    borderRadius: 18,
+                    background: "rgba(255,255,255,.88)",
+                    color: "#284185",
+                    border: "2px solid #d9e4f5",
+                    transition: "all .22s ease",
+                  }}
+                >
+                  <i className="bi bi-play-circle-fill me-2" />
+                  AutoTracker'ı Keşfet
+                </Link>
+              </div>
+            </div>
+
+            {/* Why AutoTracker? */}
+            <motion.div
+              className="text-center mb-5"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+            >
+              <h2 className="fw-bold mb-3" style={{ color: "#284185" }}>
+                AutoTracker ile araç sahipliği daha kolay
+              </h2>
+
+              <p
+                className="mx-auto"
+                style={{
+                  maxWidth: 800,
+                  color: "#4a5b75",
+                  lineHeight: 1.8,
+                  fontSize: "1.05rem",
+                }}
+              >
+                AutoTracker; araçlarınızı, bakım geçmişinizi, masraflarınızı,
+                yaklaşan işlemlerinizi ve önemli notlarınızı tek bir platformda
+                toplar. Dağınık notlar, unutulan bakım tarihleri ve kontrolü zor
+                masraflar yerine tüm araç verilerinize düzenli ve erişilebilir
+                şekilde ulaşabilirsiniz.
+              </p>
+            </motion.div>
           </div>
 
           <style>{`
