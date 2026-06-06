@@ -95,49 +95,11 @@ function ProductTourPage() {
     <PageWrapper>
       <DashboardBackground>
         <div className="container py-4 py-lg-5">
-          <motion.div
-            className="text-center mx-auto mb-5"
-            style={{ maxWidth: 820 }}
-            initial={{ opacity: 0, y: 22 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45, ease: "easeOut" }}
-          >
-            <span
-              className="badge px-3 py-2 mb-3"
-              style={{
-                background: "linear-gradient(90deg, #3b60c5, #314286)",
-                color: "#ffe082",
-                borderRadius: 999,
-                letterSpacing: "0.8px",
-              }}
-            >
-              AutoTracker'ı Keşfet
-            </span>
+         
+        
 
-            <h1
-              className="fw-bold mb-3"
-              style={{
-                color: "#284185",
-                fontSize: "clamp(2rem, 5vw, 3.6rem)",
-              }}
-            >
-              AutoTracker’ı Yakından Keşfedin
-            </h1>
 
-            <p
-              className="mb-0 mx-auto"
-              style={{
-                color: "#4a5b75",
-                maxWidth: 700,
-                lineHeight: 1.65,
-                fontSize: "1.05rem",
-              }}
-            >
-              Araç yönetimi, bakım takibi, gider kontrolü, hatırlatmalar,
-              notlar ve PDF raporları tek bir modern platformda nasıl
-              birleşiyor keşfedin.
-            </p>
-          </motion.div>
+          
 
           <div className="row g-4">
             {sections.map((section, index) => (
