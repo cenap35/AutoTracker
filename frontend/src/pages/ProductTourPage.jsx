@@ -71,7 +71,7 @@ function ProductTourPage() {
       image: remindersImg,
     },
     {
-      icon: "bi-file-earmark-pdf-fill",
+      icon: "bi-journal-text",
       label: "Raporlar Ve Notlar",
       title: "Notlarını tut",
       subtitle: "Araç hakkında notlar alın önem düzeyine göre kategorileyin.",
