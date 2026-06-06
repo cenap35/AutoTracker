@@ -2,64 +2,94 @@ import { motion } from "framer-motion";
 import PageWrapper from "../components/PageWrapper";
 import DashboardBackground from "../components/Dashboard/DashboardBackground";
 
+import dashboardImg from "../assets/product-tour/dashboard.png";
+import dashboard2Img from "../assets/product-tour/dashboard2.png";
+import vehiclesImg from "../assets/product-tour/vehicles.png";
+import vehicleDetailImg from "../assets/product-tour/vehicle-detail.png";
+import maintenanceImg from "../assets/product-tour/maintenance.png";
+import remindersImg from "../assets/product-tour/reminders.png";
+import reportsImg from "../assets/product-tour/reports.png";
+import pdf1Img from "../assets/product-tour/pdf1.png";
+
 function ProductTourPage() {
   const sections = [
     {
-      icon: "bi-speedometer2",
-      label: "Panel",
-      title: "Kontrol Paneli",
-      subtitle: "Araçlarınızın genel durumunu tek ekrandan takip edin.",
+      icon: "bi-car-front-fill",
+      label: "Araçlarım",
+      title: "Araç ekle sil",
+      subtitle: "Tüm araç kayıtlarınızı merkezi olarak yönetin.",
       description:
-        "Toplam araç sayısı, bakım kayıtları, giderler, yaklaşan hatırlatmalar ve araç bazlı masraf özetleri tek bir kontrol panelinde görüntülenir.",
-      imageLabel: "Dashboard ekran görüntüsü",
+        "Araç ekleme ve silme işlemlerinizi kolaylıkla yapabilirsiniz.",
+      image: vehiclesImg,
     },
     {
       icon: "bi-car-front-fill",
-      label: "Araçlarım",
-      title: "Araç Yönetimi",
-      subtitle: "Tüm araç kayıtlarınızı merkezi olarak yönetin.",
+      label: "Araç Detay",
+      title: "Detaya gir",
+      subtitle: "Araçlarınıza dair tüm bilgilere ve kontrollerine tek yerden ulaşın.",
+ 
       description:
-        "Araç ekleme, güncelleme, plaka, model, yıl, kilometre ve araç detaylarını takip etme işlemleri kullanıcıya özel olarak yönetilir.",
-      imageLabel: "Araçlar ekran görüntüsü",
+        "Araç bilgilerinizi güncelleyebilir, plaka, model, yıl, kilometre ve diğer detaylara kolayca erişebilir; bakım kayıtları, notlar ve takipleri hızlıca görüntüleyip yönetebilirsiniz.",
+   
+      image: vehicleDetailImg,
+    },
+    {
+      icon: "bi-speedometer2",
+      label: "Panel",
+      title: "Panelde özetini gör",
+      subtitle: "Araçlarınızın genel durumunu tek ekrandan takip edin.",
+      description:
+        "Toplam araç sayısı, bakım kayıtları, giderler, yaklaşan hatırlatmalar ve araç bazlı masraf özetleri tek bir kontrol panelinde görüntülenir.",
+      image: dashboardImg,
+    },
+    {
+      icon: "bi-speedometer2",
+      label: "Panel",
+      title: "Analizleri incele",
+      subtitle: "Araçlarınızın genel durumunu tek ekrandan takip edin.",
+      description:
+        "Burada araçlarınızla ilgili tüm analizleri ve özet raporları tek ekranda kolayca görüntüleyebilirsiniz.",
+   
+      image: dashboard2Img,
     },
     {
       icon: "bi-tools",
       label: "Bakım",
-      title: "Bakım ve Servis Takibi",
+      title: "Bakımları yönet",
       subtitle: "Araç bakım geçmişini düzenli ve izlenebilir hale getirin.",
       description:
-        "Bakım tarihi, kilometre, açıklama ve maliyet bilgileriyle her aracın servis geçmişi detaylı olarak kayıt altında tutulur.",
-      imageLabel: "Bakım ekran görüntüsü",
+        "Bakım tarihi, kilometre, açıklama ve maliyet bilgileriyle her aracın servis geçmişini kayıt altında tutun.",
+      image: maintenanceImg,
     },
     {
       icon: "bi-bell-fill",
-      label: "Takipler",
-      title: "Hatırlatma Sistemi",
+      label: "Hatırlatmalar",
+      title: "Hatırlatmaları takip et",
       subtitle: "Bakım, muayene ve önemli araç işlemlerini kaçırmayın.",
       description:
-        "Yaklaşan bakım, sigorta, muayene veya özel araç görevleri için hatırlatmalar oluşturulabilir ve takip edilebilir.",
-      imageLabel: "Hatırlatmalar ekran görüntüsü",
-    },
-    {
-      icon: "bi-journal-text",
-      label: "Notlar",
-      title: "Araç Notları",
-      subtitle: "Araçlara özel önemli bilgileri saklayın.",
-      description:
-        "Her araç için özel notlar, gözlemler, açıklamalar ve operasyonel kayıtlar güvenli şekilde saklanabilir.",
-      imageLabel: "Notlar ekran görüntüsü",
+        "Yaklaşan bakım, sigorta, muayene veya özel araç görevleri için hatırlatmalar oluşturun ve takip edin.",
+      image: remindersImg,
     },
     {
       icon: "bi-file-earmark-pdf-fill",
-      label: "Raporlar",
-      title: "Raporlama ve PDF Export",
+      label: "Raporlar Ve Notlar",
+      title: "Notlarını tut",
+      subtitle: "Araç hakkında notlar alın önem düzeyine göre kategorileyin.",
+      description:
+        "Araçlarınıza dair önemli notlarınızı, görevlerinizi ve raporlarınızı kolayca kaydedin ve düzenleyin.",
+   
+      image: reportsImg,
+    },
+    {
+      icon: "bi-file-earmark-pdf-fill",
+      label: "PDF",
+      title: "PDF al",
       subtitle: "Araç bilgilerini raporlanabilir hale getirin.",
       description:
-        "Araç bilgileri, bakım geçmişi, kilometre kayıtları, giderler ve notlar PDF formatında dışa aktarılabilir.",
-      imageLabel: "PDF rapor ekran görüntüsü",
+        "Araç bilgileri, bakım geçmişi, kilometre kayıtları, giderler ve notları PDF formatında dışa aktarın.",
+      image: pdf1Img,
     },
   ];
-
 
   return (
     <PageWrapper>
@@ -103,9 +133,9 @@ function ProductTourPage() {
                 fontSize: "1.05rem",
               }}
             >
-              Araç yönetimi, bakım takibi, gider kontrolü, hatırlatmalar, notlar
-              ve PDF raporları tek bir modern platformda nasıl birleşiyor
-              keşfedin.
+              Araç yönetimi, bakım takibi, gider kontrolü, hatırlatmalar,
+              notlar ve PDF raporları tek bir modern platformda nasıl
+              birleşiyor keşfedin.
             </p>
           </motion.div>
 
@@ -118,10 +148,6 @@ function ProductTourPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.18 }}
                 transition={{ duration: 0.45, delay: index * 0.04 }}
-                whileHover={{
-                  y: -6,
-                  scale: 1.01,
-                }}
               >
                 <div
                   className="card border-0 shadow-sm overflow-hidden position-relative"
@@ -130,10 +156,8 @@ function ProductTourPage() {
                     background:
                       "linear-gradient(111deg, #f3f8ff 70%, #fffef8 100%)",
                     border: "1.3px solid #e3eafb",
-                    transition: "all .2s ease",
                   }}
                 >
-                  {/* dekoratif daire */}
                   <div
                     style={{
                       position: "absolute",
@@ -146,7 +170,7 @@ function ProductTourPage() {
                     }}
                   />
 
-                  <div className="card-body p-3 p-md-4 p-lg-5">
+                  <div className="card-body p-3 p-md-4 p-lg-5 position-relative">
                     <div
                       className={`row g-4 align-items-center ${
                         index % 2 === 1 ? "flex-lg-row-reverse" : ""
@@ -195,45 +219,27 @@ function ProductTourPage() {
 
                       <div className="col-lg-7">
                         <div
-                          className="d-flex align-items-center justify-content-center text-center"
                           style={{
-                            minHeight: 320,
                             borderRadius: 18,
+                            padding: 10,
                             background:
                               "linear-gradient(135deg, #eef4ff, #fff8e8)",
-                            border: "1.5px dashed rgba(59,96,197,0.28)",
-                            boxShadow: "0 0 45px rgba(59,96,197,.12)",
-                            backgroundImage:
-                              "radial-gradient(#c7d4ff 1px, transparent 1px)",
-                            backgroundSize: "18px 18px",
+                            border: "1.3px solid rgba(59,96,197,0.18)",
+                            boxShadow: "0 0 38px rgba(59,96,197,.10)",
                           }}
                         >
-                          <div>
-                            <i
-                              className={`bi ${section.icon}`}
-                              style={{
-                                fontSize: "3.8rem",
-                                color: "#3b60c5",
-                              }}
-                            />
-
-                            <p
-                              className="fw-bold mt-3 mb-1"
-                              style={{
-                                color: "#284185",
-                                fontSize: "1.05rem",
-                              }}
-                            >
-                              {section.imageLabel}
-                            </p>
-
-                            <p
-                              className="small mb-0"
-                              style={{ color: "#6b7c93" }}
-                            >
-                              Screenshot will be added here
-                            </p>
-                          </div>
+                          <img
+                            src={section.image}
+                            alt={section.title}
+                            className="img-fluid w-100"
+                            style={{
+                              borderRadius: 14,
+                              maxHeight: 390,
+                              objectFit: "cover",
+                              objectPosition: "top",
+                              boxShadow: "0 12px 30px rgba(40,65,133,.16)",
+                            }}
+                          />
                         </div>
                       </div>
                     </div>
