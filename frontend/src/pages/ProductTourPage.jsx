@@ -120,7 +120,7 @@ function ProductTourPage() {
                   marginBottom: "16px",
                   fontWeight: 900,
                   display: "block",
-                  textTransform: "uppercase",
+                  // textTransform: "uppercase", // kaldırıldı, hepsi büyük olmasın
                   background: "linear-gradient(92deg, #3047b2, #60a5fa)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
@@ -136,8 +136,9 @@ function ProductTourPage() {
                   damping: 14,
                 }}
               >
-                AUTOTRACKER
+                AutoTracker
               </motion.h1>
+      
               <span
                 style={{
                   display: "inline-block",
@@ -153,7 +154,7 @@ function ProductTourPage() {
                   textTransform: "none",
                 }}
               >
-                {/* boş, klasik badge kaldırıldı */}
+            
               </span>
               <motion.h2
                 className="fw-bold"
