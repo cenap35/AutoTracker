@@ -1,4 +1,5 @@
 using MailKit.Net.Smtp;
+using MailKit.Security;
 using MimeKit;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
@@ -16,9 +17,14 @@ public class EmailService
 
     public async Task SendEmailAsync(string toEmail, string subject, string body)
     {
+        var fromEmail = _config["MailSettings:Email"];
+        var host = _config["MailSettings:Host"];
+        var port = int.Parse(_config["MailSettings:Port"]!);
+        var password = _config["MailSettings:Password"];
+
         var email = new MimeMessage();
 
-        email.From.Add(MailboxAddress.Parse("test@autotracker.com"));
+        email.From.Add(MailboxAddress.Parse(fromEmail!));
         email.To.Add(MailboxAddress.Parse(toEmail));
 
         email.Subject = subject;
@@ -31,14 +37,14 @@ public class EmailService
         using var smtp = new SmtpClient();
 
         await smtp.ConnectAsync(
-            _config["MailSettings:Host"],
-            int.Parse(_config["MailSettings:Port"]),
-            false
+            host,
+            port,
+            SecureSocketOptions.StartTls
         );
 
         await smtp.AuthenticateAsync(
-            _config["MailSettings:Email"],
-            _config["MailSettings:Password"]
+            fromEmail,
+            password
         );
 
         await smtp.SendAsync(email);
