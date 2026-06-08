@@ -45,7 +45,7 @@ function ContactPage() {
                           E-posta
                         </div>
                         <div className="text-muted">
-                          <a href="mailto:autotrackercarcare@gmail.com">autotrackercarcare@gmail.com</a>
+                          <a href="mailto:autotrackercarcare@gmail.com"style={{ color: "#0a66c2", textDecoration: "none" }} >autotrackercarcare@gmail.com</a>
                      
                         </div>
                       </div>
@@ -61,7 +61,7 @@ function ContactPage() {
                           GitHub
                         </div>
                         <div className="text-muted">
-                          <a href="https://github.com/cenap35" target="_blank" rel="noopener noreferrer">https://github.com/cenap35</a>
+                          <a href="https://github.com/cenap35" target="_blank" rel="noopener noreferrer"style={{ color: "#0a66c2", textDecoration: "none" }} >https://github.com/cenap35</a>
                      
                         </div>
                       </div>
@@ -77,7 +77,15 @@ function ContactPage() {
                           LinkedIn
                         </div>
                         <div className="text-muted">
-                          <a href="https://www.linkedin.com/in/cenapbayram-dev" target="_blank" rel="noopener noreferrer">www.linkedin.com/in/cenapbayram-dev</a>
+                          <a
+                            href="https://www.linkedin.com/in/cenapbayram-dev"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ color: "#0a66c2", textDecoration: "none" }}
+                          >
+                            www.linkedin.com/in/cenapbayram-dev
+                          </a>
+                     
                      
                         </div>
                       </div>
