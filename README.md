@@ -127,45 +127,30 @@ AutoTracker is built using a modern full-stack technology ecosystem designed for
 
 ## 📸 Screenshots
 
-### Home Page
+<p align="center">
+  <img src="docs/screenshots/homepage.png" alt="Home Page" width="45%" />
+  <img src="docs/screenshots/vehicles.png" alt="Vehicles" width="45%" />
+</p>
 
-<img src="docs/screenshots/homepage.png" alt="Home Page" width="900" />
+<p align="center">
+  <img src="docs/screenshots/vehicle-detail.png" alt="Vehicle Details" width="45%" />
+  <img src="docs/screenshots/dashboard.png" alt="Dashboard" width="45%" />
+</p>
 
-### Vehicles
+<p align="center">
+  <img src="docs/screenshots/dashboard2.png" alt="Analytics Dashboard" width="45%" />
+  <img src="docs/screenshots/maintenance.png" alt="Maintenance Tracking" width="45%" />
+</p>
 
-<img src="docs/screenshots/vehicles.png" alt="Vehicles" width="900" />
+<p align="center">
+  <img src="docs/screenshots/reminders.png" alt="Reminders" width="45%" />
+  <img src="docs/screenshots/reports.png" alt="Reports & Notes" width="45%" />
+</p>
 
-### Vehicle Details
-
-<img src="docs/screenshots/vehicle-detail.png" alt="Vehicle Details" width="900" />
-
-### Dashboard
-
-<img src="docs/screenshots/dashboard.png" alt="Dashboard" width="900" />
-
-### Analytics Dashboard
-
-<img src="docs/screenshots/dashboard2.png" alt="Analytics Dashboard" width="900" />
-
-### Maintenance Tracking
-
-<img src="docs/screenshots/maintenance.png" alt="Maintenance Tracking" width="900" />
-
-### Reminders
-
-<img src="docs/screenshots/reminders.png" alt="Reminders" width="900" />
-
-### Reports & Notes
-
-<img src="docs/screenshots/reports.png" alt="Reports & Notes" width="900" />
-
-### PDF Export
-
-<img src="docs/screenshots/pdf1.png" alt="PDF Export" width="900" />
-
-### Advanced PDF Report
-
-<img src="docs/screenshots/pdf2.png" alt="Advanced PDF Report" width="900" />
+<p align="center">
+  <img src="docs/screenshots/pdf1.png" alt="PDF Export" width="45%" />
+  <img src="docs/screenshots/pdf2.png" alt="Advanced PDF Report" width="45%" />
+</p>
 
 
 
