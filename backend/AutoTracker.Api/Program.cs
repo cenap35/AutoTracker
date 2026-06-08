@@ -22,6 +22,7 @@ builder.Services.AddControllers();
 builder.Services.AddHealthChecks();
 
 builder.Services.AddScoped<EmailService>();
+builder.Services.AddScoped<EmailTemplateService>();
 
 var frontendBaseUrl = builder.Configuration["Frontend:BaseUrl"];
 

@@ -20,12 +20,14 @@ public class AuthController : ControllerBase
   private readonly AppDbContext _context;
   private readonly EmailService _emailService;
   private readonly IConfiguration _configuration;
+  private readonly EmailTemplateService _emailTemplateService;
 
-  public AuthController(AppDbContext context, EmailService emailService, IConfiguration configuration)
+  public AuthController(AppDbContext context, EmailService emailService, IConfiguration configuration, EmailTemplateService emailTemplateService)
   {
     _context = context;
     _emailService = emailService;
     _configuration = configuration;
+    _emailTemplateService = emailTemplateService;
   }
 
   [HttpPost("register")]
@@ -65,15 +67,13 @@ public class AuthController : ControllerBase
     try
     {
       await _emailService.SendEmailAsync(
-          user.Email,
-          "AutoTracker Email Doğrulama",
-          $@"
-        <h2>AutoTracker Email Doğrulama</h2>
-        <p>Merhaba {user.FullName},</p>
-        <p>Hesabınızı aktifleştirmek için aşağıdaki linke tıklayın:</p>
-        <a href='{confirmationLink}'>Email adresimi doğrula</a>
-        "
-      );
+      user.Email,
+      "AutoTracker Email Doğrulama",
+      _emailTemplateService.BuildEmailConfirmationTemplate(
+          user.FullName,
+          confirmationLink
+      )
+  );
     }
     catch
     {
@@ -211,17 +211,13 @@ public class AuthController : ControllerBase
     try
     {
       await _emailService.SendEmailAsync(
-          user.Email,
-          "AutoTracker Email Doğrulama",
-          $@"
-        <h2>AutoTracker Email Doğrulama</h2>
-        <p>Merhaba {user.FullName},</p>
-        <p>Yeni doğrulama linkiniz:</p>
-        <a href='{confirmationLink}'>
-            Email adresimi doğrula
-        </a>
-        "
-      );
+      user.Email,
+      "AutoTracker Email Doğrulama",
+      _emailTemplateService.BuildEmailConfirmationTemplate(
+          user.FullName,
+          confirmationLink
+      )
+  );
     }
     catch
     {
@@ -259,15 +255,13 @@ public class AuthController : ControllerBase
     try
     {
       await _emailService.SendEmailAsync(
-          user.Email,
-          "AutoTracker Şifre Sıfırlama",
-          $@"
-        <h2>AutoTracker Şifre Sıfırlama</h2>
-        <p>Merhaba {user.FullName},</p>
-        <p>Şifrenizi sıfırlamak için aşağıdaki linke tıklayın:</p>
-        <a href='{resetLink}'>Şifremi sıfırla</a>
-        "
-      );
+     user.Email,
+     "AutoTracker Şifre Sıfırlama",
+     _emailTemplateService.BuildPasswordResetTemplate(
+         user.FullName,
+         resetLink
+     )
+ );
     }
     catch
     {
