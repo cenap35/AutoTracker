@@ -383,4 +383,5 @@ public class AuthController : ControllerBase
     return Ok("Hesap başarıyla silindi.");
   }
 
+
 }
