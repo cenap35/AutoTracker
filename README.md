@@ -1,3 +1,5 @@
+<img src="docs/screenshots/homepage.png" alt="AutoTracker Banner" />
+
 # 🚗 AutoTracker
 
 AutoTracker is a full-stack vehicle management platform that helps individuals and businesses track maintenance history, mileage, expenses, reminders, reports, and vehicle-related records from a centralized dashboard.
@@ -103,7 +105,8 @@ AutoTracker is built using a modern full-stack technology ecosystem designed for
 - Password Hashing
 - Email Verification Workflow
 - Password Recovery & Reset System
-- Mailtrap SMTP Integration
+- Gmail SMTP Integration
+- Custom HTML Email Templates
 
 ### 🧰 Development & Productivity Tools
 
@@ -120,6 +123,50 @@ AutoTracker is built using a modern full-stack technology ecosystem designed for
 - User-Based Data Isolation
 - Containerized Development Environment
 - Scalable and Maintainable Project Struct
+
+
+## 📸 Screenshots
+
+### Home Page
+
+<img src="docs/screenshots/homepage.png" alt="Home Page" width="900" />
+
+### Vehicles
+
+<img src="docs/screenshots/vehicles.png" alt="Vehicles" width="900" />
+
+### Vehicle Details
+
+<img src="docs/screenshots/vehicle-detail.png" alt="Vehicle Details" width="900" />
+
+### Dashboard
+
+<img src="docs/screenshots/dashboard.png" alt="Dashboard" width="900" />
+
+### Analytics Dashboard
+
+<img src="docs/screenshots/dashboard2.png" alt="Analytics Dashboard" width="900" />
+
+### Maintenance Tracking
+
+<img src="docs/screenshots/maintenance.png" alt="Maintenance Tracking" width="900" />
+
+### Reminders
+
+<img src="docs/screenshots/reminders.png" alt="Reminders" width="900" />
+
+### Reports & Notes
+
+<img src="docs/screenshots/reports.png" alt="Reports & Notes" width="900" />
+
+### PDF Export
+
+<img src="docs/screenshots/pdf1.png" alt="PDF Export" width="900" />
+
+### Advanced PDF Report
+
+<img src="docs/screenshots/pdf2.png" alt="Advanced PDF Report" width="900" />
+
 
 
 ## 🐳 Docker & Deployment
@@ -255,7 +302,7 @@ Update your local configuration values such as:
 
 * PostgreSQL Credentials
 * JWT Secret Key
-* Mailtrap SMTP Settings
+* SMTP Email Settings
 * Frontend URL Configuration
 
 ### Start the Application
