@@ -24,10 +24,10 @@ services:
       ASPNETCORE_URLS: "http://+:8080"
       ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=autotrackerdb;Username=postgres;Password=postgres"
       Frontend__BaseUrl: "http://localhost:5173"
-      MailSettings__Host: "sandbox.smtp.mailtrap.io"
-      MailSettings__Port: "2525"
-      MailSettings__Email: "0a0bd94e873298"
-      MailSettings__Password: "1e419ca8e1f82c"
+      MailSettings__Host: "smtp.gmail.com"
+      MailSettings__Port: "587"
+      MailSettings__Email: "${MAIL_EMAIL}"
+      MailSettings__Password: "${MAIL_PASSWORD}"  
       
   frontend:
     build:
