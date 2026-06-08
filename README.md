@@ -12,12 +12,12 @@ Designed for vehicle owners, service centers, repair shops, fleet operators, and
 
 | Category                     | Technologies & Features                                                                                                    |
 | ---------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| 🔐 Security & Authentication | JWT Authentication & Authorization, Password Hashing, Email Verification, Password Recovery, User-Based Data Isolation     |
+| 🔐 Security & Authentication | JWT Authentication & Authorization, Password Hashing, Email Verification, Password Recovery, User-Based Data Isolation , Global Exception Handling    |
 | 🚗 Vehicle Management        | Vehicle Registration, Vehicle Tracking, Mileage Monitoring, Vehicle Lifecycle Management                                   |
 | 🔧 Maintenance & Operations  | Maintenance Records, Service History, Cost Tracking, Maintenance Scheduling, Vehicle Reminders                             |
 | 📝 Documentation & Reporting | Vehicle Notes, Operational Records, PDF Reporting, Long-Term Record Keeping                                                |
-| ⚛️ Full-Stack Engineering    | React, React Router, Axios, Bootstrap, ASP.NET Core Web API, RESTful API Architecture, SPA Routing                         |
-| 🗄️ Data Management          | PostgreSQL, Relational Database Design, Entity Framework Core ORM, Automated Database Migrations                           |
+| ⚛️ Full-Stack Engineering    | React, React Router, Axios, Bootstrap, ASP.NET Core Web API, RESTful API Architecture, SPA Routing, Swagger/OpenAPI Documentation                         |
+| 🗄️ Data Management          | PostgreSQL, Relational Database Design, Entity Framework Core ORM, Automated Database Migrations ,Health Checks                          |
 | 🐳 DevOps & Deployment       | Dockerized Frontend, Backend & Database, Docker Compose, Nginx, Persistent Volumes, Containerized Deployment               |
 | 🏗️ Architecture             | Modular Project Structure, Environment-Based Configuration, Scalable Full-Stack Architecture, Production-Ready Environment |
 
@@ -85,6 +85,9 @@ AutoTracker is built using a modern full-stack technology ecosystem designed for
 - JWT Authentication — Secure authentication and authorization
 - RESTful API Design — Scalable service-oriented architecture
 - DTO-Based Data Transfer — Clean and maintainable API contracts
+- Swagger / OpenAPI Documentation
+- Global Exception Handling Middleware
+- Health Check Monitoring
 
 ### 🗄️ Database Layer
 
@@ -354,6 +357,8 @@ AutoTracker implements multiple security mechanisms to protect user accounts and
 - Isolated Docker Containers
 - Internal Service Networking
 - Secure API Communication
+- Global Exception Handling Middleware
+- API Health Monitoring Endpoint
 
 ## 🔮 Future Roadmap
 
