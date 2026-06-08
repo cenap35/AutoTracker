@@ -137,7 +137,7 @@ function Footer() {
                 <i className="bi bi-linkedin" />
               </a>
               <a
-                href="mailto:cenapbyrm@gmail.com"
+                href="mailto:autotrackercarcare@gmail.com"
                 style={{
                   color: "#284185",
                   fontSize: "1.3rem",
