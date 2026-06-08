@@ -195,7 +195,11 @@ The application is orchestrated with Docker Compose and consists of multiple ind
 
 ### Start the Application
 
-bash docker compose up --build 
+```bash
+
+docker compose up --build
+
+```
 
 Once started, all required services are automatically created, configured, and connected through Docker Compose.
 
@@ -392,7 +396,7 @@ AutoTracker is designed as a long-term vehicle management platform with plans to
 
 - Subscription-Based Plans
 - Cloud Deployment Infrastructure
-- Commercial SaaS Platfo
+- Commercial SaaS Platform
 
 
 ## 👨‍💻 Author
@@ -407,6 +411,26 @@ The project reflects a long-term interest in building scalable software solution
 
 ### Connect With Me
 
+- Email: autotrackercarcare@gmail.com
 - GitHub: https://github.com/cenap35
 - LinkedIn: https://www.linkedin.com/in/cenapbayram-dev/
 
+
+## 💬 Feedback & Support
+
+AutoTracker is an actively developed project and continuous improvements are being made.
+
+If you discover a bug, have a feature suggestion, or would like to provide feedback, feel free to:
+
+- Open an Issue on GitHub
+- Contact me via LinkedIn
+- Reach out via email
+
+Your feedback helps improve the project and shape future development.
+
+
+## 📄 License
+
+Copyright © 2026 Cenap Bayram
+
+Developed as a portfolio project.
