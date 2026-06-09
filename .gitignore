@@ -12,3 +12,7 @@ appsettings.Production.json
 .DS_Store
 backend/AutoTracker.Api/appsettings.Development.json
 !.env.example
+# Logs
+logs/
+*.log
+backend/AutoTracker.Api/logs/
