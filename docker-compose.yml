@@ -3,9 +3,9 @@ services:
     image: postgres:17
     container_name: autotracker-postgres
     environment:
-      POSTGRES_DB: autotrackerdb
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: "${POSTGRES_DB}"
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
     ports:
       - "5433:5432"
     volumes:
@@ -22,7 +22,7 @@ services:
       - postgres
     environment:
       ASPNETCORE_URLS: "http://+:8080"
-      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=autotrackerdb;Username=postgres;Password=postgres"
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
       Frontend__BaseUrl: "http://localhost:5173"
       MailSettings__Host: "smtp.gmail.com"
       MailSettings__Port: "587"
