@@ -26,6 +26,9 @@ import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
 import ProductTourPage from "./pages/ProductTourPage";
 import PageBackground from "./components/PageBackground";
+import FAQPage from "./pages/FAQPage";
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
+import TermsOfServicePage from "./pages/TermsOfServicePage";
 
 
 function App() {
@@ -56,6 +59,12 @@ function App() {
               <Route path="/contact" element={<ContactPage />} />
 
               <Route path="/product-tour" element={<ProductTourPage />} />
+
+              <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+
+              <Route path="/faq" element={<FAQPage />} />
+
+              <Route path="/terms-of-service" element={<TermsOfServicePage />} />
 
               <Route
                 path="/reminders"

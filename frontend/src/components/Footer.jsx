@@ -28,7 +28,7 @@ function Footer() {
             </div>
 
             {/* ÜRÜN LİNKLERİ */}
-            <div className="col-6 col-lg-2 text-center text-lg-start ms-lg-auto">
+            <div className="col-6 col-lg-2 text-center text-lg-start">
               <h6 className="footer-section-title fw-bold mb-2">Ürün</h6>
               <div className="d-flex flex-column gap-1">
                 <Link to="/product-tour" className="footer-link">
@@ -42,6 +42,22 @@ function Footer() {
                 </Link>
               </div>
             </div>
+
+            <div className="col-6 col-lg-2 text-center text-lg-start">
+              <h6 className="footer-section-title fw-bold mb-2">Destek</h6>
+              <div className="d-flex flex-column gap-1">
+                <Link to="/faq" className="footer-link">
+                  Sık Sorulan Sorular
+                </Link>
+                <Link to="/privacy-policy" className="footer-link">
+                  Gizlilik Politikası
+                </Link>
+                <Link to="/terms-of-service" className="footer-link">
+                  Kullanım Şartları
+                </Link>
+              </div>
+            </div>
+       
 
             {/* BAĞLANTILAR (SOSYAL MEDYA / MAIL) */}
             <div className="col-6 col-lg-4 text-center text-lg-end">
