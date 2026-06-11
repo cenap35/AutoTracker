@@ -44,7 +44,7 @@ public class EmailService
             await smtp.ConnectAsync(
                 host,
                 port,
-                SecureSocketOptions.Auto
+                SecureSocketOptions.SslOnConnect
             );
 
             Console.WriteLine("SMTP STEP 2: Connected");
