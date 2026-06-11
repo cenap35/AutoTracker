@@ -12,6 +12,7 @@ function ResetPasswordPage() {
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,6 +24,10 @@ function ResetPasswordPage() {
     }
 
     try {
+      setLoading(true);
+      setError("");
+      setMessage("");
+
       const response = await resetPassword(
         token,
         newPassword,
@@ -30,7 +35,6 @@ function ResetPasswordPage() {
       );
 
       setMessage(response);
-      setError("");
       setNewPassword("");
       setConfirmNewPassword("");
 
@@ -40,6 +44,8 @@ function ResetPasswordPage() {
     } catch (err) {
       setError(err.response?.data || "Şifre sıfırlanamadı.");
       setMessage("");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -87,6 +93,7 @@ function ResetPasswordPage() {
               type="password"
               className="form-control"
               placeholder="Yeni şifrenizi girin"
+              disabled={loading}
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               required
@@ -107,6 +114,7 @@ function ResetPasswordPage() {
               type="password"
               className="form-control"
               placeholder="Yeni şifrenizi tekrar girin"
+              disabled={loading}
               value={confirmNewPassword}
               onChange={(e) => setConfirmNewPassword(e.target.value)}
               required
@@ -124,14 +132,28 @@ function ResetPasswordPage() {
           <button
             type="submit"
             className="btn btn-primary w-100"
+            disabled={loading}
             style={{
               borderRadius: 10,
               fontWeight: 600,
               fontSize: 15,
               padding: "10px 0",
+              cursor: loading ? "not-allowed" : "pointer",
+              opacity: loading ? 0.85 : 1,
             }}
           >
-            Şifremi Güncelle
+            {loading ? (
+              <>
+                <span
+                  className="spinner-border spinner-border-sm me-2"
+                  role="status"
+                  aria-hidden="true"
+                ></span>
+                Şifre güncelleniyor...
+              </>
+            ) : (
+              "Şifremi Güncelle"
+            )}
           </button>
         </form>
       </div>
