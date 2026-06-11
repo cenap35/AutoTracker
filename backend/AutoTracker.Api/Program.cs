@@ -6,10 +6,11 @@ using System.Text;
 using AutoTracker.Api.Services;
 using AutoTracker.Api.Middleware;
 using Serilog;
+using Resend;
 
 var builder = WebApplication.CreateBuilder(args);
 
-Log.Logger = new LoggerConfiguration()
+Serilog.Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
     .WriteTo.Console()
     .WriteTo.File(
@@ -34,8 +35,16 @@ builder.Services.AddControllers();
 
 builder.Services.AddHealthChecks();
 
-builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<EmailTemplateService>();
+
+builder.Services.AddOptions();
+builder.Services.AddHttpClient<ResendClient>();
+builder.Services.Configure<ResendClientOptions>(options =>
+{
+    options.ApiToken = builder.Configuration["Resend:ApiKey"]!;
+});
+builder.Services.AddTransient<IResend, ResendClient>();
+builder.Services.AddScoped<ResendEmailService>();
 
 var frontendBaseUrl = builder.Configuration["Frontend:BaseUrl"];
 

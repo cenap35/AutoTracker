@@ -18,11 +18,11 @@ namespace AutoTracker.Api.Controllers;
 public class AuthController : ControllerBase
 {
   private readonly AppDbContext _context;
-  private readonly EmailService _emailService;
+  private readonly ResendEmailService _emailService;
   private readonly IConfiguration _configuration;
   private readonly EmailTemplateService _emailTemplateService;
 
-  public AuthController(AppDbContext context, EmailService emailService, IConfiguration configuration, EmailTemplateService emailTemplateService)
+  public AuthController(AppDbContext context, ResendEmailService emailService, IConfiguration configuration, EmailTemplateService emailTemplateService)
   {
     _context = context;
     _emailService = emailService;
