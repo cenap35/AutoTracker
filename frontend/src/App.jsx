@@ -24,112 +24,115 @@ import ScrollToTop from "./components/ScrollToTop";
 import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
 import ProductTourPage from "./pages/ProductTourPage";
+import PageBackground from "./components/PageBackground";
 
 function App() {
   return (
     <>
-      <Navbar />
+      <PageBackground>
+        <Navbar />
 
-      <ScrollToTop />
+        <ScrollToTop />
 
-      <ErrorBoundary>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
+        <ErrorBoundary>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
 
-          <Route path="/login" element={<LoginPage />} />
+            <Route path="/login" element={<LoginPage />} />
 
-          <Route path="/register" element={<RegisterPage />} />
+            <Route path="/register" element={<RegisterPage />} />
 
-          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
-          <Route path="/reset-password" element={<ResetPasswordPage />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
 
-          <Route path="/confirm-email" element={<ConfirmEmailPage />} />
+            <Route path="/confirm-email" element={<ConfirmEmailPage />} />
 
-          <Route path="/about" element={<AboutPage />} />
+            <Route path="/about" element={<AboutPage />} />
 
-          <Route path="/contact" element={<ContactPage />} />
-          
-          <Route path="/product-tour" element={<ProductTourPage />} />
+            <Route path="/contact" element={<ContactPage />} />
 
-          <Route
-            path="/reminders"
-            element={
-              <ProtectedRoute>
-                <ReminderPage />
-              </ProtectedRoute>
-            }
-          />
+            <Route path="/product-tour" element={<ProductTourPage />} />
 
-          <Route
-            path="/account"
-            element={
-              <ProtectedRoute>
-                <AccountPage />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="/reminders"
+              element={
+                <ProtectedRoute>
+                  <ReminderPage />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route
-            path="/vehicles"
-            element={
-              <ProtectedRoute>
-                <VehiclesPage />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="/account"
+              element={
+                <ProtectedRoute>
+                  <AccountPage />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route
-            path="/vehicles/:id"
-            element={
-              <ProtectedRoute>
-                <VehicleDetailPage />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="/vehicles"
+              element={
+                <ProtectedRoute>
+                  <VehiclesPage />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <DashboardPage />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="/vehicles/:id"
+              element={
+                <ProtectedRoute>
+                  <VehicleDetailPage />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route
-            path="/maintenance"
-            element={
-              <ProtectedRoute>
-                <MaintenancePage />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <DashboardPage />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route
-            path="/reports"
-            element={
-              <ProtectedRoute>
-                <ReportsPage />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="/maintenance"
+              element={
+                <ProtectedRoute>
+                  <MaintenancePage />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
-      </ErrorBoundary>
+            <Route
+              path="/reports"
+              element={
+                <ProtectedRoute>
+                  <ReportsPage />
+                </ProtectedRoute>
+              }
+            />
 
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        pauseOnHover
-        theme="light"
-      />
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </ErrorBoundary>
 
-      <Footer />
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          pauseOnHover
+          theme="light"
+        />
+
+        <Footer />
+      </PageBackground>
     </>
   );
 }

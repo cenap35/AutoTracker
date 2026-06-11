@@ -1,10 +1,9 @@
 import PageWrapper from "../components/PageWrapper";
-import DashboardBackground from "../components/Dashboard/DashboardBackground";
+
 
 function AboutPage() {
   return (
     <PageWrapper>
-      <DashboardBackground>
         <div className="container py-4 py-lg-5">
           <div className="row justify-content-center">
             <div className="col-lg-9">
@@ -88,7 +87,6 @@ function AboutPage() {
             </div>
           </div>
         </div>
-      </DashboardBackground>
     </PageWrapper>
   );
 }
