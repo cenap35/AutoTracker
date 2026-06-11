@@ -125,6 +125,20 @@ function ReminderPage() {
     return vehicleMatch && statusMatch && typeMatch;
   });
 
+  const totalReminders = reminders.length;
+  const completedReminders = reminders.filter((r) => r.isCompleted).length;
+  const pendingReminders = totalReminders - completedReminders;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const overdueReminders = reminders.filter((r) => {
+    const dueDate = new Date(r.dueDate);
+    dueDate.setHours(0, 0, 0, 0);
+
+    return !r.isCompleted && dueDate < today;
+  }).length;
+
   if (loading) {
     return (
       <PageWrapper>
@@ -186,6 +200,105 @@ function ReminderPage() {
                 {filteredReminders.length} / {reminders.length} takip
                 gösteriliyor
               </span>
+            </div>
+          </div>
+
+          {/* İstatistikler */}
+          <div className="row g-3 mb-4">
+            <div className="col-6 col-lg-3">
+              <div
+                className="card border-0 shadow-sm h-100"
+                style={{
+                  borderRadius: 16,
+                  background:
+                    "linear-gradient(110deg, #eaf2ff 60%, #eff5fc 100%)",
+                }}
+              >
+                <div className="card-body">
+                  <div className="d-flex align-items-center justify-content-between mb-2">
+                    <span className="text-muted small">Toplam</span>
+                    <i
+                      className="bi bi-calendar-check"
+                      style={{ color: "#3b60c5" }}
+                    />
+                  </div>
+                  <div className="h4 fw-bold mb-0" style={{ color: "#284185" }}>
+                    {totalReminders}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="col-6 col-lg-3">
+              <div
+                className="card border-0 shadow-sm h-100"
+                style={{
+                  borderRadius: 16,
+                  background:
+                    "linear-gradient(110deg, #fff8e8 65%, #ffffff 100%)",
+                }}
+              >
+                <div className="card-body">
+                  <div className="d-flex align-items-center justify-content-between mb-2">
+                    <span className="text-muted small">Bekleyen</span>
+                    <i
+                      className="bi bi-hourglass-split"
+                      style={{ color: "#f59e0b" }}
+                    />
+                  </div>
+                  <div className="h4 fw-bold mb-0" style={{ color: "#8a6514" }}>
+                    {pendingReminders}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="col-6 col-lg-3">
+              <div
+                className="card border-0 shadow-sm h-100"
+                style={{
+                  borderRadius: 16,
+                  background:
+                    "linear-gradient(110deg, #eaf9ef 65%, #f8fff9 100%)",
+                }}
+              >
+                <div className="card-body">
+                  <div className="d-flex align-items-center justify-content-between mb-2">
+                    <span className="text-muted small">Tamamlanan</span>
+                    <i
+                      className="bi bi-check2-circle"
+                      style={{ color: "#10b981" }}
+                    />
+                  </div>
+                  <div className="h4 fw-bold mb-0" style={{ color: "#1a906c" }}>
+                    {completedReminders}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="col-6 col-lg-3">
+              <div
+                className="card border-0 shadow-sm h-100"
+                style={{
+                  borderRadius: 16,
+                  background:
+                    "linear-gradient(110deg, #fff0f2 65%, #ffffff 100%)",
+                }}
+              >
+                <div className="card-body">
+                  <div className="d-flex align-items-center justify-content-between mb-2">
+                    <span className="text-muted small">Geciken</span>
+                    <i
+                      className="bi bi-exclamation-triangle-fill"
+                      style={{ color: "#ef4444" }}
+                    />
+                  </div>
+                  <div className="h4 fw-bold mb-0" style={{ color: "#dc3545" }}>
+                    {overdueReminders}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
