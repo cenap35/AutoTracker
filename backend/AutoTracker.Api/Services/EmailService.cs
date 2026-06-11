@@ -36,20 +36,36 @@ public class EmailService
 
         using var smtp = new SmtpClient();
 
-        await smtp.ConnectAsync(
-            host,
-            port,
-            SecureSocketOptions.StartTls
-        );
+        try
+        {
+            Console.WriteLine($"SMTP CONFIG => host:{host}, port:{port}, from:{fromEmail}, passwordExists:{!string.IsNullOrWhiteSpace(password)}");
 
-        await smtp.AuthenticateAsync(
-            fromEmail,
-            password
-        );
+            await smtp.ConnectAsync(
+                host,
+                port,
+                SecureSocketOptions.StartTls
+            );
 
-        await smtp.SendAsync(email);
-        Console.WriteLine("EMAIL SENT TO: " + toEmail);
+            Console.WriteLine("SMTP CONNECTED");
 
-        await smtp.DisconnectAsync(true);
+            await smtp.AuthenticateAsync(
+                fromEmail,
+                password
+            );
+
+            Console.WriteLine("SMTP AUTH OK");
+
+            await smtp.SendAsync(email);
+
+            Console.WriteLine("EMAIL SENT TO: " + toEmail);
+
+            await smtp.DisconnectAsync(true);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("EMAIL ERROR:");
+            Console.WriteLine(ex.ToString());
+            throw;
+        }
     }
 }
