@@ -11,12 +11,17 @@ function Footer() {
             {/* LOGO & AÇIKLAMA ALANI */}
             <div className="col-lg-4 text-center text-lg-start">
               <div className="d-flex align-items-center justify-content-center justify-content-lg-start gap-2 mb-2">
-                <Logo size={36} />
-                <span className="footer-brand-text fw-bold">
-                  AutoTracker
-                </span>
+                <Link to="/" style={{ textDecoration: "none" }}>
+                  {" "}
+                  <Logo size={36} />{" "}
+                </Link>
+
+                <span className="footer-brand-text fw-bold">AutoTracker</span>
               </div>
-              <p className="footer-description small mb-0 mx-auto mx-lg-0" style={{ fontSize: "12.5px", marginBottom: "0.2rem" }}>
+              <p
+                className="footer-description small mb-0 mx-auto mx-lg-0"
+                style={{ fontSize: "12.5px", marginBottom: "0.2rem" }}
+              >
                 Araç bakım, masraf, not ve hatırlatma süreçlerinizi tek panelden
                 güvenli ve düzenli şekilde yönetin.
               </p>
@@ -24,21 +29,23 @@ function Footer() {
 
             {/* ÜRÜN LİNKLERİ */}
             <div className="col-6 col-lg-2 text-center text-lg-start ms-lg-auto">
-              <h6 className="footer-section-title fw-bold mb-2">
-                Ürün
-              </h6>
+              <h6 className="footer-section-title fw-bold mb-2">Ürün</h6>
               <div className="d-flex flex-column gap-1">
-                <Link to="/product-tour" className="footer-link">AutoTracker'ı Keşfet</Link>
-                <Link to="/about" className="footer-link">Hakkında</Link>
-                <Link to="/contact" className="footer-link">İletişim</Link>
+                <Link to="/product-tour" className="footer-link">
+                  AutoTracker'ı Keşfet
+                </Link>
+                <Link to="/about" className="footer-link">
+                  Hakkında
+                </Link>
+                <Link to="/contact" className="footer-link">
+                  İletişim
+                </Link>
               </div>
             </div>
 
             {/* BAĞLANTILAR (SOSYAL MEDYA / MAIL) */}
             <div className="col-6 col-lg-4 text-center text-lg-end">
-              <h6 className="footer-section-title fw-bold mb-2">
-                Bağlantılar
-              </h6>
+              <h6 className="footer-section-title fw-bold mb-2">Bağlantılar</h6>
               <div className="d-inline-flex align-items-center gap-2">
                 <a
                   href="https://www.linkedin.com/in/cenapbayram-dev"
@@ -68,7 +75,10 @@ function Footer() {
             <span style={{ fontSize: "12.5px" }}>
               © {new Date().getFullYear()} AutoTracker. Tüm hakları saklıdır.
             </span>
-            <span className="footer-version-badge" style={{ fontSize: "12.5px" }}>
+            <span
+              className="footer-version-badge"
+              style={{ fontSize: "12.5px" }}
+            >
               Version 1.3
             </span>
           </div>
