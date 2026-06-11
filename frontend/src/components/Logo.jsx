@@ -38,9 +38,10 @@ function Logo({ size = 40 }) {
       </span>
       <span
         style={{
-          color: "#24292f",
+          color: "#375175",
           letterSpacing: "1px",
           transition: "color 0.3s"
+     
         }}
         className="logo-text-animated"
       >
