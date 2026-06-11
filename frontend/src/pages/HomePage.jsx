@@ -106,13 +106,13 @@ function HomePage() {
                     <>
                       <Link
                         to="/dashboard"
-                        className="btn fw-bold px-4 py-2"
+                        className="btn fw-bold px-4 py-2 product-tour-btn"
                         style={{
-                          background:
-                            "linear-gradient(90deg, #3b60c5 55%, #314286 100%)",
-                          color: "#ffe082",
                           borderRadius: 18,
-                          border: "2px solid #f7d358",
+                          background: "rgba(255,255,255,.88)",
+                          color: "#284185",
+                          border: "2px solid #d9e4f5",
+                          transition: "all .22s ease",
                         }}
                       >
                         <i className="bi bi-speedometer2 me-2" />
@@ -120,8 +120,14 @@ function HomePage() {
                       </Link>
                       <Link
                         to="/vehicles"
-                        className="btn btn-outline-primary fw-bold px-4 py-2"
-                        style={{ borderRadius: 18, borderWidth: 2 }}
+                        className="btn fw-bold px-4 py-2 product-tour-btn"
+                        style={{
+                          borderRadius: 18,
+                          background: "rgba(255,255,255,.88)",
+                          color: "#284185",
+                          border: "2px solid #d9e4f5",
+                          transition: "all .22s ease",
+                        }}
                       >
                         <i className="bi bi-car-front me-2" />
                         Araçlarım
@@ -152,20 +158,22 @@ function HomePage() {
                       </Link>
                     </>
                   )}
-                  <Link
-                    to="/product-tour"
-                    className="btn fw-bold px-4 py-2 product-tour-btn"
-                    style={{
-                      borderRadius: 18,
-                      background: "rgba(255,255,255,.88)",
-                      color: "#284185",
-                      border: "2px solid #d9e4f5",
-                      transition: "all .22s ease",
-                    }}
-                  >
-                    <i className="bi bi-play-circle-fill me-2" />
-                    AutoTracker'ı Keşfet
-                  </Link>
+                  {!isLoggedIn && (
+                    <Link
+                      to="/product-tour"
+                      className="btn fw-bold px-4 py-2 product-tour-btn"
+                      style={{
+                        borderRadius: 18,
+                        background: "rgba(255,255,255,.88)",
+                        color: "#284185",
+                        border: "2px solid #d9e4f5",
+                        transition: "all .22s ease",
+                      }}
+                    >
+                      <i className="bi bi-play-circle-fill me-2" />
+                      AutoTracker'ı Keşfet
+                    </Link>
+                  )}
                 </div>
                 {isLoggedIn && fullName && (
                   <p className="mt-3 mb-0 small" style={{ color: "#4a5b75" }}>
