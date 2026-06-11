@@ -15,7 +15,6 @@ function Navbar() {
     navigate("/login");
   };
 
-  // Aktif linklerin stilini daha yumuşak ve modern bir cam efektiyle güncelledim
   const navLinkStyle = ({ isActive }) => ({
     color: isActive ? "#FFFFFF" : "#A5B4FC",
     background: isActive ? "rgba(255, 255, 255, 0.08)" : "transparent",
@@ -24,25 +23,18 @@ function Navbar() {
     transition: "all 0.2s ease",
   });
 
-  // Bootstrap collapse'ı kapatmak için fonksiyon
   const collapseNavbar = () => {
     const navbarCollapse = document.getElementById("navbarNavModern");
     if (navbarCollapse && navbarCollapse.classList.contains("show")) {
-      // Bootstrap 5 collapse trigger
-      // eslint-disable-next-line no-undef
       window.bootstrap &&
         window.bootstrap.Collapse &&
         new window.bootstrap.Collapse(navbarCollapse, { toggle: true });
-      // Fallback for basic class toggle (if Bootstrap 5 not on window)
       if (navbarCollapse.classList.contains("show"))
         navbarCollapse.classList.remove("show");
     }
   };
 
-  // Linklere tıklandığında mobile görünümde menüyü kapat
-  // Tıklanan elementin link olmasına (ve collapse açık olmasına) dikkat et
   const handleNavLinkClick = () => {
-    // Sadece mobilde collapse'ı kapat
     if (window.innerWidth < 992) {
       collapseNavbar();
     }
@@ -76,7 +68,6 @@ function Navbar() {
           </button>
 
           <div className="collapse navbar-collapse" id="navbarNavModern">
-            {/* Ortadaki Sayfa Linkleri */}
             <div className="navbar-nav me-auto gap-2 flex-wrap align-items-center mt-3 mt-lg-0">
               <NavLink
                 className="nav-link nav-hover px-3 py-2 fw-medium rounded-3 d-flex align-items-center gap-2"
@@ -150,7 +141,6 @@ function Navbar() {
               )}
             </div>
 
-            {/* Sağ Taraf - Giriş/Kayıt veya Kullanıcı Paneli */}
             <div className="navbar-nav ms-auto align-items-center gap-2 mt-3 mt-lg-0">
               {!token ? (
                 <>
@@ -195,9 +185,7 @@ function Navbar() {
         </div>
       </nav>
 
-      {/* Tasarımı Şahlandıran Ama Yapıyı Şişirmeyen Temiz CSS */}
       <style>{`
-        /* Ana Navbar - Modern Koyu Gece Mavisi ve İnce Çizgi */
         .custom-premium-navbar {
           background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
           border-bottom: 1px solid rgba(255, 255, 255, 0.08);
@@ -205,7 +193,6 @@ function Navbar() {
           min-height: 70px;
         }
 
-        /* Logo ve Başlık Stilleri */
         .brand-title {
           font-size: 20px;
           letter-spacing: 0.5px;
@@ -217,7 +204,6 @@ function Navbar() {
           font-size: 15px;
         }
 
-        /* Link Hover Efektleri */
         .nav-hover {
           font-size: 14.5px;
           transition: all 0.2s ease;
@@ -227,7 +213,6 @@ function Navbar() {
           color: #ffffff !important;
         }
 
-        /* Yeni Giriş Yap Butonu */
         .btn-premium-login {
           background: rgba(255, 255, 255, 0.05);
           color: #e2e8f0;
@@ -243,7 +228,6 @@ function Navbar() {
           border-color: rgba(255, 255, 255, 0.3);
         }
 
-        /* Yeni Kayıt Ol Butonu (Göz Alıcı İndigo Gradyan) */
         .btn-premium-register {
           background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
           color: #ffffff;
@@ -260,7 +244,6 @@ function Navbar() {
           color: #ffffff;
         }
 
-        /* Kullanıcı Bilgi Kapsülü */
         .user-profile-badge {
           display: inline-flex;
           align-items: center;
@@ -277,10 +260,9 @@ function Navbar() {
           background: rgba(255, 255, 255, 0.1);
         }
 
-        /* Yeni Çıkış Butonu */
         .btn-premium-logout {
           background: transparent;
-          color: #f87171; /* Modern soft kırmızı */
+          color: #f87171;
           border: 1px solid rgba(248, 113, 113, 0.3);
           font-weight: 600;
           font-size: 14px;
@@ -293,7 +275,6 @@ function Navbar() {
           color: #f87171;
         }
 
-        /* Mobil Menü Butonu Temizliği */
         .custom-toggler-btn {
           border: none !important;
           padding: 6px !important;
