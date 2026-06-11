@@ -10,15 +10,18 @@ function RegisterPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
+      setLoading(true);
+      setError("");
+
       await register(fullName, email, password);
 
       setSuccess(true);
-      setError("Lütfen email adresinizi doğrulayın.");
 
       setFullName("");
       setEmail("");
@@ -31,10 +34,11 @@ function RegisterPage() {
       const errorMessage = err.response?.data || "Kayıt başarısız oldu";
 
       setError(errorMessage);
-
       setSuccess(false);
 
       console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -93,7 +97,7 @@ function RegisterPage() {
                 placeholder="Adınızı ve soyadınızı girin"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                disabled={success}
+                disabled={success || loading}
                 style={{ fontSize: 16, borderRadius: 8 }}
                 autoFocus
                 required
@@ -114,7 +118,7 @@ function RegisterPage() {
                 placeholder="Email adresinizi girin"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                disabled={success}
+                disabled={success || loading}
                 style={{ fontSize: 16, borderRadius: 8 }}
                 required
               />
@@ -134,7 +138,7 @@ function RegisterPage() {
                 placeholder="En az 6 karakter"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                disabled={success}
+                disabled={success || loading}
                 style={{ fontSize: 16, borderRadius: 8 }}
                 minLength={6}
                 required
@@ -142,18 +146,32 @@ function RegisterPage() {
             </div>
             <button
               type="submit"
-              disabled={success}
+              disabled={success || loading}
               className="btn btn-primary w-100 p-2 fw-bold"
               style={{
                 fontSize: 18,
                 borderRadius: 7,
                 letterSpacing: 1,
                 boxShadow: "0 2px 12px #bbe1fc40",
-                cursor: success ? "default" : "pointer",
+                cursor: success || loading ? "not-allowed" : "pointer",
+                opacity: loading ? 0.85 : 1,
               }}
             >
-              <i className="bi bi-person-plus-fill me-2"></i>
-              Kayıt Ol
+              {loading ? (
+                <>
+                  <span
+                    className="spinner-border spinner-border-sm me-2"
+                    role="status"
+                    aria-hidden="true"
+                  ></span>
+                  Kayıt oluşturuluyor...
+                </>
+              ) : (
+                <>
+                  <i className="bi bi-person-plus-fill me-2"></i>
+                  Kayıt Ol
+                </>
+              )}
             </button>
           </form>
           {success && (
@@ -162,7 +180,9 @@ function RegisterPage() {
               style={{ fontSize: 16, textAlign: "center", borderRadius: 8 }}
             >
               <i className="bi bi-check2-circle me-2"></i>
-              Kayıt başarılı! Lütfen giriş yapınız.
+              Kayıt başarılı! Lütfen email adresinizi doğrulayın. 
+              <br />
+               5 saniye içinde giriş sayfasına yönlendirileceksiniz.
             </div>
           )}
           {error && (
