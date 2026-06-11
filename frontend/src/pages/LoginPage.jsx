@@ -10,11 +10,16 @@ function LoginPage() {
   const [error, setError] = useState("");
   const [showResend, setShowResend] = useState(false);
   const [resendCooldown, setResendCooldown] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
+      setLoading(true);
+      setError("");
+
       const data = await login(email, password);
 
       localStorage.setItem("token", data.token);
@@ -36,6 +41,8 @@ function LoginPage() {
       }, 7000);
 
       console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -130,9 +137,10 @@ function LoginPage() {
               <button
                 type="button"
                 className="btn btn-outline-warning w-100 mb-3"
-                disabled={resendCooldown}
+                disabled={resendCooldown || resendLoading}
                 onClick={async () => {
                   try {
+                    setResendLoading(true);
                     setResendCooldown(true);
 
                     const message = await resendConfirmationEmail(email);
@@ -146,29 +154,57 @@ function LoginPage() {
                       err.response?.data || "Email tekrar gönderilemedi.",
                     );
                     setResendCooldown(false);
+                  } finally {
+                    setResendLoading(false);
                   }
                 }}
               >
-                {resendCooldown
-                  ? "Tekrar göndermek için bekleyin..."
-                  : "Doğrulama emailini tekrar gönder"}
+                {resendLoading ? (
+                  <>
+                    <span
+                      className="spinner-border spinner-border-sm me-2"
+                      role="status"
+                      aria-hidden="true"
+                    ></span>
+                    Email gönderiliyor...
+                  </>
+                ) : resendCooldown ? (
+                  "Tekrar göndermek için bekleyin..."
+                ) : (
+                  "Doğrulama emailini tekrar gönder"
+                )}
               </button>
             )}
 
             <button
               type="submit"
               className="btn btn-primary w-100 p-2 fw-bold"
+              disabled={loading}
               style={{
                 fontSize: 18,
                 borderRadius: 7,
                 boxShadow: "0 2px 12px #bbe1fc40",
+                opacity: loading ? 0.85 : 1,
+                cursor: loading ? "not-allowed" : "pointer",
               }}
             >
-              <i className="bi bi-door-open me-2"></i>
-              Giriş Yap
+              {loading ? (
+                <>
+                  <span
+                    className="spinner-border spinner-border-sm me-2"
+                    role="status"
+                    aria-hidden="true"
+                  ></span>
+                  Giriş yapılıyor...
+                </>
+              ) : (
+                <>
+                  <i className="bi bi-door-open me-2"></i>
+                  Giriş Yap
+                </>
+              )}
             </button>
           </form>
-
 
           <div className="text-end mb-3">
             <a
@@ -183,8 +219,6 @@ function LoginPage() {
               Şifremi unuttum
             </a>
           </div>
-
-
 
           <div className="text-center mt-4" style={{ fontSize: 15 }}>
             Hesabınız yok mu?{" "}
