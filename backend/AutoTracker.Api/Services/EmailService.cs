@@ -22,11 +22,12 @@ public class EmailService
         var port = int.Parse(_config["MailSettings:Port"]!);
         var password = _config["MailSettings:Password"];
 
+        Console.WriteLine($"SMTP CONFIG => host:{host}, port:{port}, from:{fromEmail}, passwordExists:{!string.IsNullOrWhiteSpace(password)}");
+
         var email = new MimeMessage();
 
         email.From.Add(MailboxAddress.Parse(fromEmail!));
         email.To.Add(MailboxAddress.Parse(toEmail));
-
         email.Subject = subject;
 
         email.Body = new TextPart(MimeKit.Text.TextFormat.Html)
@@ -38,28 +39,34 @@ public class EmailService
 
         try
         {
-            Console.WriteLine($"SMTP CONFIG => host:{host}, port:{port}, from:{fromEmail}, passwordExists:{!string.IsNullOrWhiteSpace(password)}");
+            Console.WriteLine("SMTP STEP 1: Connecting...");
 
             await smtp.ConnectAsync(
                 host,
                 port,
-                SecureSocketOptions.StartTls
+                SecureSocketOptions.Auto
             );
 
-            Console.WriteLine("SMTP CONNECTED");
+            Console.WriteLine("SMTP STEP 2: Connected");
+
+            Console.WriteLine("SMTP STEP 3: Authenticating...");
 
             await smtp.AuthenticateAsync(
                 fromEmail,
                 password
             );
 
-            Console.WriteLine("SMTP AUTH OK");
+            Console.WriteLine("SMTP STEP 4: Authenticated");
+
+            Console.WriteLine("SMTP STEP 5: Sending email...");
 
             await smtp.SendAsync(email);
 
-            Console.WriteLine("EMAIL SENT TO: " + toEmail);
+            Console.WriteLine("SMTP STEP 6: EMAIL SENT TO: " + toEmail);
 
             await smtp.DisconnectAsync(true);
+
+            Console.WriteLine("SMTP STEP 7: Disconnected");
         }
         catch (Exception ex)
         {
