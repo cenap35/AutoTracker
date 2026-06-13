@@ -876,151 +876,132 @@ function VehicleDetailPage() {
               </div>
             </div>
 
-            {/* Bakım Kaydı Ekleme */}
-            <div
-              className="card border-0 shadow-sm mb-3"
-              style={{ borderRadius: 12 }}
-            >
-              <div className="card-body px-4 py-3">
-                <div className="d-flex justify-content-between align-items-center">
-                  <div
-                    className="fw-bold text-primary"
-                    style={{ fontSize: 18 }}
-                  >
-                    <i className="bi bi-tools me-2"></i>
-                    Bakım Kaydı Ekle
-                  </div>
+            
 
-                  <button
-                    type="button"
-                    className="btn btn-outline-primary btn-sm fw-semibold"
-                    onClick={() => setIsMaintenanceFormOpen((prev) => !prev)}
-                    style={{ borderRadius: 10 }}
+   {/* Bakım Kayıtları */}
+<div
+  className="card border-0 shadow-sm mb-3"
+  style={{
+    borderRadius: 10,
+    background: "#fff",
+  }}
+>
+  <div className="card-body px-4 py-3">
+    <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2 mb-3">
+      <div className="text-primary fw-bold" style={{ fontSize: 18 }}>
+        <i className="bi bi-tools me-2"></i>
+        Bakım Kayıtları
+      </div>
+
+      <div className="d-flex flex-wrap gap-2">
+        <button
+          type="button"
+          className="btn btn-outline-primary btn-sm fw-semibold"
+          onClick={() => setIsMaintenanceFormOpen((prev) => !prev)}
+          style={{ borderRadius: 10 }}
+        >
+          <i
+            className={`bi ${
+              isMaintenanceFormOpen ? "bi-chevron-up" : "bi-plus-circle"
+            } me-1`}
+          ></i>
+          {isMaintenanceFormOpen ? "Formu Kapat" : "Bakım Ekle"}
+        </button>
+
+        <button
+          type="button"
+          className="btn btn-outline-danger btn-sm fw-semibold"
+          onClick={handleDownloadSelectedMaintenanceInvoice}
+          disabled={selectedMaintenanceIds.length === 0}
+          style={{ borderRadius: 10 }}
+        >
+          <i className="bi bi-receipt me-2"></i>
+          Seçilenlerden Fatura Oluştur ({selectedMaintenanceIds.length})
+        </button>
+      </div>
+    </div>
+
+    <AnimatePresence initial={false}>
+      {isMaintenanceFormOpen && (
+        <motion.div
+          initial={{ height: 0, opacity: 0 }}
+          animate={{ height: "auto", opacity: 1 }}
+          exit={{ height: 0, opacity: 0 }}
+          transition={{
+            duration: 0.3,
+            ease: "easeInOut",
+          }}
+          style={{ overflow: "hidden" }}
+        >
+          <div
+            className="rounded-4 border p-3 mb-3"
+            style={{
+              borderColor: "#e3eafb",
+              background: "#f8fbff",
+            }}
+          >
+            <AddMaintenanceForm onCreate={handleCreateMaintenanceRecord} />
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+
+    {maintenanceRecords.length === 0 ? (
+      <div className="alert alert-info text-center rounded-3 my-3 py-3 fs-6">
+        Henüz bakım kaydı yok.
+      </div>
+    ) : (
+      <div className="row g-2">
+        {[...maintenanceRecords]
+          .sort(
+            (a, b) =>
+              new Date(b.maintenanceDate) - new Date(a.maintenanceDate),
+          )
+          .map((record) => (
+            <div key={record.id} className="col-md-6 col-lg-4">
+              <div className="position-relative h-100">
+                <div
+                  className="form-check position-absolute z-1"
+                  style={{
+                    top: 12,
+                    left: 14,
+                    background: "rgba(255,255,255,0.9)",
+                    borderRadius: 10,
+                    padding: "6px 10px 6px 30px",
+                    border: "1px solid #e3eafb",
+                  }}
+                >
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    checked={selectedMaintenanceIds.includes(record.id)}
+                    onChange={() => handleToggleMaintenanceSelection(record.id)}
+                    id={`maintenance-${record.id}`}
+                  />
+                  <label
+                    className="form-check-label small fw-semibold"
+                    htmlFor={`maintenance-${record.id}`}
+                    style={{ color: "#284185" }}
                   >
-                    <i
-                      className={`bi ${
-                        isMaintenanceFormOpen
-                          ? "bi-chevron-up"
-                          : "bi-plus-circle"
-                      } me-1`}
-                    ></i>
-                    {isMaintenanceFormOpen ? "Formu Kapat" : "Bakım Ekle"}
-                  </button>
+                    Faturaya ekle
+                  </label>
                 </div>
 
-                <AnimatePresence initial={false}>
-                  {isMaintenanceFormOpen && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{
-                        duration: 0.3,
-                        ease: "easeInOut",
-                      }}
-                      style={{ overflow: "hidden" }}
-                    >
-                      <div className="mt-3">
-                        <AddMaintenanceForm
-                          onCreate={handleCreateMaintenanceRecord}
-                        />
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            </div>
-
-            {/* Bakım Kayıtları */}
-            <div
-              className="card border-0 shadow-sm mb-3"
-              style={{
-                borderRadius: 10,
-                background: "#fff",
-              }}
-            >
-              <div className="card-body px-4 py-3">
-                <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2 mb-3">
-                  <div
-                    className="text-primary fw-bold"
-                    style={{ fontSize: 18 }}
-                  >
-                    <i className="bi bi-tools me-2"></i>
-                    Bakım Kayıtları
-                  </div>
-
-                  <button
-                    type="button"
-                    className="btn btn-outline-danger btn-sm fw-semibold"
-                    onClick={handleDownloadSelectedMaintenanceInvoice}
-                    disabled={selectedMaintenanceIds.length === 0}
-                    style={{ borderRadius: 10 }}
-                  >
-                    <i className="bi bi-receipt me-2"></i>
-                    Seçilenlerden Fatura Oluştur (
-                    {selectedMaintenanceIds.length})
-                  </button>
+                <div style={{ paddingTop: 42 }}>
+                  <MaintenanceCard
+                    record={record}
+                    onUpdate={handleUpdateMaintenanceRecord}
+                    onDelete={handleDeleteMaintenanceRecord}
+                  />
                 </div>
-                {maintenanceRecords.length === 0 ? (
-                  <div className="alert alert-info text-center rounded-3 my-3 py-3 fs-6">
-                    Henüz bakım kaydı yok.
-                  </div>
-                ) : (
-                  <div className="row g-2">
-                    {[...maintenanceRecords]
-                      .sort(
-                        (a, b) =>
-                          new Date(b.maintenanceDate) -
-                          new Date(a.maintenanceDate),
-                      )
-                      .map((record) => (
-                        <div key={record.id} className="col-md-6 col-lg-4">
-                          <div className="position-relative h-100">
-                            <div
-                              className="form-check position-absolute z-1"
-                              style={{
-                                top: 12,
-                                left: 14,
-                                background: "rgba(255,255,255,0.9)",
-                                borderRadius: 10,
-                                padding: "6px 10px 6px 30px",
-                                border: "1px solid #e3eafb",
-                              }}
-                            >
-                              <input
-                                className="form-check-input"
-                                type="checkbox"
-                                checked={selectedMaintenanceIds.includes(
-                                  record.id,
-                                )}
-                                onChange={() =>
-                                  handleToggleMaintenanceSelection(record.id)
-                                }
-                                id={`maintenance-${record.id}`}
-                              />
-                              <label
-                                className="form-check-label small fw-semibold"
-                                htmlFor={`maintenance-${record.id}`}
-                                style={{ color: "#284185" }}
-                              >
-                                Faturaya ekle
-                              </label>
-                            </div>
-
-                            <div style={{ paddingTop: 42 }}>
-                              <MaintenanceCard
-                                record={record}
-                                onUpdate={handleUpdateMaintenanceRecord}
-                                onDelete={handleDeleteMaintenanceRecord}
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                  </div>
-                )}
               </div>
             </div>
+          ))}
+      </div>
+    )}
+  </div>
+</div>
+            
 
             <VehicleNotesSection
               notes={vehicleNotes}
