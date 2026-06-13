@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { motion, AnimatePresence } from "framer-motion";
 import { getVehicleById, updateVehicle } from "../services/vehicleService";
 import PageWrapper from "../components/PageWrapper";
 import vehicleData from "../constants/vehicleData";
@@ -907,13 +908,26 @@ function VehicleDetailPage() {
                   </button>
                 </div>
 
-                {isMaintenanceFormOpen && (
-                  <div className="mt-3">
-                    <AddMaintenanceForm
-                      onCreate={handleCreateMaintenanceRecord}
-                    />
-                  </div>
-                )}
+                <AnimatePresence initial={false}>
+                  {isMaintenanceFormOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{
+                        duration: 0.3,
+                        ease: "easeInOut",
+                      }}
+                      style={{ overflow: "hidden" }}
+                    >
+                      <div className="mt-3">
+                        <AddMaintenanceForm
+                          onCreate={handleCreateMaintenanceRecord}
+                        />
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
 
@@ -1050,14 +1064,27 @@ function VehicleDetailPage() {
                   </button>
                 </div>
 
-                {isReminderFormOpen && (
-                  <div className="mt-3">
-                    <ReminderForm
-                      selectedVehicleId={id}
-                      onCreate={handleCreateVehicleReminder}
-                    />
-                  </div>
-                )}
+                <AnimatePresence initial={false}>
+                  {isReminderFormOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{
+                        duration: 0.3,
+                        ease: "easeInOut",
+                      }}
+                      style={{ overflow: "hidden" }}
+                    >
+                      <div className="mt-3">
+                        <ReminderForm
+                          selectedVehicleId={id}
+                          onCreate={handleCreateVehicleReminder}
+                        />
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
 

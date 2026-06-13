@@ -1,5 +1,6 @@
 import VehicleNoteForm from "./VehicleNoteForm";
 import VehicleNoteCard from "./VehicleNoteCard";
+import { motion, AnimatePresence } from "framer-motion";
 
 function VehicleNotesSection({
   notes,
@@ -40,15 +41,28 @@ function VehicleNotesSection({
           </button>
         </div>
 
-        {isFormOpen && (
-          <div className="mb-3">
-            <VehicleNoteForm
-              vehicles={vehicles}
-              selectedVehicleId={selectedVehicleId}
-              onCreate={onCreate}
-            />
-          </div>
-        )}
+        <AnimatePresence initial={false}>
+          {isFormOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{
+                duration: 0.3,
+                ease: "easeInOut",
+              }}
+              style={{ overflow: "hidden" }}
+            >
+              <div className="mb-3">
+                <VehicleNoteForm
+                  vehicles={vehicles}
+                  selectedVehicleId={selectedVehicleId}
+                  onCreate={onCreate}
+                />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {notes.length === 0 ? (
           <div className="alert alert-info text-center rounded-3">
