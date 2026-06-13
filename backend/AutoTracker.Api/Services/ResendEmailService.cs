@@ -18,7 +18,7 @@ public class ResendEmailService
     {
         var message = new EmailMessage
         {
-            From = "AutoTracker <onboarding@resend.dev>",
+            From = "AutoTracker <noreply@autotrackercarcare.com>",
             Subject = subject,
             HtmlBody = body
         };
