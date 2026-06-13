@@ -184,9 +184,22 @@ function HomePage() {
               )}
             </div>
 
-            <div className="col-lg-5">
-              <div
+            {/*why autotracker */}
+            <motion.div
+              className="col-lg-5"
+              initial={{ opacity: 0, x: 80 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.33 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+            >
+              <motion.div
                 className="card border-0 shadow-lg h-100"
+                initial={{ scale: 0.95, boxShadow: "0 0 0 #0000" }}
+                whileHover={{
+                  scale: 1.03,
+                  boxShadow: "0 14px 34px #3b60c522",
+                  transition: { duration: 0.28, ease: "easeOut" },
+                }}
                 style={{
                   borderRadius: 22,
                   background: "rgba(255,255,255,0.97)",
@@ -198,10 +211,6 @@ function HomePage() {
                     className="h5 fw-bold mb-3 d-flex align-items-center gap-2"
                     style={{ color: "#284185" }}
                   >
-                    <i
-                      className="bi bi-lightning-charge-fill"
-                      style={{ color: "#f7d358" }}
-                    />
                     Neden AutoTracker?
                   </h2>
                   <ul
@@ -220,23 +229,40 @@ function HomePage() {
                       "PDF raporları, masraf dağılımı ve daha fazlası",
 
                       "Ve daha fazlası ...",
-                    ].map((item) => (
-                      <li
+                    ].map((item, idx) => (
+                      <motion.li
                         key={item}
                         className="d-flex align-items-start gap-2 mb-2"
                         style={{ fontSize: "0.95rem", lineHeight: 1.5 }}
+                        initial={{ opacity: 0, x: 24 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true, amount: 0.3 }}
+                        transition={{
+                          delay: 0.1 + idx * 0.07,
+                          duration: 0.46,
+                          type: "tween",
+                        }}
                       >
-                        <i
+                        <motion.i
                           className="bi bi-check-circle-fill mt-1 flex-shrink-0"
                           style={{ color: "#47c172" }}
+                          initial={{ scale: 0, rotate: -10 }}
+                          whileInView={{ scale: 1, rotate: 0 }}
+                          transition={{
+                            delay: 0.17 + idx * 0.07,
+                            type: "spring",
+                            stiffness: 320,
+                            damping: 16,
+                          }}
+                          viewport={{ once: true, amount: 0.25 }}
                         />
                         {item}
-                      </li>
+                      </motion.li>
                     ))}
                   </ul>
                 </div>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           </div>
 
           {/* Features */}
@@ -318,81 +344,140 @@ function HomePage() {
           </div>
 
           {/* How it works */}
-          <div
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            variants={{
+              hidden: { opacity: 0, y: 40 },
+              visible: {
+                opacity: 1,
+                y: 0,
+                transition: {
+                  staggerChildren: 0.12,
+                  delayChildren: 0.15,
+                  duration: 0.37,
+                  ease: "easeOut",
+                },
+              },
+            }}
+            viewport={{ once: true, amount: 0.5 }}
             className="rounded-4 p-4 p-lg-5 mb-4"
             style={{
-              background: "linear-gradient(114deg, #f7faff 53%, #fff9f0 100%)",
+              background: "#f9fbff",
               border: "1.3px solid #e3eafb",
-              boxShadow: "0 8px 32px #c9e7ff22",
+              boxShadow: "0 2px 10px #c9e7ff20",
             }}
           >
-            <h2
-              className="h4 fw-bold text-center mb-4"
+            <motion.h2
+              className="h5 fw-bold text-center mb-4"
               style={{ color: "#284185" }}
+              initial={{ opacity: 0, scale: 0.96 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.35, delay: 0.1, ease: "easeOut" }}
+              viewport={{ once: true }}
             >
-              <i
-                className="bi bi-signpost-split me-2"
-                style={{ color: "#3b60c5" }}
-              />
-              3 adımda başlayın
-            </h2>
+              <i className="bi bi-signpost-split me-2" style={{ color: "#3b60c5" }} />
+              3 Adımda Başlayın
+            </motion.h2>
             <div className="row g-3">
-              {STEPS.map((step) => (
-                <div key={step.num} className="col-md-4">
+              {STEPS.map((step, i) => (
+                <motion.div
+                  key={step.num}
+                  className="col-md-4"
+                  initial={{ opacity: 0, y: 32, scale: 0.95 }}
+                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{
+                    duration: 0.45,
+                    ease: "easeOut",
+                    delay: 0.23 + i * 0.12,
+                  }}
+                  viewport={{ once: true }}
+                >
                   <div className="d-flex gap-3 align-items-start">
-                    <span
-                      className="flex-shrink-0 d-flex align-items-center justify-content-center fw-bold"
+                    <motion.span
+                      className="d-flex align-items-center justify-content-center fw-bold"
                       style={{
-                        width: 40,
-                        height: 40,
+                        width: 36,
+                        height: 36,
                         borderRadius: "50%",
-                        background:
-                          "linear-gradient(90deg, #3b60c5 55%, #314286 100%)",
-                        color: "#ffe082",
-                        fontSize: 18,
-                        border: "2px solid #f7d358",
+                        background: "#e4ebfc",
+                        color: "#3b60c5",
+                        fontSize: 16,
+                        border: "1.5px solid #e3eafb",
+                        boxShadow: "0 1px 6px #bfcff820",
                       }}
+                      initial={{ scale: 0.88, opacity: 0 }}
+                      whileInView={{ scale: 1, opacity: 1 }}
+                      transition={{ duration: 0.38, delay: 0.31 + i * 0.10, bounce: 0.5, type: "spring" }}
+                      viewport={{ once: true }}
                     >
                       {step.num}
-                    </span>
+                    </motion.span>
                     <div>
-                      <h3
-                        className="h6 fw-bold mb-1"
+                      <motion.h3
+                        className="h6 fw-semibold mb-1"
                         style={{ color: "#1c3967" }}
+                        initial={{ x: -12, opacity: 0 }}
+                        whileInView={{ x: 0, opacity: 1 }}
+                        transition={{ duration: 0.35, delay: 0.32 + i * 0.09, ease: "easeOut" }}
+                        viewport={{ once: true }}
                       >
                         {step.title}
-                      </h3>
-                      <p className="small text-muted mb-0">{step.text}</p>
+                      </motion.h3>
+                      <motion.p
+                        className="small text-muted mb-0"
+                        initial={{ y: 10, opacity: 0 }}
+                        whileInView={{ y: 0, opacity: 1 }}
+                        transition={{ duration: 0.39, delay: 0.36 + i * 0.11, ease: "easeOut" }}
+                        viewport={{ once: true }}
+                      >
+                        {step.text}
+                      </motion.p>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
             {!isLoggedIn && (
-              <div className="text-center mt-4">
+              <motion.div
+                className="text-center mt-4"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.44, delay: 0.42, ease: "easeOut" }}
+                viewport={{ once: true }}
+              >
                 <Link
                   to="/register"
-                  className="btn btn-warning fw-bold px-4"
-                  style={{ borderRadius: 18 }}
+                  className="btn btn-warning fw-semibold px-4"
+                  style={{ borderRadius: 14, fontSize: 16 }}
                 >
-                  Hemen kayıt ol
+                  Kayıt ol
                 </Link>
-              </div>
+              </motion.div>
             )}
-          </div>
+          </motion.div>
+     
+     
 
           {/* Why AutoTracker? */}
           <motion.div
             className="text-center mb-5"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
           >
-            <h2 className="fw-bold mb-3" style={{ color: "#284185" }}>
+            <motion.h2
+              className="fw-bold mb-3"
+              style={{ color: "#284185" }}
+              initial={{ opacity: 0, x: 70 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.55, delay: 0.05, ease: "easeOut" }}
+            >
               AutoTracker ile araç sahipliği daha kolay
-            </h2>
-
-            <p
+            </motion.h2>
+            <motion.p
               className="mx-auto"
               style={{
                 maxWidth: 800,
@@ -400,57 +485,98 @@ function HomePage() {
                 lineHeight: 1.8,
                 fontSize: "1.05rem",
               }}
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.12, ease: "easeOut" }}
             >
               AutoTracker; araçlarınızı, bakım geçmişinizi, masraflarınızı,
               yaklaşan işlemlerinizi ve önemli notlarınızı tek bir platformda
               toplar. Dağınık notlar, unutulan bakım tarihleri ve kontrolü zor
               masraflar yerine tüm araç verilerinize düzenli ve erişilebilir
               şekilde ulaşabilirsiniz.
-            </p>
+            </motion.p>
           </motion.div>
+     
 
           {/* Product Tour */}
-          <div
+          <motion.div
             className="card border-0 shadow-sm mb-4"
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.5 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
             style={{
               borderRadius: 22,
               background: "rgba(255,255,255,0.96)",
               border: "1.3px solid #e3eafb",
             }}
           >
-            <div className="card-body p-4 p-lg-5 text-center">
-              <h2 className="h4 fw-bold mb-3" style={{ color: "#284185" }}>
+            <motion.div
+              className="card-body p-4 p-lg-5 text-center"
+              initial={{ opacity: 0, scale: 0.96 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true, amount: 0.55 }}
+              transition={{ duration: 0.53, ease: "easeOut", delay: 0.14 }}
+            >
+              <motion.h2
+                className="h4 fw-bold mb-3"
+                style={{ color: "#284185" }}
+                initial={{ opacity: 0, y: 18 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.44, delay: 0.18, ease: "easeOut" }}
+                viewport={{ once: true }}
+              >
                 AutoTracker'ı keşfet
-              </h2>
+              </motion.h2>
 
-              <p
+              <motion.p
                 className="mx-auto mb-4"
                 style={{
                   maxWidth: 650,
                   color: "#4a5b75",
                   lineHeight: 1.7,
                 }}
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.28, ease: "easeOut" }}
+                viewport={{ once: true }}
               >
                 Panel, araç yönetimi, bakım kayıtları, hatırlatmalar ve
                 raporlama ekranlarını giriş yapmadan inceleyin.
-              </p>
+              </motion.p>
 
-              <Link
-                to="/product-tour"
-                className="btn fw-bold px-4 py-2 product-tour-btn"
-                style={{
-                  borderRadius: 18,
-                  background: "rgba(255,255,255,.88)",
-                  color: "#284185",
-                  border: "2px solid #d9e4f5",
-                  transition: "all .22s ease",
+              <motion.div
+                initial={{ opacity: 0, scale: 0.93 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{
+                  duration: 0.43,
+                  delay: 0.41,
+                  type: "spring",
+                  stiffness: 280,
+                  damping: 22,
                 }}
+                viewport={{ once: true }}
+                className="d-inline-block"
               >
-                <i className="bi bi-play-circle-fill me-2" />
-                AutoTracker'ı Keşfet
-              </Link>
-            </div>
-          </div>
+                <Link
+                  to="/product-tour"
+                  className="btn fw-bold px-4 py-2 product-tour-btn"
+                  style={{
+                    borderRadius: 18,
+                    background: "rgba(255,255,255,.88)",
+                    color: "#284185",
+                    border: "2px solid #d9e4f5",
+                    transition: "all .22s ease",
+                  }}
+                >
+                  <i className="bi bi-play-circle-fill me-2" />
+                  AutoTracker'ı Keşfet
+                </Link>
+              </motion.div>
+            </motion.div>
+          </motion.div>
+     
         </div>
 
         <style>{`
