@@ -48,15 +48,31 @@ builder.Services.AddScoped<ResendEmailService>();
 
 var frontendBaseUrl = builder.Configuration["Frontend:BaseUrl"];
 
+// builder.Services.AddCors(options =>
+// {
+//     options.AddPolicy("AllowReactApp", policy =>
+//     {
+//         policy.WithOrigins(frontendBaseUrl!)
+//               .AllowAnyHeader()
+//               .AllowAnyMethod();
+//     });
+// });
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
     {
-        policy.WithOrigins(frontendBaseUrl!)
-              .AllowAnyHeader()
-              .AllowAnyMethod();
+        policy.WithOrigins(
+            "https://autotrackercarcare.com",
+            "https://www.autotrackercarcare.com",
+            "https://auto-tracker-sand.vercel.app",
+            "http://localhost:5173"
+        )
+        .AllowAnyHeader()
+        .AllowAnyMethod();
     });
 });
+
 
 //jwt authentication service
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
