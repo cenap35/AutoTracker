@@ -49,6 +49,10 @@ function VehicleDetailPage() {
 
   const [selectedMaintenanceIds, setSelectedMaintenanceIds] = useState([]);
 
+  const [isMaintenanceFormOpen, setIsMaintenanceFormOpen] = useState(false);
+  const [isNoteFormOpen, setIsNoteFormOpen] = useState(false);
+  const [isReminderFormOpen, setIsReminderFormOpen] = useState(false);
+
   useEffect(() => {
     const fetchVehicle = async () => {
       try {
@@ -872,8 +876,45 @@ function VehicleDetailPage() {
             </div>
 
             {/* Bakım Kaydı Ekleme */}
-            <div className="mb-3">
-              <AddMaintenanceForm onCreate={handleCreateMaintenanceRecord} />
+            <div
+              className="card border-0 shadow-sm mb-3"
+              style={{ borderRadius: 12 }}
+            >
+              <div className="card-body px-4 py-3">
+                <div className="d-flex justify-content-between align-items-center">
+                  <div
+                    className="fw-bold text-primary"
+                    style={{ fontSize: 18 }}
+                  >
+                    <i className="bi bi-tools me-2"></i>
+                    Bakım Kaydı Ekle
+                  </div>
+
+                  <button
+                    type="button"
+                    className="btn btn-outline-primary btn-sm fw-semibold"
+                    onClick={() => setIsMaintenanceFormOpen((prev) => !prev)}
+                    style={{ borderRadius: 10 }}
+                  >
+                    <i
+                      className={`bi ${
+                        isMaintenanceFormOpen
+                          ? "bi-chevron-up"
+                          : "bi-plus-circle"
+                      } me-1`}
+                    ></i>
+                    {isMaintenanceFormOpen ? "Formu Kapat" : "Bakım Ekle"}
+                  </button>
+                </div>
+
+                {isMaintenanceFormOpen && (
+                  <div className="mt-3">
+                    <AddMaintenanceForm
+                      onCreate={handleCreateMaintenanceRecord}
+                    />
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Bakım Kayıtları */}
@@ -975,14 +1016,49 @@ function VehicleDetailPage() {
               onUpdate={handleUpdateVehicleNote}
               onToggleComplete={handleToggleVehicleNote}
               onDelete={handleDeleteVehicleNote}
+              isFormOpen={isNoteFormOpen}
+              onToggleForm={() => setIsNoteFormOpen((prev) => !prev)}
             />
 
             {/* Takip Formu */}
-            <div className="mb-3">
-              <ReminderForm
-                selectedVehicleId={id}
-                onCreate={handleCreateVehicleReminder}
-              />
+            <div
+              className="card border-0 shadow-sm mb-3"
+              style={{ borderRadius: 12 }}
+            >
+              <div className="card-body px-4 py-3">
+                <div className="d-flex justify-content-between align-items-center">
+                  <div
+                    className="fw-bold text-primary"
+                    style={{ fontSize: 18 }}
+                  >
+                    <i className="bi bi-calendar-plus me-2"></i>
+                    Takip Kaydı Ekle
+                  </div>
+
+                  <button
+                    type="button"
+                    className="btn btn-outline-primary btn-sm fw-semibold"
+                    onClick={() => setIsReminderFormOpen((prev) => !prev)}
+                    style={{ borderRadius: 10 }}
+                  >
+                    <i
+                      className={`bi ${
+                        isReminderFormOpen ? "bi-chevron-up" : "bi-plus-circle"
+                      } me-1`}
+                    ></i>
+                    {isReminderFormOpen ? "Formu Kapat" : "Takip Ekle"}
+                  </button>
+                </div>
+
+                {isReminderFormOpen && (
+                  <div className="mt-3">
+                    <ReminderForm
+                      selectedVehicleId={id}
+                      onCreate={handleCreateVehicleReminder}
+                    />
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Araç Takipleri */}

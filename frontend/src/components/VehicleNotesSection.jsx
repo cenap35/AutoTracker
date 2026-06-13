@@ -10,20 +10,45 @@ function VehicleNotesSection({
   onUpdate,
   onToggleComplete,
   onDelete,
+  isFormOpen,
+  onToggleForm,
 }) {
   return (
-    <div className="card border-0 shadow-sm mb-4 mt-4" style={{ borderRadius: 14 }}>
+    <div
+      className="card border-0 shadow-sm mb-4 mt-4"
+      style={{ borderRadius: 14 }}
+    >
       <div className="card-body px-4 py-4">
-        <h5 className="text-primary mb-3 fw-bold">
-          <i className="bi bi-clipboard-check me-2"></i>
-          Araç Notları
-        </h5>
+        <div className="d-flex justify-content-between align-items-center mb-3">
+          <h5 className="text-primary mb-0 fw-bold">
+            <i className="bi bi-clipboard-check me-2"></i>
+            Araç Notları
+          </h5>
 
-        <VehicleNoteForm
-          vehicles={vehicles}
-          selectedVehicleId={selectedVehicleId}
-          onCreate={onCreate}
-        />
+          <button
+            type="button"
+            className="btn btn-outline-primary btn-sm fw-semibold"
+            onClick={onToggleForm}
+            style={{ borderRadius: 10 }}
+          >
+            <i
+              className={`bi ${
+                isFormOpen ? "bi-chevron-up" : "bi-plus-circle"
+              } me-1`}
+            ></i>
+            {isFormOpen ? "Formu Kapat" : "Not Ekle"}
+          </button>
+        </div>
+
+        {isFormOpen && (
+          <div className="mb-3">
+            <VehicleNoteForm
+              vehicles={vehicles}
+              selectedVehicleId={selectedVehicleId}
+              onCreate={onCreate}
+            />
+          </div>
+        )}
 
         {notes.length === 0 ? (
           <div className="alert alert-info text-center rounded-3">
