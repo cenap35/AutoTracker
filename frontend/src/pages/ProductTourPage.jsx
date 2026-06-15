@@ -8,6 +8,7 @@ import maintenanceImg from "../assets/product-tour/maintenance.png";
 import remindersImg from "../assets/product-tour/reminders.png";
 import reportsImg from "../assets/product-tour/reports.png";
 import pdf1Img from "../assets/product-tour/pdf1.png";
+import DrivingCarAnimation from "../components/AnimationsEffects/DrivingCarAnimation";
 
 function ProductTourPage() {
   const sections = [
@@ -93,6 +94,10 @@ function ProductTourPage() {
   return (
     <PageWrapper>
       <div className="container py-4 py-lg-5">
+
+      <DrivingCarAnimation/>
+
+
         {/* Hero */}
         <motion.div
           className="text-center mx-auto mb-5"
