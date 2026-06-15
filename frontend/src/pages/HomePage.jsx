@@ -87,7 +87,7 @@ function HomePage() {
                     fontSize: "1.05rem",
                   }}
                 >
-                  CarCare | Araç Takip ve Masraf Yönetimi
+                  CarCare | Araç Bakım, Masraf ve Takip Yönetimi
                 </p>
               </motion.div>
               <p
@@ -576,6 +576,9 @@ function HomePage() {
               </motion.div>
             </motion.div>
           </motion.div>
+
+
+          
      
         </div>
 
