@@ -24,5 +24,6 @@ public class AppUser
     public DateTime? PasswordResetTokenExpiresAt { get; set; }
 
     public List<Vehicle> Vehicles { get; set; } = new();
+    public ServiceBusiness? ServiceBusiness { get; set; }
 
 }
