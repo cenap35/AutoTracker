@@ -1,5 +1,6 @@
 import { NavLink, Outlet } from "react-router-dom";
 
+
 function ServiceLayout() {
   return (
     <div className="container-fluid py-4">
@@ -22,7 +23,7 @@ function ServiceLayout() {
                 </NavLink>
 
                 <NavLink
-                  to="/service/customers"
+                  to="/service/customer"
                   className={({ isActive }) =>
                     `btn text-start ${
                       isActive ? "btn-primary" : "btn-outline-primary"

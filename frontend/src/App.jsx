@@ -31,6 +31,7 @@ import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import TermsOfServicePage from "./pages/TermsOfServicePage";
 import ServiceDashboardPage from "./pages/ServiceDashboardPage";
 import ServiceLayout from "./layouts/ServiceLayout";
+import ServiceCustomersPage from "./pages/ServiceCustomersPage";
 
 function App() {
   return (
@@ -64,6 +65,8 @@ function App() {
               <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
 
               <Route path="/faq" element={<FAQPage />} />
+
+              
 
               <Route
                 path="/terms-of-service"
@@ -124,6 +127,7 @@ function App() {
                 }
               >
                 <Route path="dashboard" element={<ServiceDashboardPage />} />
+                <Route path="customer" element={<ServiceCustomersPage />} />
               </Route>
 
               <Route
