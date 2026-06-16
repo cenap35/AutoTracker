@@ -47,6 +47,7 @@ public class AuthController : ControllerBase
     {
       FullName = dto.FullName,
       Email = dto.Email,
+      Role = "User",
       IsEmailConfirmed = false,
       EmailConfirmationToken = emailToken,
       EmailConfirmationTokenExpiresAt = DateTime.UtcNow.AddHours(24)
@@ -146,7 +147,8 @@ public class AuthController : ControllerBase
       token = token,
       userId = user.Id,
       fullName = user.FullName,
-      email = user.Email
+      email = user.Email,
+      role = user.Role
     });
   }
   private string CreateToken(AppUser user)  // creating the token for the user jwt
@@ -155,7 +157,8 @@ public class AuthController : ControllerBase
     {
         new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
         new Claim(ClaimTypes.Name, user.FullName),
-        new Claim(ClaimTypes.Email, user.Email)
+        new Claim(ClaimTypes.Email, user.Email),
+        new Claim(ClaimTypes.Role, user.Role)
     };
 
     var key = new SymmetricSecurityKey(
