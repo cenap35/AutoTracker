@@ -29,8 +29,8 @@ import PageBackground from "./components/PageBackground";
 import FAQPage from "./pages/FAQPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import TermsOfServicePage from "./pages/TermsOfServicePage";
-
 import ServiceDashboardPage from "./pages/ServiceDashboardPage";
+import ServiceLayout from "./layouts/ServiceLayout";
 
 function App() {
   return (
@@ -116,13 +116,15 @@ function App() {
               />
 
               <Route
-                path="/service/dashboard"
+                path="/service"
                 element={
                   <ProtectedRoute>
-                    <ServiceDashboardPage />
+                    <ServiceLayout />
                   </ProtectedRoute>
                 }
-              />
+              >
+                <Route path="dashboard" element={<ServiceDashboardPage />} />
+              </Route>
 
               <Route
                 path="/maintenance"
