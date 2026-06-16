@@ -17,4 +17,5 @@ public class AppDbContext : DbContext
     public DbSet<VehicleReminder> VehicleReminders { get; set; }
     public DbSet<ServiceBusiness> ServiceBusinesses { get; set; }
     public DbSet<ServiceCustomer> ServiceCustomers { get; set; }
+    public DbSet<CustomerVehicle> CustomerVehicles { get; set; }
 }
