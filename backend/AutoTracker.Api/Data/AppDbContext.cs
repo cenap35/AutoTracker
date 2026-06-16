@@ -16,4 +16,5 @@ public class AppDbContext : DbContext
     public DbSet<VehicleNote> VehicleNotes { get; set; }  = null!;
     public DbSet<VehicleReminder> VehicleReminders { get; set; }
     public DbSet<ServiceBusiness> ServiceBusinesses { get; set; }
+    public DbSet<ServiceCustomer> ServiceCustomers { get; set; }
 }

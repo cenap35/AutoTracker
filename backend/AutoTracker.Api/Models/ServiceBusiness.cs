@@ -17,4 +17,5 @@ public class ServiceBusiness
     public AppUser OwnerUser { get; set; } = null!;
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public List<ServiceCustomer> Customers { get; set; } = new();
 }
