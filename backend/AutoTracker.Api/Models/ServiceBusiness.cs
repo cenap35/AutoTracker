@@ -19,4 +19,5 @@ public class ServiceBusiness
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public List<ServiceCustomer> Customers { get; set; } = new();
     public List<CustomerVehicle> CustomerVehicles { get; set; } = new();
+    public List<ServiceWorkOrder> WorkOrders { get; set; } = new();
 }
