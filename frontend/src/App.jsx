@@ -30,6 +30,7 @@ import FAQPage from "./pages/FAQPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import TermsOfServicePage from "./pages/TermsOfServicePage";
 
+import ServiceDashboardPage from "./pages/ServiceDashboardPage";
 
 function App() {
   return (
@@ -64,7 +65,10 @@ function App() {
 
               <Route path="/faq" element={<FAQPage />} />
 
-              <Route path="/terms-of-service" element={<TermsOfServicePage />} />
+              <Route
+                path="/terms-of-service"
+                element={<TermsOfServicePage />}
+              />
 
               <Route
                 path="/reminders"
@@ -107,6 +111,15 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <DashboardPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/service/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <ServiceDashboardPage />
                   </ProtectedRoute>
                 }
               />
