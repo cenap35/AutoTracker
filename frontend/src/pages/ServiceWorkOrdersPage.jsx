@@ -4,6 +4,7 @@ import {
   getServiceWorkOrders,
   createServiceWorkOrder,
   updateWorkOrderStatus,
+  deleteServiceWorkOrder,
 } from "../services/serviceWorkOrderService";
 import { getCustomerVehicles } from "../services/customerVehicleService";
 
@@ -93,6 +94,20 @@ function ServiceWorkOrdersPage() {
           : order
       )
     );
+  };
+
+  const handleDelete = async (id) => {
+    const confirmed = window.confirm("Bu iş emrini silmek istiyor musun?");
+
+    if (!confirmed) return;
+
+    try {
+      await deleteServiceWorkOrder(id);
+      setWorkOrders(workOrders.filter((order) => order.id !== id));
+    } catch (error) {
+      console.error(error);
+      alert("İş emri silinemedi.");
+    }
   };
 
   const filteredWorkOrders = workOrders.filter((order) => {
@@ -291,6 +306,13 @@ function ServiceWorkOrdersPage() {
                     }
                   >
                     Tamamlandı
+                  </button>
+
+                  <button
+                    className="btn btn-outline-danger btn-sm"
+                    onClick={() => handleDelete(order.id)}
+                  >
+                    Sil
                   </button>
                 </div>
               </div>

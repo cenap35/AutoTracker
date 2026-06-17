@@ -266,4 +266,30 @@ public class ServiceWorkOrdersController : ControllerBase
             workOrder.CompletedAt
         });
     }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteWorkOrder(int id)
+    {
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        var serviceBusiness = await _context.ServiceBusinesses
+            .FirstOrDefaultAsync(s => s.OwnerUserId == userId);
+
+        if (serviceBusiness == null)
+            return NotFound("Servis hesabı bulunamadı.");
+
+        var workOrder = await _context.ServiceWorkOrders
+            .FirstOrDefaultAsync(w =>
+                w.Id == id &&
+                w.ServiceBusinessId == serviceBusiness.Id);
+
+        if (workOrder == null)
+            return NotFound("İş emri bulunamadı.");
+
+        _context.ServiceWorkOrders.Remove(workOrder);
+
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
 }

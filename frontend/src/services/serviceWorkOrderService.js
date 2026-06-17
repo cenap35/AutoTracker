@@ -35,3 +35,6 @@ export const updateServiceWorkOrder = async (id, workOrder) => {
   return response.data;
 };
 
+export const deleteServiceWorkOrder = async (id) => {
+  await api.delete(`/serviceworkorders/${id}`);
+};
