@@ -125,4 +125,51 @@ public class ServiceWorkOrdersController : ControllerBase
             workOrder.CompletedAt
         });
     }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetWorkOrderById(int id)
+    {
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        var serviceBusiness = await _context.ServiceBusinesses
+            .FirstOrDefaultAsync(s => s.OwnerUserId == userId);
+
+        if (serviceBusiness == null)
+            return NotFound("Servis hesabı bulunamadı.");
+
+        var workOrder = await _context.ServiceWorkOrders
+            .Where(w => w.Id == id && w.ServiceBusinessId == serviceBusiness.Id)
+            .Select(w => new
+            {
+                w.Id,
+                w.Title,
+                w.Description,
+                w.Mileage,
+                w.LaborCost,
+                w.PartsCost,
+                w.TotalCost,
+                w.Status,
+                w.CreatedAt,
+                w.CompletedAt,
+                Vehicle = new
+                {
+                    w.CustomerVehicle.Id,
+                    w.CustomerVehicle.Brand,
+                    w.CustomerVehicle.Model,
+                    w.CustomerVehicle.Plate
+                },
+                Customer = new
+                {
+                    w.CustomerVehicle.ServiceCustomer.Id,
+                    w.CustomerVehicle.ServiceCustomer.FullName,
+                    w.CustomerVehicle.ServiceCustomer.Phone
+                }
+            })
+            .FirstOrDefaultAsync();
+
+        if (workOrder == null)
+            return NotFound("İş emri bulunamadı.");
+
+        return Ok(workOrder);
+    }
 }

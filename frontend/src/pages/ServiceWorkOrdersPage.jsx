@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import {
   getServiceWorkOrders,
   createServiceWorkOrder,
@@ -154,27 +155,33 @@ function ServiceWorkOrdersPage() {
 
       <div className="mt-4">
         {workOrders.map((order) => (
-          <div key={order.id} className="card mb-3">
-            <div className="card-body">
-              <h5>{order.title}</h5>
+          <Link
+            key={order.id}
+            to={`/service/work-orders/${order.id}`}
+            className="text-decoration-none text-dark"
+          >
+            <div className="card mb-3">
+              <div className="card-body">
+                <h5>{order.title}</h5>
 
-              <p className="mb-1">
-                <strong>Müşteri:</strong> {order.customerName}
-              </p>
+                <p className="mb-1">
+                  <strong>Müşteri:</strong> {order.customerName}
+                </p>
 
-              <p className="mb-1">
-                <strong>Araç:</strong> {order.vehicleName} - {order.plate}
-              </p>
+                <p className="mb-1">
+                  <strong>Araç:</strong> {order.vehicleName} - {order.plate}
+                </p>
 
-              <p className="mb-1">
-                <strong>Durum:</strong> {order.status}
-              </p>
+                <p className="mb-1">
+                  <strong>Durum:</strong> {order.status}
+                </p>
 
-              <p className="mb-0">
-                <strong>Tutar:</strong> {order.totalCost} ₺
-              </p>
+                <p className="mb-0">
+                  <strong>Tutar:</strong> {order.totalCost} ₺
+                </p>
+              </div>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </div>

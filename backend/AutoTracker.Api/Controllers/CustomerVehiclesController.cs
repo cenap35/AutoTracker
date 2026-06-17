@@ -102,4 +102,58 @@ public class CustomerVehiclesController : ControllerBase
             vehicle.CreatedAt
         });
     }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetVehicleById(int id)
+    {
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        var serviceBusiness = await _context.ServiceBusinesses
+            .FirstOrDefaultAsync(s => s.OwnerUserId == userId);
+
+        if (serviceBusiness == null)
+            return NotFound("Servis hesabı bulunamadı.");
+
+        var vehicle = await _context.CustomerVehicles
+            .Where(v => v.Id == id && v.ServiceBusinessId == serviceBusiness.Id)
+            .Select(v => new
+            {
+                v.Id,
+                v.Brand,
+                v.Model,
+                v.Year,
+                v.Plate,
+                v.CurrentMileage,
+                v.ChassisNumber,
+                v.CreatedAt,
+                Customer = new
+                {
+                    v.ServiceCustomer.Id,
+                    v.ServiceCustomer.FullName,
+                    v.ServiceCustomer.Phone
+                },
+                WorkOrders = _context.ServiceWorkOrders
+                    .Where(w => w.CustomerVehicleId == v.Id)
+                    .OrderByDescending(w => w.CreatedAt)
+                    .Select(w => new
+                    {
+                        w.Id,
+                        w.Title,
+                        w.Status,
+                        w.TotalCost,
+                        w.CreatedAt
+                    })
+                    .ToList(),
+                TotalSpent = _context.ServiceWorkOrders
+                    .Where(w => w.CustomerVehicleId == v.Id && w.Status == "Completed")
+                    .Select(w => (decimal?)w.TotalCost)
+                    .Sum() ?? 0
+            })
+            .FirstOrDefaultAsync();
+
+        if (vehicle == null)
+            return NotFound("Araç bulunamadı.");
+
+        return Ok(vehicle);
+    }
 }

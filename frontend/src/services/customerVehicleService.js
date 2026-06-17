@@ -9,3 +9,8 @@ export const createCustomerVehicle = async (vehicle) => {
   const response = await api.post("/customervehicles", vehicle);
   return response.data;
 };
+
+export const getCustomerVehicleById = async (id) => {
+  const response = await api.get(`/customervehicles/${id}`);
+  return response.data;
+};

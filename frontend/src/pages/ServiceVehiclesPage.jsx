@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import {
   getCustomerVehicles,
   createCustomerVehicle,
@@ -152,25 +153,31 @@ function ServiceVehiclesPage() {
 
       <div className="mt-4">
         {vehicles.map((vehicle) => (
-          <div key={vehicle.id} className="card mb-3">
-            <div className="card-body">
-              <h5>
-                {vehicle.brand} {vehicle.model}
-              </h5>
-
-              <p className="mb-1">
-                <strong>Plaka:</strong> {vehicle.plate}
-              </p>
-
-              <p className="mb-1">
-                <strong>Müşteri:</strong> {vehicle.customerName}
-              </p>
-
-              <p className="mb-0">
-                <strong>KM:</strong> {vehicle.currentMileage}
-              </p>
-            </div>
-          </div>
+         <Link
+         key={vehicle.id}
+         to={`/service/vehicles/${vehicle.id}`}
+         className="text-decoration-none text-dark"
+       >
+         <div className="card mb-3">
+           <div className="card-body">
+             <h5>
+               {vehicle.brand} {vehicle.model}
+             </h5>
+       
+             <p className="mb-1">
+               <strong>Plaka:</strong> {vehicle.plate}
+             </p>
+       
+             <p className="mb-1">
+               <strong>Müşteri:</strong> {vehicle.customerName}
+             </p>
+       
+             <p className="mb-0">
+               <strong>KM:</strong> {vehicle.currentMileage}
+             </p>
+           </div>
+         </div>
+       </Link>
         ))}
       </div>
     </div>
