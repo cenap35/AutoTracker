@@ -1,5 +1,6 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import api from "../api/axios";
 import AnimatedText from "../components/AnimationsEffects/AnimatedText";
 import PageWrapper from "../components/PageWrapper";
 
@@ -60,6 +61,17 @@ const STEPS = [
 function HomePage() {
   const isLoggedIn = Boolean(localStorage.getItem("token"));
   const fullName = localStorage.getItem("fullName");
+
+  const navigate = useNavigate();
+
+  const handleServiceClick = async () => {
+    try {
+      await api.get("/servicebusinesses/me");
+      navigate("/service/dashboard");
+    } catch {
+      navigate("/service-upgrade");
+    }
+  };
 
   return (
     <PageWrapper>
@@ -130,6 +142,12 @@ function HomePage() {
                       <i className="bi bi-car-front me-2" />
                       Araçlarım
                     </Link>
+                    <button
+                      className="btn btn-warning"
+                      onClick={handleServiceClick}
+                    >
+                      Servis Yönetimine Geç
+                    </button>
                   </>
                 ) : (
                   <>
@@ -376,7 +394,10 @@ function HomePage() {
               transition={{ duration: 0.35, delay: 0.1, ease: "easeOut" }}
               viewport={{ once: true }}
             >
-              <i className="bi bi-signpost-split me-2" style={{ color: "#3b60c5" }} />
+              <i
+                className="bi bi-signpost-split me-2"
+                style={{ color: "#3b60c5" }}
+              />
               3 Adımda Başlayın
             </motion.h2>
             <div className="row g-3">
@@ -408,7 +429,12 @@ function HomePage() {
                       }}
                       initial={{ scale: 0.88, opacity: 0 }}
                       whileInView={{ scale: 1, opacity: 1 }}
-                      transition={{ duration: 0.38, delay: 0.31 + i * 0.10, bounce: 0.5, type: "spring" }}
+                      transition={{
+                        duration: 0.38,
+                        delay: 0.31 + i * 0.1,
+                        bounce: 0.5,
+                        type: "spring",
+                      }}
                       viewport={{ once: true }}
                     >
                       {step.num}
@@ -419,7 +445,11 @@ function HomePage() {
                         style={{ color: "#1c3967" }}
                         initial={{ x: -12, opacity: 0 }}
                         whileInView={{ x: 0, opacity: 1 }}
-                        transition={{ duration: 0.35, delay: 0.32 + i * 0.09, ease: "easeOut" }}
+                        transition={{
+                          duration: 0.35,
+                          delay: 0.32 + i * 0.09,
+                          ease: "easeOut",
+                        }}
                         viewport={{ once: true }}
                       >
                         {step.title}
@@ -428,7 +458,11 @@ function HomePage() {
                         className="small text-muted mb-0"
                         initial={{ y: 10, opacity: 0 }}
                         whileInView={{ y: 0, opacity: 1 }}
-                        transition={{ duration: 0.39, delay: 0.36 + i * 0.11, ease: "easeOut" }}
+                        transition={{
+                          duration: 0.39,
+                          delay: 0.36 + i * 0.11,
+                          ease: "easeOut",
+                        }}
                         viewport={{ once: true }}
                       >
                         {step.text}
@@ -456,8 +490,6 @@ function HomePage() {
               </motion.div>
             )}
           </motion.div>
-     
-     
 
           {/* Why AutoTracker? */}
           <motion.div
@@ -497,7 +529,6 @@ function HomePage() {
               şekilde ulaşabilirsiniz.
             </motion.p>
           </motion.div>
-     
 
           {/* Product Tour */}
           <motion.div
@@ -576,10 +607,6 @@ function HomePage() {
               </motion.div>
             </motion.div>
           </motion.div>
-
-
-          
-     
         </div>
 
         <style>{`

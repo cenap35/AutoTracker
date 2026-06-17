@@ -37,6 +37,8 @@ import ServiceWorkOrdersPage from "./pages/ServiceWorkOrdersPage";
 import ServiceCustomerDetailPage from "./pages/ServiceCustomerDetailPage";
 import ServiceVehicleDetailPage from "./pages/ServiceVehicleDetailPage";
 import ServiceWorkOrderDetailPage from "./pages/ServiceWorkOrderDetailPage";
+import ServiceUpgradePage from "./pages/ServiceUpgradePage";
+import ServiceSetupPage from "./pages/ServiceSetupPage";
 
 function App() {
   return (
@@ -133,9 +135,18 @@ function App() {
                 <Route path="customer" element={<ServiceCustomersPage />} />
                 <Route path="vehicles" element={<ServiceVehiclesPage />} />
                 <Route path="work-orders" element={<ServiceWorkOrdersPage />} />
-                <Route path="customers/:id" element={<ServiceCustomerDetailPage />} />
-                <Route path="vehicles/:id" element={<ServiceVehicleDetailPage />} />
-                <Route path="work-orders/:id" element={<ServiceWorkOrderDetailPage />} />
+                <Route
+                  path="customers/:id"
+                  element={<ServiceCustomerDetailPage />}
+                />
+                <Route
+                  path="vehicles/:id"
+                  element={<ServiceVehicleDetailPage />}
+                />
+                <Route
+                  path="work-orders/:id"
+                  element={<ServiceWorkOrderDetailPage />}
+                />
               </Route>
 
               <Route
@@ -152,6 +163,24 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <ReportsPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/service-upgrade"
+                element={
+                  <ProtectedRoute>
+                    <ServiceUpgradePage />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/service/setup"
+                element={
+                  <ProtectedRoute>
+                    <ServiceSetupPage />
                   </ProtectedRoute>
                 }
               />
