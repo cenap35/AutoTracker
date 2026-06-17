@@ -5,6 +5,7 @@ import {
   updateWorkOrderStatus,
   updateServiceWorkOrder,
 } from "../services/serviceWorkOrderService";
+import ServicePageHeader from "../components/ServiceComponents/ServicePageHeader";
 
 function ServiceWorkOrderDetailPage() {
   const { id } = useParams();
@@ -110,7 +111,11 @@ function ServiceWorkOrderDetailPage() {
   return (
     <div>
       <div className="d-flex justify-content-between align-items-center mb-3">
-        <h2>{workOrder.title}</h2>
+        <ServicePageHeader
+          icon="🛠️"
+          title={workOrder.title}
+          subtitle="İş emri detayları"
+        />
 
         <span className={`badge fs-6 ${getStatusClass(workOrder.status)}`}>
           {getStatusText(workOrder.status)}

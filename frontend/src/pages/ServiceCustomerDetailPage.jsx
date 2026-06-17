@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getCustomerById } from "../services/serviceCustomerService";
+import ServicePageHeader from "../components/ServiceComponents/ServicePageHeader";
 
 function ServiceCustomerDetailPage() {
   const { id } = useParams();
@@ -22,7 +23,11 @@ function ServiceCustomerDetailPage() {
 
   return (
     <div>
-      <h2>{customer.fullName}</h2>
+      <ServicePageHeader
+        icon="👤"
+        title={customer.fullName}
+        subtitle="Müşteri detayları ve geçmiş kayıtlar."
+      />
 
       <div className="card p-3 mb-4">
         <p>
@@ -35,9 +40,7 @@ function ServiceCustomerDetailPage() {
 
         <h5>Toplam Harcama</h5>
 
-        <div className="fs-3 text-success">
-          {customer.totalSpent} ₺
-        </div>
+        <div className="fs-3 text-success">{customer.totalSpent} ₺</div>
       </div>
 
       <h4>Araçlar</h4>
@@ -56,13 +59,9 @@ function ServiceCustomerDetailPage() {
         <div key={order.id} className="card mb-2">
           <div className="card-body">
             <strong>{order.title}</strong>
-
             <br />
-
             {order.vehicleName}
-
             <br />
-
             {order.totalCost} ₺
           </div>
         </div>

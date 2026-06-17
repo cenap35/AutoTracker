@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getCustomerVehicleById } from "../services/customerVehicleService";
+import ServicePageHeader from "../components/ServiceComponents/ServicePageHeader";
 
 function ServiceVehicleDetailPage() {
   const { id } = useParams();
@@ -21,16 +22,28 @@ function ServiceVehicleDetailPage() {
 
   return (
     <div>
-      <h2>
-        {vehicle.brand} {vehicle.model}
-      </h2>
+      <ServicePageHeader
+        icon="🚘"
+        title={`${vehicle.brand} ${vehicle.model}`}
+        subtitle={vehicle.plate}
+      />
 
       <div className="card p-3 mb-4">
-        <p><strong>Plaka:</strong> {vehicle.plate}</p>
-        <p><strong>Yıl:</strong> {vehicle.year}</p>
-        <p><strong>KM:</strong> {vehicle.currentMileage}</p>
-        <p><strong>Şasi No:</strong> {vehicle.chassisNumber}</p>
-        <p><strong>Müşteri:</strong> {vehicle.customer.fullName}</p>
+        <p>
+          <strong>Plaka:</strong> {vehicle.plate}
+        </p>
+        <p>
+          <strong>Yıl:</strong> {vehicle.year}
+        </p>
+        <p>
+          <strong>KM:</strong> {vehicle.currentMileage}
+        </p>
+        <p>
+          <strong>Şasi No:</strong> {vehicle.chassisNumber}
+        </p>
+        <p>
+          <strong>Müşteri:</strong> {vehicle.customer.fullName}
+        </p>
 
         <h5>Toplam Harcama</h5>
         <div className="fs-3 text-success">{vehicle.totalSpent} ₺</div>

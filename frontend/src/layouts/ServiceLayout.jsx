@@ -232,6 +232,29 @@ function ServiceLayout() {
           .service-content {
             padding: 16px;
           }
+
+          .service-page-header {
+  padding: 20px 22px;
+  border-radius: 22px;
+  background: rgba(255,255,255,.88);
+  border: 1px solid rgba(255,255,255,.85);
+  box-shadow: 0 12px 30px rgba(44, 62, 100, .08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.service-page-header h2 {
+  margin: 0;
+  color: #18265a;
+  font-weight: 850;
+}
+
+.service-page-header p {
+  margin: 6px 0 0;
+  color: #6d7890;
+}
         }
       `}</style>
     </div>

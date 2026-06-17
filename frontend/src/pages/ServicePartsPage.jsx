@@ -5,6 +5,7 @@ import {
   updatePart,
   deletePart,
 } from "../services/servicePartService";
+import ServicePageHeader from "../components/ServiceComponents/ServicePageHeader";
 
 function ServicePartsPage() {
   const [parts, setParts] = useState([]);
@@ -99,8 +100,8 @@ function ServicePartsPage() {
 
     setParts(
       parts.map((part) =>
-        part.id === id ? { ...part, ...updatedPart } : part
-      )
+        part.id === id ? { ...part, ...updatedPart } : part,
+      ),
     );
 
     cancelEdit();
@@ -119,9 +120,7 @@ function ServicePartsPage() {
   const getStockBadge = (stockQuantity) => {
     if (stockQuantity <= 3) {
       return (
-        <span className="badge bg-danger">
-          Kritik Stok ({stockQuantity})
-        </span>
+        <span className="badge bg-danger">Kritik Stok ({stockQuantity})</span>
       );
     }
 
@@ -133,16 +132,16 @@ function ServicePartsPage() {
       );
     }
 
-    return (
-      <span className="badge bg-success">
-        Stok: {stockQuantity}
-      </span>
-    );
+    return <span className="badge bg-success">Stok: {stockQuantity}</span>;
   };
 
   return (
     <div>
-      <h2>Parça Stokları</h2>
+      <ServicePageHeader
+        icon="📦"
+        title="Stoklar"
+        subtitle="Yedek parça ve stok yönetimi."
+      />
 
       <form onSubmit={handleCreateSubmit} className="card p-3 mt-3">
         <h5>Yeni Parça Ekle</h5>
@@ -304,9 +303,7 @@ function ServicePartsPage() {
                     </div>
 
                     <div className="col-md-1">
-                      <button className="btn btn-primary w-100">
-                        Kaydet
-                      </button>
+                      <button className="btn btn-primary w-100">Kaydet</button>
                     </div>
                   </div>
 

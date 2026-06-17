@@ -6,6 +6,7 @@ import {
   updateCustomer,
   deleteCustomer,
 } from "../services/serviceCustomerService";
+import ServicePageHeader from "../components/ServiceComponents/ServicePageHeader";
 
 function ServiceCustomersPage() {
   const [customers, setCustomers] = useState([]);
@@ -110,7 +111,11 @@ function ServiceCustomersPage() {
 
   return (
     <div>
-      <h2>Müşteriler</h2>
+      <ServicePageHeader
+  icon="👥"
+  title="Müşteriler"
+  subtitle="Servis müşterilerinizi ekleyin, düzenleyin ve yönetin."
+/>
 
       <input
         className="form-control mt-3"

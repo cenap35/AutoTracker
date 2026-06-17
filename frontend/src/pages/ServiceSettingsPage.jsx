@@ -3,6 +3,7 @@ import {
   getMyServiceBusiness,
   updateMyServiceBusiness,
 } from "../services/serviceBusinessService";
+import ServicePageHeader from "../components/ServiceComponents/ServicePageHeader";
 
 function ServiceSettingsPage() {
   const [form, setForm] = useState({
@@ -63,7 +64,11 @@ function ServiceSettingsPage() {
 
   return (
     <div>
-      <h2>Servis Bilgileri</h2>
+      <ServicePageHeader
+        icon="⚙️"
+        title="Servis Bilgileri"
+        subtitle="Servis profil bilgilerinizi güncelleyin."
+      />
 
       {message && <div className="alert alert-info mt-3">{message}</div>}
 

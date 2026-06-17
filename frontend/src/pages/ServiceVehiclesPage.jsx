@@ -7,6 +7,7 @@ import {
   deleteCustomerVehicle,
 } from "../services/customerVehicleService";
 import { getCustomers } from "../services/serviceCustomerService";
+import ServicePageHeader from "../components/ServiceComponents/ServicePageHeader";
 
 function ServiceVehiclesPage() {
   const [vehicles, setVehicles] = useState([]);
@@ -115,8 +116,8 @@ function ServiceVehiclesPage() {
 
     setVehicles(
       vehicles.map((vehicle) =>
-        vehicle.id === id ? { ...vehicle, ...updatedVehicle } : vehicle
-      )
+        vehicle.id === id ? { ...vehicle, ...updatedVehicle } : vehicle,
+      ),
     );
 
     cancelEdit();
@@ -133,7 +134,7 @@ function ServiceVehiclesPage() {
     } catch (error) {
       alert(
         error.response?.data ||
-          "Araç silinemedi. Bu araca bağlı iş emri olabilir."
+          "Araç silinemedi. Bu araca bağlı iş emri olabilir.",
       );
     }
   };
@@ -151,7 +152,11 @@ function ServiceVehiclesPage() {
 
   return (
     <div>
-      <h2>Araçlar</h2>
+      <ServicePageHeader
+        icon="🚗"
+        title="Araçlar"
+        subtitle="Servise kayıtlı araçları yönetin."
+      />
 
       <input
         className="form-control mt-3"

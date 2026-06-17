@@ -7,6 +7,7 @@ import {
   deleteServiceWorkOrder,
 } from "../services/serviceWorkOrderService";
 import { getCustomerVehicles } from "../services/customerVehicleService";
+import ServicePageHeader from "../components/ServiceComponents/ServicePageHeader";
 
 function ServiceWorkOrdersPage() {
   const [workOrders, setWorkOrders] = useState([]);
@@ -91,8 +92,8 @@ function ServiceWorkOrdersPage() {
               status: result.status,
               completedAt: result.completedAt,
             }
-          : order
-      )
+          : order,
+      ),
     );
   };
 
@@ -127,8 +128,11 @@ function ServiceWorkOrdersPage() {
 
   return (
     <div>
-      <h2>İş Emirleri</h2>
-
+      <ServicePageHeader
+        icon="🔧"
+        title="İş Emirleri"
+        subtitle="Bakım ve onarım süreçlerini takip edin."
+      />
       <form onSubmit={handleSubmit} className="card p-3 mt-3">
         <div className="row g-2">
           <div className="col-md-4">
