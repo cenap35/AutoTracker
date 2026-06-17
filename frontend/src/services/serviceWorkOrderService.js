@@ -28,3 +28,10 @@ export const updateWorkOrderStatus = async (id, status) => {
 
   return response.data;
 };
+
+export const updateServiceWorkOrder = async (id, workOrder) => {
+  const response = await api.put(`/serviceworkorders/${id}`, workOrder);
+
+  return response.data;
+};
+

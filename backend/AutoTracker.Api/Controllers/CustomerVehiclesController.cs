@@ -156,4 +156,91 @@ public class CustomerVehiclesController : ControllerBase
 
         return Ok(vehicle);
     }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateVehicle(
+    int id,
+    UpdateCustomerVehicleDto dto)
+    {
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        var serviceBusiness = await _context.ServiceBusinesses
+            .FirstOrDefaultAsync(s => s.OwnerUserId == userId);
+
+        if (serviceBusiness == null)
+            return NotFound("Servis hesabı bulunamadı.");
+
+        var vehicle = await _context.CustomerVehicles
+            .FirstOrDefaultAsync(v =>
+                v.Id == id &&
+                v.ServiceBusinessId == serviceBusiness.Id);
+
+        if (vehicle == null)
+            return NotFound("Araç bulunamadı.");
+
+        var customer = await _context.ServiceCustomers
+            .FirstOrDefaultAsync(c =>
+                c.Id == dto.ServiceCustomerId &&
+                c.ServiceBusinessId == serviceBusiness.Id);
+
+        if (customer == null)
+            return NotFound("Müşteri bulunamadı.");
+
+        vehicle.ServiceCustomerId = customer.Id;
+        vehicle.Brand = dto.Brand;
+        vehicle.Model = dto.Model;
+        vehicle.Year = dto.Year;
+        vehicle.Plate = dto.Plate;
+        vehicle.CurrentMileage = dto.CurrentMileage;
+        vehicle.ChassisNumber = dto.ChassisNumber;
+
+        await _context.SaveChangesAsync();
+
+        return Ok(new
+        {
+            vehicle.Id,
+            vehicle.Brand,
+            vehicle.Model,
+            vehicle.Year,
+            vehicle.Plate,
+            vehicle.CurrentMileage,
+            vehicle.ChassisNumber,
+            vehicle.ServiceCustomerId,
+            CustomerName = customer.FullName,
+            vehicle.ServiceBusinessId,
+            vehicle.CreatedAt
+        });
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteVehicle(int id)
+    {
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        var serviceBusiness = await _context.ServiceBusinesses
+            .FirstOrDefaultAsync(s => s.OwnerUserId == userId);
+
+        if (serviceBusiness == null)
+            return NotFound("Servis hesabı bulunamadı.");
+
+        var vehicle = await _context.CustomerVehicles
+            .FirstOrDefaultAsync(v =>
+                v.Id == id &&
+                v.ServiceBusinessId == serviceBusiness.Id);
+
+        if (vehicle == null)
+            return NotFound("Araç bulunamadı.");
+
+        var hasWorkOrder = await _context.ServiceWorkOrders
+            .AnyAsync(w => w.CustomerVehicleId == vehicle.Id);
+
+        if (hasWorkOrder)
+            return BadRequest("Bu araca ait iş emri bulunduğu için silinemez.");
+
+        _context.CustomerVehicles.Remove(vehicle);
+
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
 }

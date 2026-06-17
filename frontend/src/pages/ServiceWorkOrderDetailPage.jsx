@@ -3,11 +3,22 @@ import { useParams } from "react-router-dom";
 import {
   getServiceWorkOrderById,
   updateWorkOrderStatus,
+  updateServiceWorkOrder,
 } from "../services/serviceWorkOrderService";
 
 function ServiceWorkOrderDetailPage() {
   const { id } = useParams();
+
   const [workOrder, setWorkOrder] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+
+  const [editForm, setEditForm] = useState({
+    title: "",
+    description: "",
+    mileage: "",
+    laborCost: "",
+    partsCost: "",
+  });
 
   useEffect(() => {
     loadWorkOrder();
@@ -18,9 +29,59 @@ function ServiceWorkOrderDetailPage() {
     setWorkOrder(data);
   };
 
+  const startEdit = () => {
+    setEditForm({
+      title: workOrder.title,
+      description: workOrder.description || "",
+      mileage: workOrder.mileage,
+      laborCost: workOrder.laborCost,
+      partsCost: workOrder.partsCost,
+    });
+
+    setIsEditing(true);
+  };
+
+  const cancelEdit = () => {
+    setIsEditing(false);
+
+    setEditForm({
+      title: "",
+      description: "",
+      mileage: "",
+      laborCost: "",
+      partsCost: "",
+    });
+  };
+
+  const handleUpdateSubmit = async (e) => {
+    e.preventDefault();
+
+    const payload = {
+      title: editForm.title,
+      description: editForm.description,
+      mileage: Number(editForm.mileage),
+      laborCost: Number(editForm.laborCost),
+      partsCost: Number(editForm.partsCost),
+    };
+
+    const updated = await updateServiceWorkOrder(workOrder.id, payload);
+
+    setWorkOrder({
+      ...workOrder,
+      title: updated.title,
+      description: updated.description,
+      mileage: updated.mileage,
+      laborCost: updated.laborCost,
+      partsCost: updated.partsCost,
+      totalCost: updated.totalCost,
+    });
+
+    cancelEdit();
+  };
+
   const handleStatusChange = async (status) => {
     const result = await updateWorkOrderStatus(workOrder.id, status);
-  
+
     setWorkOrder({
       ...workOrder,
       status: result.status,
@@ -70,40 +131,127 @@ function ServiceWorkOrderDetailPage() {
           {workOrder.vehicle.model} - {workOrder.vehicle.plate}
         </p>
 
-        <p>
-          <strong>Açıklama:</strong> {workOrder.description}
-        </p>
+        {isEditing ? (
+          <form onSubmit={handleUpdateSubmit} className="mt-3">
+            <div className="mb-3">
+              <label className="form-label">Başlık</label>
+              <input
+                className="form-control"
+                value={editForm.title}
+                onChange={(e) =>
+                  setEditForm({ ...editForm, title: e.target.value })
+                }
+                required
+              />
+            </div>
 
-        <p>
-          <strong>KM:</strong> {workOrder.mileage}
-        </p>
+            <div className="mb-3">
+              <label className="form-label">Açıklama</label>
+              <textarea
+                className="form-control"
+                rows="3"
+                value={editForm.description}
+                onChange={(e) =>
+                  setEditForm({
+                    ...editForm,
+                    description: e.target.value,
+                  })
+                }
+              />
+            </div>
 
-        <p>
-          <strong>Durum:</strong> {getStatusText(workOrder.status)}
-        </p>
+            <div className="row g-2">
+              <div className="col-md-4">
+                <label className="form-label">KM</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  value={editForm.mileage}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, mileage: e.target.value })
+                  }
+                />
+              </div>
 
-        <div className="mt-3">
-          <button
-            className="btn btn-warning me-2"
-            onClick={() => handleStatusChange("Pending")}
-          >
-            Bekliyor
-          </button>
+              <div className="col-md-4">
+                <label className="form-label">İşçilik</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  value={editForm.laborCost}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, laborCost: e.target.value })
+                  }
+                />
+              </div>
 
-          <button
-            className="btn btn-primary me-2"
-            onClick={() => handleStatusChange("InProgress")}
-          >
-            İşlemde
-          </button>
+              <div className="col-md-4">
+                <label className="form-label">Parça</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  value={editForm.partsCost}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, partsCost: e.target.value })
+                  }
+                />
+              </div>
+            </div>
 
-          <button
-            className="btn btn-success"
-            onClick={() => handleStatusChange("Completed")}
-          >
-            Tamamlandı
-          </button>
-        </div>
+            <div className="mt-3 d-flex gap-2">
+              <button className="btn btn-success">Kaydet</button>
+
+              <button
+                type="button"
+                className="btn btn-outline-secondary"
+                onClick={cancelEdit}
+              >
+                İptal
+              </button>
+            </div>
+          </form>
+        ) : (
+          <>
+            <p>
+              <strong>Açıklama:</strong> {workOrder.description}
+            </p>
+
+            <p>
+              <strong>KM:</strong> {workOrder.mileage}
+            </p>
+
+            <p>
+              <strong>Durum:</strong> {getStatusText(workOrder.status)}
+            </p>
+
+            <div className="mt-3 d-flex flex-wrap gap-2">
+              <button className="btn btn-outline-secondary" onClick={startEdit}>
+                Düzenle
+              </button>
+
+              <button
+                className="btn btn-warning"
+                onClick={() => handleStatusChange("Pending")}
+              >
+                Bekliyor
+              </button>
+
+              <button
+                className="btn btn-primary"
+                onClick={() => handleStatusChange("InProgress")}
+              >
+                İşlemde
+              </button>
+
+              <button
+                className="btn btn-success"
+                onClick={() => handleStatusChange("Completed")}
+              >
+                Tamamlandı
+              </button>
+            </div>
+          </>
+        )}
       </div>
 
       <div className="card p-3">

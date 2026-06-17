@@ -173,6 +173,63 @@ public class ServiceWorkOrdersController : ControllerBase
         return Ok(workOrder);
     }
 
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateWorkOrder(
+    int id,
+    UpdateServiceWorkOrderDto dto)
+    {
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        var serviceBusiness = await _context.ServiceBusinesses
+            .FirstOrDefaultAsync(s => s.OwnerUserId == userId);
+
+        if (serviceBusiness == null)
+            return NotFound("Servis hesabı bulunamadı.");
+
+        var workOrder = await _context.ServiceWorkOrders
+            .Include(w => w.CustomerVehicle)
+            .ThenInclude(v => v.ServiceCustomer)
+            .FirstOrDefaultAsync(w =>
+                w.Id == id &&
+                w.ServiceBusinessId == serviceBusiness.Id);
+
+        if (workOrder == null)
+            return NotFound("İş emri bulunamadı.");
+
+        workOrder.Title = dto.Title;
+        workOrder.Description = dto.Description;
+        workOrder.Mileage = dto.Mileage;
+        workOrder.LaborCost = dto.LaborCost;
+        workOrder.PartsCost = dto.PartsCost;
+        workOrder.TotalCost = dto.LaborCost + dto.PartsCost;
+
+        if (dto.Mileage > workOrder.CustomerVehicle.CurrentMileage)
+        {
+            workOrder.CustomerVehicle.CurrentMileage = dto.Mileage;
+        }
+
+        await _context.SaveChangesAsync();
+
+        return Ok(new
+        {
+            workOrder.Id,
+            workOrder.Title,
+            workOrder.Description,
+            workOrder.Mileage,
+            workOrder.LaborCost,
+            workOrder.PartsCost,
+            workOrder.TotalCost,
+            workOrder.Status,
+            workOrder.CustomerVehicleId,
+            VehicleName = workOrder.CustomerVehicle.Brand + " " + workOrder.CustomerVehicle.Model,
+            Plate = workOrder.CustomerVehicle.Plate,
+            CustomerName = workOrder.CustomerVehicle.ServiceCustomer.FullName,
+            workOrder.ServiceBusinessId,
+            workOrder.CreatedAt,
+            workOrder.CompletedAt
+        });
+    }
+
     [HttpPut("{id}/status")]
     public async Task<IActionResult> UpdateStatus(int id, [FromBody] string status)
     {
