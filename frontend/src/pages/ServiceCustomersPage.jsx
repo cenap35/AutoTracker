@@ -12,6 +12,7 @@ function ServiceCustomersPage() {
     phone: "",
     note: "",
   });
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     loadCustomers();
@@ -22,14 +23,13 @@ function ServiceCustomersPage() {
     setCustomers(data);
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     const createdCustomer = await createCustomer(form);
-  
+
     setCustomers([createdCustomer, ...customers]);
-  
+
     setForm({
       fullName: "",
       phone: "",
@@ -40,6 +40,12 @@ function ServiceCustomersPage() {
   return (
     <div>
       <h2>Müşteriler</h2>
+      <input
+        className="form-control mt-3"
+        placeholder="Müşteri ara..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
 
       <form onSubmit={handleSubmit} className="card p-3 mt-3">
         <div className="row g-2">
@@ -77,21 +83,32 @@ function ServiceCustomersPage() {
       </form>
 
       <div className="mt-4">
-        {customers.map((customer) => (
-         <Link
-         key={customer.id}
-         to={`/service/customers/${customer.id}`}
-         className="text-decoration-none text-dark"
-       >
-         <div className="card mb-3">
-           <div className="card-body">
-             <h5>{customer.fullName}</h5>
-             <p className="mb-1">{customer.phone}</p>
-             <small className="text-muted">{customer.note}</small>
-           </div>
-         </div>
-       </Link>
-        ))}
+        {customers
+          .filter(
+            (customer) =>
+              customer.fullName
+                .toLowerCase()
+                .includes(searchTerm.toLowerCase()) ||
+              customer.phone.includes(searchTerm) ||
+              (customer.note || "")
+                .toLowerCase()
+                .includes(searchTerm.toLowerCase()),
+          )
+          .map((customer) => (
+            <Link
+              key={customer.id}
+              to={`/service/customers/${customer.id}`}
+              className="text-decoration-none text-dark"
+            >
+              <div className="card mb-3">
+                <div className="card-body">
+                  <h5>{customer.fullName}</h5>
+                  <p className="mb-1">{customer.phone}</p>
+                  <small className="text-muted">{customer.note}</small>
+                </div>
+              </div>
+            </Link>
+          ))}
       </div>
     </div>
   );

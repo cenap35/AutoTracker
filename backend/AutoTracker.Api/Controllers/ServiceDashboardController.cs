@@ -71,6 +71,26 @@ public class ServiceDashboardController : ControllerBase
                 w.CompletedAt.Value.Year == currentYear)
             .SumAsync(w => w.TotalCost);
 
+        var monthlyRevenueStats = await _context.ServiceWorkOrders
+            .Where(w =>
+                w.ServiceBusinessId == serviceBusiness.Id &&
+                w.Status == "Completed" &&
+                w.CompletedAt != null)
+            .GroupBy(w => new
+            {
+                Year = w.CompletedAt!.Value.Year,
+                Month = w.CompletedAt!.Value.Month
+            })
+            .Select(g => new
+            {
+                year = g.Key.Year,
+                month = g.Key.Month,
+                revenue = g.Sum(w => w.TotalCost)
+            })
+            .OrderBy(x => x.year)
+            .ThenBy(x => x.month)
+            .ToListAsync();
+
         var recentWorkOrders = await _context.ServiceWorkOrders
             .Where(w => w.ServiceBusinessId == serviceBusiness.Id)
             .OrderByDescending(w => w.CreatedAt)
@@ -104,6 +124,7 @@ public class ServiceDashboardController : ControllerBase
             inProgressWorkOrders,
             totalRevenue,
             monthlyRevenue,
+            monthlyRevenueStats,
             recentWorkOrders
         });
     }
