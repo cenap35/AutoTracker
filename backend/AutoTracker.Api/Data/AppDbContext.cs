@@ -19,4 +19,5 @@ public class AppDbContext : DbContext
     public DbSet<ServiceCustomer> ServiceCustomers { get; set; }
     public DbSet<CustomerVehicle> CustomerVehicles { get; set; }
     public DbSet<ServiceWorkOrder> ServiceWorkOrders { get; set; }
+    public DbSet<ServicePart> ServiceParts { get; set; }
 }

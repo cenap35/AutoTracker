@@ -39,6 +39,7 @@ import ServiceVehicleDetailPage from "./pages/ServiceVehicleDetailPage";
 import ServiceWorkOrderDetailPage from "./pages/ServiceWorkOrderDetailPage";
 import ServiceUpgradePage from "./pages/ServiceUpgradePage";
 import ServiceSetupPage from "./pages/ServiceSetupPage";
+import ServicePartsPage from "./pages/ServicePartsPage";
 
 function App() {
   return (
@@ -132,7 +133,7 @@ function App() {
                 }
               >
                 <Route path="dashboard" element={<ServiceDashboardPage />} />
-                <Route path="customer" element={<ServiceCustomersPage />} />
+                <Route path="customers" element={<ServiceCustomersPage />} />
                 <Route path="vehicles" element={<ServiceVehiclesPage />} />
                 <Route path="work-orders" element={<ServiceWorkOrdersPage />} />
                 <Route
@@ -147,6 +148,7 @@ function App() {
                   path="work-orders/:id"
                   element={<ServiceWorkOrderDetailPage />}
                 />
+                <Route path="parts" element={<ServicePartsPage />} />
               </Route>
 
               <Route

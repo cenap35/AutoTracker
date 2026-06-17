@@ -20,4 +20,5 @@ public class ServiceBusiness
     public List<ServiceCustomer> Customers { get; set; } = new();
     public List<CustomerVehicle> CustomerVehicles { get; set; } = new();
     public List<ServiceWorkOrder> WorkOrders { get; set; } = new();
+    public List<ServicePart> Parts { get; set; } = new();
 }
