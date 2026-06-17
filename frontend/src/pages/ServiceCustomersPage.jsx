@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import {
   getCustomers,
   createCustomer,
@@ -77,12 +78,19 @@ function ServiceCustomersPage() {
 
       <div className="mt-4">
         {customers.map((customer) => (
-          <div key={customer.id} className="card mb-3">
-            <div className="card-body">
-              <h5>{customer.fullName}</h5>
-              <p>{customer.phone}</p>
-            </div>
-          </div>
+         <Link
+         key={customer.id}
+         to={`/service/customers/${customer.id}`}
+         className="text-decoration-none text-dark"
+       >
+         <div className="card mb-3">
+           <div className="card-body">
+             <h5>{customer.fullName}</h5>
+             <p className="mb-1">{customer.phone}</p>
+             <small className="text-muted">{customer.note}</small>
+           </div>
+         </div>
+       </Link>
         ))}
       </div>
     </div>

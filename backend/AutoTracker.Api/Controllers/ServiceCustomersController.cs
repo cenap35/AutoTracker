@@ -80,4 +80,66 @@ public class ServiceCustomersController : ControllerBase
       customer.CreatedAt
     });
   }
+
+  [HttpGet("{id}")]
+  public async Task<IActionResult> GetCustomerById(int id)
+  {
+    var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+    var serviceBusiness = await _context.ServiceBusinesses
+        .FirstOrDefaultAsync(s => s.OwnerUserId == userId);
+
+    if (serviceBusiness == null)
+      return NotFound("Servis hesabı bulunamadı.");
+
+    var customer = await _context.ServiceCustomers
+        .Where(c => c.Id == id && c.ServiceBusinessId == serviceBusiness.Id)
+        .Select(c => new
+        {
+          c.Id,
+          c.FullName,
+          c.Phone,
+          c.Note,
+          c.CreatedAt,
+
+          Vehicles = _context.CustomerVehicles
+                .Where(v => v.ServiceCustomerId == c.Id)
+                .Select(v => new
+                {
+                  v.Id,
+                  v.Brand,
+                  v.Model,
+                  v.Plate,
+                  v.CurrentMileage
+                })
+                .ToList(),
+
+          WorkOrders = _context.ServiceWorkOrders
+                .Where(w => w.CustomerVehicle.ServiceCustomerId == c.Id)
+                .OrderByDescending(w => w.CreatedAt)
+                .Select(w => new
+                {
+                  w.Id,
+                  w.Title,
+                  w.Status,
+                  w.TotalCost,
+                  VehicleName = w.CustomerVehicle.Brand + " " + w.CustomerVehicle.Model,
+                  Plate = w.CustomerVehicle.Plate,
+                  w.CreatedAt
+                })
+                .ToList(),
+
+          TotalSpent = _context.ServiceWorkOrders
+                .Where(w =>
+                    w.CustomerVehicle.ServiceCustomerId == c.Id &&
+                    w.Status == "Completed")
+                .Sum(w => w.TotalCost)
+        })
+        .FirstOrDefaultAsync();
+
+    if (customer == null)
+      return NotFound("Müşteri bulunamadı.");
+
+    return Ok(customer);
+  }
 }
