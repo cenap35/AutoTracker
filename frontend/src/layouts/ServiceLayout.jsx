@@ -32,6 +32,9 @@ function ServiceLayout() {
                 <NavLink to="/service/parts" className={linkClass}>
                   📦 Stoklar
                 </NavLink>
+                <NavLink to="/service/settings" className={linkClass}>
+                  🏢 Servis Bilgileri
+                </NavLink>
               </nav>
             </div>
           </div>

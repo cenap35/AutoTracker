@@ -98,4 +98,34 @@ public class ServiceBusinessesController : ControllerBase
 
         return Ok(serviceBusiness);
     }
+
+    [HttpPut("me")]
+    public async Task<IActionResult> UpdateMyServiceBusiness(UpdateServiceBusinessDto dto)
+    {
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        var serviceBusiness = await _context.ServiceBusinesses
+            .FirstOrDefaultAsync(s => s.OwnerUserId == userId);
+
+        if (serviceBusiness == null)
+            return NotFound("Servis hesabı bulunamadı.");
+
+        serviceBusiness.Name = dto.Name;
+        serviceBusiness.Phone = dto.Phone;
+        serviceBusiness.City = dto.City;
+        serviceBusiness.Address = dto.Address;
+
+        await _context.SaveChangesAsync();
+
+        return Ok(new
+        {
+            serviceBusiness.Id,
+            serviceBusiness.Name,
+            serviceBusiness.Phone,
+            serviceBusiness.City,
+            serviceBusiness.Address,
+            serviceBusiness.OwnerUserId,
+            serviceBusiness.CreatedAt
+        });
+    }
 }

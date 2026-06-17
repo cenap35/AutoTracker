@@ -40,6 +40,7 @@ import ServiceWorkOrderDetailPage from "./pages/ServiceWorkOrderDetailPage";
 import ServiceUpgradePage from "./pages/ServiceUpgradePage";
 import ServiceSetupPage from "./pages/ServiceSetupPage";
 import ServicePartsPage from "./pages/ServicePartsPage";
+import ServiceSettingsPage from "./pages/ServiceSettingsPage";
 
 function App() {
   return (
@@ -149,6 +150,7 @@ function App() {
                   element={<ServiceWorkOrderDetailPage />}
                 />
                 <Route path="parts" element={<ServicePartsPage />} />
+                <Route path="settings" element={<ServiceSettingsPage />} />
               </Route>
 
               <Route
