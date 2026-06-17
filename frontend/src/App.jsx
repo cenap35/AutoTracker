@@ -32,6 +32,8 @@ import TermsOfServicePage from "./pages/TermsOfServicePage";
 import ServiceDashboardPage from "./pages/ServiceDashboardPage";
 import ServiceLayout from "./layouts/ServiceLayout";
 import ServiceCustomersPage from "./pages/ServiceCustomersPage";
+import ServiceVehiclesPage from "./pages/ServiceVehiclesPage";
+import ServiceWorkOrdersPage from "./pages/ServiceWorkOrdersPage";
 
 function App() {
   return (
@@ -128,6 +130,8 @@ function App() {
               >
                 <Route path="dashboard" element={<ServiceDashboardPage />} />
                 <Route path="customer" element={<ServiceCustomersPage />} />
+                <Route path="vehicles" element={<ServiceVehiclesPage />} />
+                <Route path="work-orders" element={<ServiceWorkOrdersPage />} />
               </Route>
 
               <Route
