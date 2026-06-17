@@ -14,3 +14,12 @@ export const getCustomerVehicleById = async (id) => {
   const response = await api.get(`/customervehicles/${id}`);
   return response.data;
 };
+
+export const updateCustomerVehicle = async (id, vehicle) => {
+  const response = await api.put(`/customervehicles/${id}`, vehicle);
+  return response.data;
+};
+
+export const deleteCustomerVehicle = async (id) => {
+  await api.delete(`/customervehicles/${id}`);
+};

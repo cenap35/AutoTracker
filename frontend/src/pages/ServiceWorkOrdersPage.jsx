@@ -3,26 +3,15 @@ import { Link } from "react-router-dom";
 import {
   getServiceWorkOrders,
   createServiceWorkOrder,
+  updateWorkOrderStatus,
 } from "../services/serviceWorkOrderService";
 import { getCustomerVehicles } from "../services/customerVehicleService";
 
 function ServiceWorkOrdersPage() {
   const [workOrders, setWorkOrders] = useState([]);
   const [vehicles, setVehicles] = useState([]);
-
-  const getStatusText = (status) => {
-    if (status === "Pending") return "Bekliyor";
-    if (status === "InProgress") return "İşlemde";
-    if (status === "Completed") return "Tamamlandı";
-    return status;
-  };
-
-  const getStatusClass = (status) => {
-    if (status === "Pending") return "bg-warning text-dark";
-    if (status === "InProgress") return "bg-primary";
-    if (status === "Completed") return "bg-success";
-    return "bg-secondary";
-  };
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("All");
 
   const [form, setForm] = useState({
     customerVehicleId: "",
@@ -49,6 +38,20 @@ function ServiceWorkOrdersPage() {
     setVehicles(data);
   };
 
+  const getStatusText = (status) => {
+    if (status === "Pending") return "Bekliyor";
+    if (status === "InProgress") return "İşlemde";
+    if (status === "Completed") return "Tamamlandı";
+    return status;
+  };
+
+  const getStatusClass = (status) => {
+    if (status === "Pending") return "bg-warning text-dark";
+    if (status === "InProgress") return "bg-primary";
+    if (status === "Completed") return "bg-success";
+    return "bg-secondary";
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -72,6 +75,40 @@ function ServiceWorkOrdersPage() {
       status: "Pending",
     });
   };
+
+  const handleQuickStatusChange = async (e, orderId, status) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const result = await updateWorkOrderStatus(orderId, status);
+
+    setWorkOrders(
+      workOrders.map((order) =>
+        order.id === orderId
+          ? {
+              ...order,
+              status: result.status,
+              completedAt: result.completedAt,
+            }
+          : order
+      )
+    );
+  };
+
+  const filteredWorkOrders = workOrders.filter((order) => {
+    const search = searchTerm.toLowerCase();
+
+    const matchesSearch =
+      order.title.toLowerCase().includes(search) ||
+      order.customerName.toLowerCase().includes(search) ||
+      order.vehicleName.toLowerCase().includes(search) ||
+      order.plate.toLowerCase().includes(search);
+
+    const matchesStatus =
+      statusFilter === "All" || order.status === statusFilter;
+
+    return matchesSearch && matchesStatus;
+  });
 
   return (
     <div>
@@ -167,39 +204,103 @@ function ServiceWorkOrdersPage() {
         </div>
       </form>
 
+      <div className="card p-3 mt-4">
+        <div className="row g-2">
+          <div className="col-md-8">
+            <input
+              className="form-control"
+              placeholder="İş emri, müşteri, araç veya plaka ara..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+
+          <div className="col-md-4">
+            <select
+              className="form-select"
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+            >
+              <option value="All">Tüm durumlar</option>
+              <option value="Pending">Bekliyor</option>
+              <option value="InProgress">İşlemde</option>
+              <option value="Completed">Tamamlandı</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
       <div className="mt-4">
-        {workOrders.map((order) => (
-          <Link
-            key={order.id}
-            to={`/service/work-orders/${order.id}`}
-            className="text-decoration-none text-dark"
-          >
-            <div className="card mb-3">
-              <div className="card-body">
-                <h5>{order.title}</h5>
+        {filteredWorkOrders.map((order) => (
+          <div key={order.id} className="card mb-3">
+            <div className="card-body">
+              <div className="d-flex justify-content-between align-items-start gap-3">
+                <div>
+                  <h5>{order.title}</h5>
 
-                <p className="mb-1">
-                  <strong>Müşteri:</strong> {order.customerName}
-                </p>
+                  <p className="mb-1">
+                    <strong>Müşteri:</strong> {order.customerName}
+                  </p>
 
-                <p className="mb-1">
-                  <strong>Araç:</strong> {order.vehicleName} - {order.plate}
-                </p>
+                  <p className="mb-1">
+                    <strong>Araç:</strong> {order.vehicleName} - {order.plate}
+                  </p>
 
-                <p className="mb-1">
-                  <strong>Durum:</strong>{" "}
-                  <span className={`badge ${getStatusClass(order.status)}`}>
-                    {getStatusText(order.status)}
-                  </span>
-                </p>
+                  <p className="mb-1">
+                    <strong>Durum:</strong>{" "}
+                    <span className={`badge ${getStatusClass(order.status)}`}>
+                      {getStatusText(order.status)}
+                    </span>
+                  </p>
 
-                <p className="mb-0">
-                  <strong>Tutar:</strong> {order.totalCost} ₺
-                </p>
+                  <p className="mb-0">
+                    <strong>Tutar:</strong> {order.totalCost} ₺
+                  </p>
+                </div>
+
+                <div className="d-flex flex-column gap-2">
+                  <Link
+                    to={`/service/work-orders/${order.id}`}
+                    className="btn btn-outline-primary btn-sm"
+                  >
+                    Detay
+                  </Link>
+
+                  <button
+                    className="btn btn-outline-warning btn-sm"
+                    onClick={(e) =>
+                      handleQuickStatusChange(e, order.id, "Pending")
+                    }
+                  >
+                    Bekliyor
+                  </button>
+
+                  <button
+                    className="btn btn-outline-primary btn-sm"
+                    onClick={(e) =>
+                      handleQuickStatusChange(e, order.id, "InProgress")
+                    }
+                  >
+                    İşlemde
+                  </button>
+
+                  <button
+                    className="btn btn-outline-success btn-sm"
+                    onClick={(e) =>
+                      handleQuickStatusChange(e, order.id, "Completed")
+                    }
+                  >
+                    Tamamlandı
+                  </button>
+                </div>
               </div>
             </div>
-          </Link>
+          </div>
         ))}
+
+        {filteredWorkOrders.length === 0 && (
+          <p className="text-muted">İş emri bulunamadı.</p>
+        )}
       </div>
     </div>
   );
