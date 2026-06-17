@@ -172,4 +172,41 @@ public class ServiceWorkOrdersController : ControllerBase
 
         return Ok(workOrder);
     }
+
+    [HttpPut("{id}/status")]
+    public async Task<IActionResult> UpdateStatus(int id, [FromBody] string status)
+    {
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        var serviceBusiness = await _context.ServiceBusinesses
+            .FirstOrDefaultAsync(s => s.OwnerUserId == userId);
+
+        if (serviceBusiness == null)
+            return NotFound("Servis hesabı bulunamadı.");
+
+        var workOrder = await _context.ServiceWorkOrders
+            .FirstOrDefaultAsync(w =>
+                w.Id == id &&
+                w.ServiceBusinessId == serviceBusiness.Id);
+
+        if (workOrder == null)
+            return NotFound("İş emri bulunamadı.");
+
+        workOrder.Status = status;
+
+        if (status == "Completed")
+            workOrder.CompletedAt = DateTime.UtcNow;
+
+        if (status != "Completed")
+            workOrder.CompletedAt = null;
+
+        await _context.SaveChangesAsync();
+
+        return Ok(new
+        {
+            workOrder.Id,
+            workOrder.Status,
+            workOrder.CompletedAt
+        });
+    }
 }

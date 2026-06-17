@@ -14,3 +14,17 @@ export const getServiceWorkOrderById = async (id) => {
   const response = await api.get(`/serviceworkorders/${id}`);
   return response.data;
 };
+
+export const updateWorkOrderStatus = async (id, status) => {
+  const response = await api.put(
+    `/serviceworkorders/${id}/status`,
+    JSON.stringify(status),
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
+  );
+
+  return response.data;
+};
