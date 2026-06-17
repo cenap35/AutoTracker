@@ -10,6 +10,20 @@ function ServiceWorkOrdersPage() {
   const [workOrders, setWorkOrders] = useState([]);
   const [vehicles, setVehicles] = useState([]);
 
+  const getStatusText = (status) => {
+    if (status === "Pending") return "Bekliyor";
+    if (status === "InProgress") return "İşlemde";
+    if (status === "Completed") return "Tamamlandı";
+    return status;
+  };
+
+  const getStatusClass = (status) => {
+    if (status === "Pending") return "bg-warning text-dark";
+    if (status === "InProgress") return "bg-primary";
+    if (status === "Completed") return "bg-success";
+    return "bg-secondary";
+  };
+
   const [form, setForm] = useState({
     customerVehicleId: "",
     title: "",
@@ -173,7 +187,10 @@ function ServiceWorkOrdersPage() {
                 </p>
 
                 <p className="mb-1">
-                  <strong>Durum:</strong> {order.status}
+                  <strong>Durum:</strong>{" "}
+                  <span className={`badge ${getStatusClass(order.status)}`}>
+                    {getStatusText(order.status)}
+                  </span>
                 </p>
 
                 <p className="mb-0">

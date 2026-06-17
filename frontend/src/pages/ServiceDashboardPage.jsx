@@ -61,6 +61,49 @@ function ServiceDashboardPage() {
             </div>
           </div>
         </div>
+        <div className="col-md-3">
+          <div className="card p-3">
+            <h6>Tamamlanan</h6>
+            <h3>{dashboard.completedWorkOrders}</h3>
+          </div>
+        </div>
+
+        <div className="col-md-3">
+          <div className="card p-3">
+            <h6>Bekleyen</h6>
+            <h3>{dashboard.pendingWorkOrders}</h3>
+          </div>
+        </div>
+
+        <div className="col-md-3">
+          <div className="card p-3">
+            <h6>İşlemde</h6>
+            <h3>{dashboard.inProgressWorkOrders}</h3>
+          </div>
+        </div>
+      </div>
+      <div className="card mt-4">
+        <div className="card-body">
+          <h5>Son İş Emirleri</h5>
+
+          {dashboard.recentWorkOrders.length === 0 && (
+            <p className="text-muted">Henüz iş emri yok.</p>
+          )}
+
+          {dashboard.recentWorkOrders.map((order) => (
+            <div key={order.id} className="border-bottom py-2">
+              <strong>{order.title}</strong>
+
+              <div className="text-muted small">
+                {order.customerName} - {order.vehicleName} - {order.plate}
+              </div>
+
+              <div>
+                {order.totalCost} ₺ / {order.status}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
