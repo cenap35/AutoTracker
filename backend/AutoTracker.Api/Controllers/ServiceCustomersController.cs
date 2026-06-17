@@ -142,4 +142,74 @@ public class ServiceCustomersController : ControllerBase
 
     return Ok(customer);
   }
+
+  [HttpPut("{id}")]
+public async Task<IActionResult> UpdateCustomer(
+  int id,
+  UpdateServiceCustomerDto dto)
+{
+  var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+  var serviceBusiness = await _context.ServiceBusinesses
+      .FirstOrDefaultAsync(s => s.OwnerUserId == userId);
+
+  if (serviceBusiness == null)
+    return NotFound("Servis hesabı bulunamadı.");
+
+  var customer = await _context.ServiceCustomers
+      .FirstOrDefaultAsync(c =>
+          c.Id == id &&
+          c.ServiceBusinessId == serviceBusiness.Id);
+
+  if (customer == null)
+    return NotFound("Müşteri bulunamadı.");
+
+  customer.FullName = dto.FullName;
+  customer.Phone = dto.Phone;
+  customer.Note = dto.Note;
+
+  await _context.SaveChangesAsync();
+
+  return Ok(new
+  {
+    customer.Id,
+    customer.FullName,
+    customer.Phone,
+    customer.Note,
+    customer.ServiceBusinessId,
+    customer.CreatedAt
+  });
+}
+
+[HttpDelete("{id}")]
+public async Task<IActionResult> DeleteCustomer(int id)
+{
+  var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+  var serviceBusiness = await _context.ServiceBusinesses
+      .FirstOrDefaultAsync(s => s.OwnerUserId == userId);
+
+  if (serviceBusiness == null)
+    return NotFound("Servis hesabı bulunamadı.");
+
+  var customer = await _context.ServiceCustomers
+      .FirstOrDefaultAsync(c =>
+          c.Id == id &&
+          c.ServiceBusinessId == serviceBusiness.Id);
+
+  if (customer == null)
+    return NotFound("Müşteri bulunamadı.");
+
+  var hasVehicle = await _context.CustomerVehicles
+      .AnyAsync(v => v.ServiceCustomerId == customer.Id);
+
+  if (hasVehicle)
+    return BadRequest("Bu müşteriye ait araç bulunduğu için silinemez.");
+
+  _context.ServiceCustomers.Remove(customer);
+
+  await _context.SaveChangesAsync();
+
+  return NoContent();
+}
 }

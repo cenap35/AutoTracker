@@ -3,16 +3,26 @@ import { Link } from "react-router-dom";
 import {
   getCustomers,
   createCustomer,
+  updateCustomer,
+  deleteCustomer,
 } from "../services/serviceCustomerService";
 
 function ServiceCustomersPage() {
   const [customers, setCustomers] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [editingCustomerId, setEditingCustomerId] = useState(null);
+
   const [form, setForm] = useState({
     fullName: "",
     phone: "",
     note: "",
   });
-  const [searchTerm, setSearchTerm] = useState("");
+
+  const [editForm, setEditForm] = useState({
+    fullName: "",
+    phone: "",
+    note: "",
+  });
 
   useEffect(() => {
     loadCustomers();
@@ -23,13 +33,7 @@ function ServiceCustomersPage() {
     setCustomers(data);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const createdCustomer = await createCustomer(form);
-
-    setCustomers([createdCustomer, ...customers]);
-
+  const resetForm = () => {
     setForm({
       fullName: "",
       phone: "",
@@ -37,9 +41,77 @@ function ServiceCustomersPage() {
     });
   };
 
+  const cancelEdit = () => {
+    setEditingCustomerId(null);
+    setEditForm({
+      fullName: "",
+      phone: "",
+      note: "",
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const createdCustomer = await createCustomer(form);
+
+    setCustomers([createdCustomer, ...customers]);
+    resetForm();
+  };
+
+  const startEdit = (customer) => {
+    setEditingCustomerId(customer.id);
+
+    setEditForm({
+      fullName: customer.fullName,
+      phone: customer.phone,
+      note: customer.note || "",
+    });
+  };
+
+  const handleUpdate = async (e, id) => {
+    e.preventDefault();
+
+    const updatedCustomer = await updateCustomer(id, editForm);
+
+    setCustomers(
+      customers.map((customer) =>
+        customer.id === id ? { ...customer, ...updatedCustomer } : customer
+      )
+    );
+
+    cancelEdit();
+  };
+
+  const handleDelete = async (id) => {
+    const confirmed = window.confirm(
+      "Bu müşteriyi silmek istediğine emin misin?"
+    );
+
+    if (!confirmed) return;
+
+    try {
+      await deleteCustomer(id);
+      setCustomers(customers.filter((customer) => customer.id !== id));
+    } catch (error) {
+      alert(
+        error.response?.data ||
+          "Müşteri silinemedi. Bu müşteriye bağlı araç olabilir."
+      );
+    }
+  };
+
+  const filteredCustomers = customers.filter(
+    (customer) =>
+      customer.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      customer.phone.includes(searchTerm) ||
+      (customer.note || "").toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div>
       <h2>Müşteriler</h2>
+
       <input
         className="form-control mt-3"
         placeholder="Müşteri ara..."
@@ -55,6 +127,7 @@ function ServiceCustomersPage() {
               placeholder="Ad Soyad"
               value={form.fullName}
               onChange={(e) => setForm({ ...form, fullName: e.target.value })}
+              required
             />
           </div>
 
@@ -83,32 +156,102 @@ function ServiceCustomersPage() {
       </form>
 
       <div className="mt-4">
-        {customers
-          .filter(
-            (customer) =>
-              customer.fullName
-                .toLowerCase()
-                .includes(searchTerm.toLowerCase()) ||
-              customer.phone.includes(searchTerm) ||
-              (customer.note || "")
-                .toLowerCase()
-                .includes(searchTerm.toLowerCase()),
-          )
-          .map((customer) => (
-            <Link
-              key={customer.id}
-              to={`/service/customers/${customer.id}`}
-              className="text-decoration-none text-dark"
-            >
-              <div className="card mb-3">
-                <div className="card-body">
+        {filteredCustomers.map((customer) => (
+          <div key={customer.id} className="card mb-3">
+            <div className="card-body">
+              {editingCustomerId === customer.id ? (
+                <form onSubmit={(e) => handleUpdate(e, customer.id)}>
+                  <div className="row g-2">
+                    <div className="col-md-4">
+                      <input
+                        className="form-control"
+                        value={editForm.fullName}
+                        onChange={(e) =>
+                          setEditForm({
+                            ...editForm,
+                            fullName: e.target.value,
+                          })
+                        }
+                        required
+                      />
+                    </div>
+
+                    <div className="col-md-3">
+                      <input
+                        className="form-control"
+                        value={editForm.phone}
+                        onChange={(e) =>
+                          setEditForm({
+                            ...editForm,
+                            phone: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+
+                    <div className="col-md-3">
+                      <input
+                        className="form-control"
+                        value={editForm.note}
+                        onChange={(e) =>
+                          setEditForm({
+                            ...editForm,
+                            note: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+
+                    <div className="col-md-2 d-flex gap-2">
+                      <button className="btn btn-success w-100">Kaydet</button>
+
+                      <button
+                        type="button"
+                        className="btn btn-outline-secondary w-100"
+                        onClick={cancelEdit}
+                      >
+                        İptal
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              ) : (
+                <>
                   <h5>{customer.fullName}</h5>
                   <p className="mb-1">{customer.phone}</p>
                   <small className="text-muted">{customer.note}</small>
-                </div>
-              </div>
-            </Link>
-          ))}
+
+                  <div className="mt-3 d-flex gap-2">
+                    <Link
+                      to={`/service/customers/${customer.id}`}
+                      className="btn btn-outline-primary btn-sm"
+                    >
+                      Detay
+                    </Link>
+
+                    <button
+                      className="btn btn-outline-secondary btn-sm"
+                      onClick={() => startEdit(customer)}
+                    >
+                      Düzenle
+                    </button>
+
+                    <button
+                      className="btn btn-outline-danger btn-sm"
+                      onClick={() => handleDelete(customer.id)}
+                    >
+                      Sil
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        ))}
+
+        {filteredCustomers.length === 0 && (
+          <p className="text-muted">Müşteri bulunamadı.</p>
+        )}
       </div>
     </div>
   );
