@@ -133,6 +133,17 @@ function ServiceWorkOrderDetailPage() {
     if (status === "Completed") return "bg-success";
     return "bg-secondary";
   };
+  const formatDateTime = (date) => {
+    if (!date) return "-";
+
+    return new Date(date).toLocaleString("tr-TR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
 
   const getStatusIcon = (status) => {
     if (status === "Pending") return "bi-hourglass-split";
@@ -194,8 +205,12 @@ function ServiceWorkOrderDetailPage() {
                       İş Emri Bilgileri
                     </h5>
 
-                    <span className={`badge ${getStatusClass(workOrder.status)}`}>
-                      <i className={`bi ${getStatusIcon(workOrder.status)} me-1`} />
+                    <span
+                      className={`badge ${getStatusClass(workOrder.status)}`}
+                    >
+                      <i
+                        className={`bi ${getStatusIcon(workOrder.status)} me-1`}
+                      />
                       {getStatusText(workOrder.status)}
                     </span>
                   </div>
@@ -251,6 +266,16 @@ function ServiceWorkOrderDetailPage() {
                       <span className="badge bg-light text-dark border">
                         <i className="bi bi-speedometer2 me-1" />
                         {workOrder.mileage} KM
+                      </span>
+
+                      <span className="badge bg-light text-dark border">
+                        <i className="bi bi-clock me-1" />
+                        Oluşturuldu: {formatDateTime(workOrder.createdAt)}
+                      </span>
+
+                      <span className="badge bg-light text-dark border">
+                        <i className="bi bi-check2-circle me-1" />
+                        Tamamlandı: {formatDateTime(workOrder.completedAt)}
                       </span>
                     </div>
 
@@ -409,10 +434,7 @@ function ServiceWorkOrderDetailPage() {
               <div className="card-body">
                 <div className="text-muted small">Toplam Tutar</div>
 
-                <div
-                  className="h3 fw-bold mb-3"
-                  style={{ color: "#b78b16" }}
-                >
+                <div className="h3 fw-bold mb-3" style={{ color: "#b78b16" }}>
                   ₺{Number(workOrder.totalCost || 0).toLocaleString("tr-TR")}
                 </div>
 
@@ -431,7 +453,9 @@ function ServiceWorkOrderDetailPage() {
 
                   <div className="d-flex justify-content-between">
                     <span className="text-muted">Durum</span>
-                    <span className={`badge ${getStatusClass(workOrder.status)}`}>
+                    <span
+                      className={`badge ${getStatusClass(workOrder.status)}`}
+                    >
                       {getStatusText(workOrder.status)}
                     </span>
                   </div>

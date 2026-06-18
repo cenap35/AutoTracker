@@ -71,6 +71,18 @@ function ServiceWorkOrdersPage() {
     return "bg-secondary";
   };
 
+  const formatDateTime = (date) => {
+    if (!date) return "-";
+
+    return new Date(date).toLocaleString("tr-TR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
   const getStatusIcon = (status) => {
     if (status === "Pending") return "bi-hourglass-split";
     if (status === "InProgress") return "bi-gear";
@@ -351,8 +363,7 @@ function ServiceWorkOrdersPage() {
                         width: 48,
                         height: 48,
                         borderRadius: 16,
-                        background:
-                          "linear-gradient(135deg, #b78b16, #ffb703)",
+                        background: "linear-gradient(135deg, #b78b16, #ffb703)",
                         boxShadow: "0 10px 22px rgba(255, 183, 3, .22)",
                       }}
                     >
@@ -394,6 +405,11 @@ function ServiceWorkOrdersPage() {
                         <span className="badge bg-light text-dark border">
                           <i className="bi bi-cash-coin me-1" />
                           {order.totalCost} ₺
+                        </span>
+
+                        <span className="badge bg-light text-dark border">
+                          <i className="bi bi-clock me-1" />
+                          {formatDateTime(order.createdAt)}
                         </span>
                       </div>
                     </div>
