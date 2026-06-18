@@ -19,4 +19,5 @@ public class ServicePart
     public ServiceBusiness ServiceBusiness { get; set; } = null!;
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public List<ServicePartSale> Sales { get; set; } = new();
 }

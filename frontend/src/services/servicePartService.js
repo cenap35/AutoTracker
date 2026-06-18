@@ -18,3 +18,11 @@ export const updatePart = async (id, part) => {
 export const deletePart = async (id) => {
   await api.delete(`/serviceparts/${id}`);
 };
+
+export const sellPart = async (id, quantity) => {
+  const response = await api.post(`/serviceparts/${id}/sell`, {
+    quantity: Number(quantity),
+  });
+
+  return response.data;
+};

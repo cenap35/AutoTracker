@@ -155,4 +155,64 @@ UpdateServicePartDto dto)
 
         return NoContent();
     }
+
+    [HttpPost("{id}/sell")]
+    public async Task<IActionResult> SellPart(int id, SellServicePartDto dto)
+    {
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        var serviceBusiness = await _context.ServiceBusinesses
+            .FirstOrDefaultAsync(s => s.OwnerUserId == userId);
+
+        if (serviceBusiness == null)
+            return NotFound("Servis hesabı bulunamadı.");
+
+        var part = await _context.ServiceParts
+            .FirstOrDefaultAsync(p =>
+                p.Id == id &&
+                p.ServiceBusinessId == serviceBusiness.Id);
+
+        if (part == null)
+            return NotFound("Parça bulunamadı.");
+
+        if (part.StockQuantity < dto.Quantity)
+            return BadRequest("Yeterli stok yok.");
+
+        var totalRevenue = part.SalePrice * dto.Quantity;
+        var totalProfit = (part.SalePrice - part.PurchasePrice) * dto.Quantity;
+
+        part.StockQuantity -= dto.Quantity;
+
+        var sale = new ServicePartSale
+        {
+            ServicePartId = part.Id,
+            ServiceBusinessId = serviceBusiness.Id,
+            Quantity = dto.Quantity,
+            PurchasePrice = part.PurchasePrice,
+            SalePrice = part.SalePrice,
+            TotalRevenue = totalRevenue,
+            TotalProfit = totalProfit
+        };
+
+        _context.ServicePartSales.Add(sale);
+        await _context.SaveChangesAsync();
+
+        return Ok(new
+        {
+            part.Id,
+            part.Name,
+            part.Code,
+            part.PurchasePrice,
+            part.SalePrice,
+            part.StockQuantity,
+            Sale = new
+            {
+                sale.Id,
+                sale.Quantity,
+                sale.TotalRevenue,
+                sale.TotalProfit,
+                sale.SoldAt
+            }
+        });
+    }
 }

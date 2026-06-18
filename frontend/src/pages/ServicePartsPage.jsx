@@ -8,6 +8,7 @@ import {
   createPart,
   updatePart,
   deletePart,
+  sellPart,
 } from "../services/servicePartService";
 
 import ServicePageHeader from "../components/ServiceComponents/ServicePageHeader";
@@ -17,6 +18,7 @@ function ServicePartsPage() {
   const [editingPartId, setEditingPartId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [sellQuantityByPartId, setSellQuantityByPartId] = useState({});
 
   const [newPartForm, setNewPartForm] = useState({
     name: "",
@@ -50,6 +52,55 @@ function ServicePartsPage() {
       toast.error("Stoklar yüklenemedi.");
     } finally {
       setLoading(false);
+    }
+  };
+  const handleSellPart = async (id) => {
+    const quantity = Number(sellQuantityByPartId[id] || 1);
+    const selectedPart = parts.find((part) => part.id === id);
+
+    if (!selectedPart) {
+      toast.error("Parça bulunamadı.");
+      return;
+    }
+
+    if (quantity <= 0) {
+      toast.error("Satış adedi en az 1 olmalı.");
+      return;
+    }
+
+    if (quantity > selectedPart.stockQuantity) {
+      toast.error("Satış adedi stok miktarından fazla olamaz.");
+      return;
+    }
+
+    try {
+      const result = await sellPart(id, quantity);
+
+      setParts(
+        parts.map((part) =>
+          part.id === id
+            ? {
+                ...part,
+                stockQuantity: result.stockQuantity,
+              }
+            : part,
+        ),
+      );
+
+      setSellQuantityByPartId({
+        ...sellQuantityByPartId,
+        [id]: "",
+      });
+
+      toast.success(`Satış yapıldı. Kar: ${result.sale.totalProfit} ₺`);
+    } catch (err) {
+      console.error(err);
+
+      toast.error(
+        typeof err.response?.data === "string"
+          ? err.response.data
+          : "Satış yapılamadı.",
+      );
     }
   };
 
@@ -154,9 +205,7 @@ function ServicePartsPage() {
   const getStockBadge = (stockQuantity) => {
     if (stockQuantity <= 3) {
       return (
-        <span className="badge bg-danger">
-          Kritik Stok ({stockQuantity})
-        </span>
+        <span className="badge bg-danger">Kritik Stok ({stockQuantity})</span>
       );
     }
 
@@ -438,6 +487,12 @@ function ServicePartsPage() {
                             <i className="bi bi-cash-coin me-1" />
                             Satış: {part.salePrice} ₺
                           </span>
+                          <span className="badge bg-dark">
+                            <i className="bi bi-graph-up-arrow me-1" />
+                            Birim Kazanç: {part.salePrice -
+                              part.purchasePrice}{" "}
+                            ₺
+                          </span>
 
                           <span className="badge bg-light text-dark border">
                             <i className="bi bi-boxes me-1" />
@@ -447,7 +502,28 @@ function ServicePartsPage() {
                       </div>
                     </div>
 
-                    <div className="d-flex gap-2 flex-wrap">
+                    <div className="d-flex gap-2 flex-wrap align-items-center">
+                      <input
+                        type="number"
+                        min="1"
+                        placeholder="Adet"
+                        className="form-control form-control-sm"
+                        style={{ width: "80px" }}
+                        value={sellQuantityByPartId[part.id] || ""}
+                        onChange={(e) =>
+                          setSellQuantityByPartId({
+                            ...sellQuantityByPartId,
+                            [part.id]: e.target.value,
+                          })
+                        }
+                      />
+
+                      <button
+                        className="btn btn-outline-success btn-sm"
+                        onClick={() => handleSellPart(part.id)}
+                      >
+                        Sat
+                      </button>
                       <button
                         className="btn btn-outline-secondary btn-sm"
                         onClick={() => startEdit(part)}
