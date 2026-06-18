@@ -83,6 +83,24 @@ function ServiceWorkOrdersPage() {
     });
   };
 
+  const getWorkDuration = (createdAt, completedAt) => {
+    if (!createdAt || !completedAt) return "-";
+
+    const diffMs = new Date(completedAt) - new Date(createdAt);
+
+    if (diffMs <= 0) return "-";
+
+    const totalMinutes = Math.floor(diffMs / 1000 / 60);
+    const days = Math.floor(totalMinutes / 1440);
+    const hours = Math.floor((totalMinutes % 1440) / 60);
+    const minutes = totalMinutes % 60;
+
+    if (days > 0) return `${days} gün ${hours} saat ${minutes} dk`;
+    if (hours > 0) return `${hours} saat ${minutes} dk`;
+
+    return `${minutes} dk`;
+  };
+
   const getStatusIcon = (status) => {
     if (status === "Pending") return "bi-hourglass-split";
     if (status === "InProgress") return "bi-gear";
@@ -411,6 +429,20 @@ function ServiceWorkOrdersPage() {
                           <i className="bi bi-clock me-1" />
                           {formatDateTime(order.createdAt)}
                         </span>
+
+                        {order.completedAt && (
+  <>
+    <span className="badge bg-light text-dark border">
+      <i className="bi bi-check2-circle me-1" />
+      Tamamlandı: {formatDateTime(order.completedAt)}
+    </span>
+
+    <span className="badge bg-light text-dark border">
+      <i className="bi bi-hourglass-split me-1" />
+      Süre: {getWorkDuration(order.createdAt, order.completedAt)}
+    </span>
+  </>
+)}
                       </div>
                     </div>
                   </div>
