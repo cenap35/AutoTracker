@@ -431,18 +431,22 @@ function ServiceWorkOrdersPage() {
                         </span>
 
                         {order.completedAt && (
-  <>
-    <span className="badge bg-light text-dark border">
-      <i className="bi bi-check2-circle me-1" />
-      Tamamlandı: {formatDateTime(order.completedAt)}
-    </span>
+                          <>
+                            <span className="badge bg-light text-dark border">
+                              <i className="bi bi-check2-circle me-1" />
+                              Tamamlandı: {formatDateTime(order.completedAt)}
+                            </span>
 
-    <span className="badge bg-light text-dark border">
-      <i className="bi bi-hourglass-split me-1" />
-      Süre: {getWorkDuration(order.createdAt, order.completedAt)}
-    </span>
-  </>
-)}
+                            <span className="badge bg-light text-dark border">
+                              <i className="bi bi-hourglass-split me-1" />
+                              Süre:{" "}
+                              {getWorkDuration(
+                                order.createdAt,
+                                order.completedAt,
+                              )}
+                            </span>
+                          </>
+                        )}
                       </div>
                     </div>
                   </div>
