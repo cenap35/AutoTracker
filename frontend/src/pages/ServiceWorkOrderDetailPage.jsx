@@ -145,6 +145,27 @@ function ServiceWorkOrderDetailPage() {
     });
   };
 
+  const getWorkDuration = (createdAt, completedAt) => {
+    if (!createdAt || !completedAt) return "-";
+
+    const start = new Date(createdAt);
+    const end = new Date(completedAt);
+
+    const diffMs = end - start;
+
+    if (diffMs <= 0) return "-";
+
+    const totalMinutes = Math.floor(diffMs / 1000 / 60);
+    const days = Math.floor(totalMinutes / 1440);
+    const hours = Math.floor((totalMinutes % 1440) / 60);
+    const minutes = totalMinutes % 60;
+
+    if (days > 0) return `${days} gün ${hours} saat ${minutes} dk`;
+    if (hours > 0) return `${hours} saat ${minutes} dk`;
+
+    return `${minutes} dk`;
+  };
+
   const getStatusIcon = (status) => {
     if (status === "Pending") return "bi-hourglass-split";
     if (status === "InProgress") return "bi-gear";
@@ -276,6 +297,15 @@ function ServiceWorkOrderDetailPage() {
                       <span className="badge bg-light text-dark border">
                         <i className="bi bi-check2-circle me-1" />
                         Tamamlandı: {formatDateTime(workOrder.completedAt)}
+                      </span>
+
+                      <span className="badge bg-light text-dark border">
+                        <i className="bi bi-hourglass-split me-1" />
+                        Süre:{" "}
+                        {getWorkDuration(
+                          workOrder.createdAt,
+                          workOrder.completedAt,
+                        )}
                       </span>
                     </div>
 
@@ -458,6 +488,16 @@ function ServiceWorkOrderDetailPage() {
                     >
                       {getStatusText(workOrder.status)}
                     </span>
+                  </div>
+                  <hr />
+                  <div className="d-flex justify-content-between">
+                    <span className="text-muted">Süre</span>
+                    <strong>
+                      {getWorkDuration(
+                        workOrder.createdAt,
+                        workOrder.completedAt,
+                      )}
+                    </strong>
                   </div>
                 </div>
               </div>
