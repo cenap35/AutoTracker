@@ -16,10 +16,12 @@ function ServiceLayout() {
         </div>
 
         <nav className="service-nav">
-          <NavLink to="/service/dashboard" className={linkClass}>
-            <span>📊</span> <b>Dashboard</b>
+          <NavLink to="/service" end className={linkClass}>
+            <span>🏠</span> <b>Ana Sayfa</b>
           </NavLink>
-         
+          <NavLink to="/service/dashboard" className={linkClass}>
+            <span>📊</span> <b>Panel</b>
+          </NavLink>
 
           <NavLink to="/service/customers" className={linkClass}>
             <span>👥</span> <b>Müşteriler</b>

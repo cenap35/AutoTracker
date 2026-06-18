@@ -67,7 +67,7 @@ function HomePage() {
   const handleServiceClick = async () => {
     try {
       await api.get("/servicebusinesses/me");
-      navigate("/service/dashboard");
+      navigate("/service");
     } catch {
       navigate("/service-upgrade");
     }
@@ -143,11 +143,35 @@ function HomePage() {
                       Araçlarım
                     </Link>
                     <button
-                      className="btn btn-warning"
+                      className="btn fw-bold px-4 py-2"
                       onClick={handleServiceClick}
+                      style={{
+                        borderRadius: 18,
+                        background: "#ffd966",
+                        color: "#5c4104",
+                        border: "2px solid #ffd966",
+                        transition: "all .20s, transform .20s",
+                        boxShadow: "0 2px 14px rgba(255, 217, 102, 0.22)"
+                      }}
+                      onMouseOver={e => {
+                        e.currentTarget.style.background = "#ffe599";
+                        e.currentTarget.style.color = "#4e3825";
+                        e.currentTarget.style.borderColor = "#ffe599";
+                        e.currentTarget.style.transform = "translateY(-5px)";
+                        e.currentTarget.style.boxShadow = "0 8px 24px rgba(255, 217, 102, 0.38)";
+                      }}
+                      onMouseOut={e => {
+                        e.currentTarget.style.background = "#ffd966";
+                        e.currentTarget.style.color = "#5c4104";
+                        e.currentTarget.style.borderColor = "#ffd966";
+                        e.currentTarget.style.transform = "translateY(0)";
+                        e.currentTarget.style.boxShadow = "0 2px 14px rgba(255, 217, 102, 0.22)";
+                      }}
                     >
+                      <i className="bi bi-gear-fill me-2" />
                       Servis Yönetimine Geç
                     </button>
+               
                   </>
                 ) : (
                   <>

@@ -27,6 +27,7 @@ import ReportsPage from "../pages/ReportsPage";
 import ReminderPage from "../pages/ReminderPage";
 import AccountPage from "../pages/AccountPage";
 
+import ServiceHomePage from "../pages/ServiceHomePage";
 import ServiceDashboardPage from "../pages/ServiceDashboardPage";
 import ServiceCustomersPage from "../pages/ServiceCustomersPage";
 import ServiceCustomerDetailPage from "../pages/ServiceCustomerDetailPage";
@@ -133,6 +134,7 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       >
+        <Route index element={<ServiceHomePage />} />
         <Route path="dashboard" element={<ServiceDashboardPage />} />
         <Route path="customers" element={<ServiceCustomersPage />} />
         <Route path="customers/:id" element={<ServiceCustomerDetailPage />} />
