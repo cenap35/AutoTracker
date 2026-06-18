@@ -46,3 +46,17 @@ export const getPartSales = async () => {
   const response = await api.get("/serviceparts/sales");
   return response.data;
 };
+
+export const downloadPartReportPdf = async ({ year, month } = {}) => {
+  const params = {};
+
+  if (year) params.year = year;
+  if (month) params.month = month;
+
+  const response = await api.get("/serviceparts/report-pdf", {
+    params,
+    responseType: "blob",
+  });
+
+  return response.data;
+};

@@ -7,8 +7,11 @@ using AutoTracker.Api.Services;
 using AutoTracker.Api.Middleware;
 using Serilog;
 using Resend;
+using QuestPDF.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
+
+QuestPDF.Settings.License = LicenseType.Community;
 
 Serilog.Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()

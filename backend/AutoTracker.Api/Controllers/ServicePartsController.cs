@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
 
 namespace AutoTracker.Api.Controllers;
 
@@ -418,5 +421,197 @@ public class ServicePartsController : ControllerBase
             .ToListAsync();
 
         return Ok(sales);
+    }
+
+    [HttpGet("report-pdf")]
+    public async Task<IActionResult> GetPartSalesReportPdf(
+      [FromQuery] int? year,
+      [FromQuery] int? month)
+    {
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        var serviceBusiness = await _context.ServiceBusinesses
+            .FirstOrDefaultAsync(s => s.OwnerUserId == userId);
+
+        if (serviceBusiness == null)
+            return NotFound("Servis hesabı bulunamadı.");
+
+        DateTime? startDate = null;
+        DateTime? endDate = null;
+        string reportPeriod = "Tüm Zamanlar";
+
+        if (year.HasValue && month.HasValue)
+        {
+            startDate = new DateTime(
+                year.Value,
+                month.Value,
+                1,
+                0,
+                0,
+                0,
+                DateTimeKind.Utc
+            );
+
+            endDate = startDate.Value.AddMonths(1);
+            reportPeriod = $"{month.Value:00}/{year.Value}";
+        }
+        else if (year.HasValue)
+        {
+            startDate = new DateTime(
+                year.Value,
+                1,
+                1,
+                0,
+                0,
+                0,
+                DateTimeKind.Utc
+            );
+
+            endDate = startDate.Value.AddYears(1);
+            reportPeriod = year.Value.ToString();
+        }
+
+        var parts = await _context.ServiceParts
+            .Where(p => p.ServiceBusinessId == serviceBusiness.Id)
+            .ToListAsync();
+
+        var salesQuery = _context.ServicePartSales
+            .Where(s => s.ServiceBusinessId == serviceBusiness.Id);
+
+        if (startDate.HasValue && endDate.HasValue)
+        {
+            salesQuery = salesQuery.Where(s =>
+                s.SoldAt >= startDate.Value &&
+                s.SoldAt < endDate.Value);
+        }
+
+        var sales = await salesQuery
+            .Include(s => s.ServicePart)
+            .OrderByDescending(s => s.SoldAt)
+            .ToListAsync();
+
+        var totalStockCost = parts.Sum(p => p.PurchasePrice * p.StockQuantity);
+        var totalPotentialRevenue = parts.Sum(p => p.SalePrice * p.StockQuantity);
+        var totalPotentialProfit = parts.Sum(p =>
+            (p.SalePrice - p.PurchasePrice) * p.StockQuantity);
+
+        var totalSalesRevenue = sales.Sum(s => s.TotalRevenue);
+        var totalRealizedProfit = sales.Sum(s => s.TotalProfit);
+        var totalSoldQuantity = sales.Sum(s => s.Quantity);
+
+        var bestSellingPart = sales
+            .GroupBy(s => s.ServicePart.Name)
+            .Select(g => new
+            {
+                Name = g.Key,
+                Quantity = g.Sum(x => x.Quantity),
+                Profit = g.Sum(x => x.TotalProfit)
+            })
+            .OrderByDescending(x => x.Quantity)
+            .FirstOrDefault();
+
+        var mostProfitablePart = sales
+            .GroupBy(s => s.ServicePart.Name)
+            .Select(g => new
+            {
+                Name = g.Key,
+                Quantity = g.Sum(x => x.Quantity),
+                Profit = g.Sum(x => x.TotalProfit)
+            })
+            .OrderByDescending(x => x.Profit)
+            .FirstOrDefault();
+
+        var pdfBytes = Document.Create(container =>
+        {
+            container.Page(page =>
+            {
+                page.Size(PageSizes.A4);
+                page.Margin(35);
+
+                page.Header().Column(col =>
+                {
+                    col.Item().Text("AutoTracker Service").FontSize(22).Bold();
+                    col.Item().Text("Stok Finans Raporu").FontSize(16);
+                    col.Item().Text($"Rapor Dönemi: {reportPeriod}");
+                    col.Item().Text($"{serviceBusiness.Name} - {DateTime.Now:dd.MM.yyyy HH:mm}");
+                });
+
+                page.Content().PaddingVertical(20).Column(col =>
+                {
+                    col.Spacing(12);
+
+                    col.Item().Text("Özet Bilgiler").FontSize(16).Bold();
+
+                    col.Item().Table(table =>
+                    {
+                        table.ColumnsDefinition(columns =>
+                        {
+                            columns.RelativeColumn();
+                            columns.RelativeColumn();
+                        });
+
+                        void Row(string label, string value)
+                        {
+                            table.Cell().Text(label).SemiBold();
+                            table.Cell().Text(value);
+                        }
+
+                        Row("Rapor Dönemi", reportPeriod);
+                        Row("Stoktaki Sermaye", $"{totalStockCost:N0} TL");
+                        Row("Stok Satılırsa Ciro", $"{totalPotentialRevenue:N0} TL");
+                        Row("Stok Satılırsa Kar", $"{totalPotentialProfit:N0} TL");
+                        Row("Gerçekleşen Ciro", $"{totalSalesRevenue:N0} TL");
+                        Row("Gerçekleşen Kar", $"{totalRealizedProfit:N0} TL");
+                        Row("Satılan Adet", totalSoldQuantity.ToString());
+                        Row("En Çok Satan Parça", bestSellingPart?.Name ?? "-");
+                        Row("En Karlı Parça", mostProfitablePart?.Name ?? "-");
+                    });
+
+                    col.Item().PaddingTop(15).Text("Son Satışlar").FontSize(16).Bold();
+
+                    col.Item().Table(table =>
+                    {
+                        table.ColumnsDefinition(columns =>
+                        {
+                            columns.RelativeColumn(2);
+                            columns.RelativeColumn(3);
+                            columns.RelativeColumn();
+                            columns.RelativeColumn();
+                            columns.RelativeColumn();
+                        });
+
+                        table.Header(header =>
+                        {
+                            header.Cell().Text("Tarih").Bold();
+                            header.Cell().Text("Parça").Bold();
+                            header.Cell().Text("Adet").Bold();
+                            header.Cell().Text("Ciro").Bold();
+                            header.Cell().Text("Kar").Bold();
+                        });
+
+                        foreach (var sale in sales.Take(20))
+                        {
+                            table.Cell().Text(sale.SoldAt.ToString("dd.MM.yyyy"));
+                            table.Cell().Text(sale.ServicePart.Name);
+                            table.Cell().Text(sale.Quantity.ToString());
+                            table.Cell().Text($"{sale.TotalRevenue:N0}");
+                            table.Cell().Text($"{sale.TotalProfit:N0}");
+                        }
+                    });
+                });
+
+                page.Footer()
+                    .AlignCenter()
+                    .Text("AutoTracker Service tarafından oluşturuldu.");
+            });
+        }).GeneratePdf();
+
+        var fileName = year.HasValue
+            ? month.HasValue
+                ? $"stok-finans-raporu-{year}-{month.Value:00}.pdf"
+                : $"stok-finans-raporu-{year}.pdf"
+            : "stok-finans-raporu-tum-zamanlar.pdf";
+
+        return File(pdfBytes, "application/pdf", fileName);
     }
 }
