@@ -40,6 +40,13 @@ const MODULES = [
     color: "#9b59b6",
   },
   {
+    icon: "💸",
+    title: "Stok Finans",
+    text: "Stoktaki sermaye, gerçekleşen kar ve son 12 ay satış performansını inceleyin.",
+    to: "/service/part-sales",
+    color: "#1a906c",
+  },
+  {
     icon: "📝",
     title: "Notlar",
     text: "Servis içi hatırlatmaları, önemli işleri ve günlük notları kayıt altında tutun.",

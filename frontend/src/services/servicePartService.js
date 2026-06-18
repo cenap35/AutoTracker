@@ -26,3 +26,14 @@ export const sellPart = async (id, quantity) => {
 
   return response.data;
 };
+
+
+export const getPartStats = async () => {
+  const response = await api.get("/serviceparts/stats");
+  return response.data;
+};
+
+export const getMonthlyPartStats = async () => {
+  const response = await api.get("/serviceparts/monthly-stats");
+  return response.data;
+};

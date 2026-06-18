@@ -1,0 +1,237 @@
+import { useEffect, useState } from "react";
+import PageWrapper from "../components/PageWrapper";
+import LoadingSpinner from "../components/Common/LoadingSpinner";
+import { toast } from "react-toastify";
+import ServicePageHeader from "../components/ServiceComponents/ServicePageHeader";
+
+import {
+  getPartStats,
+  getMonthlyPartStats,
+} from "../services/servicePartService";
+
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  CartesianGrid,
+  BarChart,
+  Bar,
+} from "recharts";
+
+function ServicePartSalesPage() {
+  const [stats, setStats] = useState(null);
+  const [monthlyStats, setMonthlyStats] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadPageData();
+  }, []);
+
+  const loadPageData = async () => {
+    try {
+      setLoading(true);
+
+      const [statsData, monthlyData] = await Promise.all([
+        getPartStats(),
+        getMonthlyPartStats(),
+      ]);
+
+      setStats(statsData);
+      setMonthlyStats(monthlyData);
+    } catch (err) {
+      console.error(err);
+      toast.error("Stok finans verileri yüklenemedi.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatCurrency = (value) =>
+    Number(value || 0).toLocaleString("tr-TR", {
+      maximumFractionDigits: 0,
+    });
+
+  const chartData = monthlyStats.map((item) => ({
+    month: `${item.month}/${item.year}`,
+    revenue: item.totalRevenue,
+    profit: item.totalProfit,
+    quantity: item.totalQuantity,
+  }));
+
+  if (loading) {
+    return (
+      <PageWrapper>
+        <LoadingSpinner text="Stok finans raporu yükleniyor..." />
+      </PageWrapper>
+    );
+  }
+
+  return (
+    <PageWrapper>
+      <div>
+        <ServicePageHeader
+          icon="💸"
+          title="Stok Finans Raporu"
+          subtitle="Stoktaki sermaye, beklenen kar, gerçekleşen satışlar ve aylık performans."
+        />
+
+        <div className="row g-3 mb-4">
+          <StatCard
+            icon="🏦"
+            title="Stoktaki Sermaye"
+            value={`₺${formatCurrency(stats?.totalStockCost)}`}
+          />
+
+          <StatCard
+            icon="🧾"
+            title="Stok Satılırsa Ciro"
+            value={`₺${formatCurrency(stats?.totalPotentialRevenue)}`}
+          />
+
+          <StatCard
+            icon="📈"
+            title="Stok Satılırsa Kar"
+            value={`₺${formatCurrency(stats?.totalPotentialProfit)}`}
+          />
+
+          <StatCard
+            icon="✅"
+            title="Gerçekleşen Kar"
+            value={`₺${formatCurrency(stats?.totalRealizedProfit)}`}
+          />
+
+          <StatCard
+            icon="💰"
+            title="Gerçekleşen Ciro"
+            value={`₺${formatCurrency(stats?.totalSalesRevenue)}`}
+          />
+
+          <StatCard
+            icon="📦"
+            title="Satılan Adet"
+            value={stats?.totalSoldQuantity || 0}
+          />
+
+          <StatCard
+            icon="⚠️"
+            title="Kritik Stok"
+            value={stats?.criticalStockCount || 0}
+          />
+        </div>
+
+        <div className="row g-3">
+          <div className="col-lg-8">
+            <div className="finance-card-hover card border-0 shadow-sm h-100">
+              <div className="card-body p-4">
+                <h5
+                  className="mb-4"
+                  style={{ color: "#18265a", fontWeight: 850 }}
+                >
+                  Son 12 Ay Ciro / Kar
+                </h5>
+
+                <div style={{ height: 330 }}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={chartData}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#edf2fb" />
+                      <XAxis dataKey="month" />
+                      <YAxis />
+                      <Tooltip
+                        formatter={(value) => `${formatCurrency(value)} ₺`}
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="revenue"
+                        name="Ciro"
+                        stroke="#3b60c5"
+                        strokeWidth={3}
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="profit"
+                        name="Kar"
+                        stroke="#1a906c"
+                        strokeWidth={3}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="col-lg-4">
+            <div className="finance-card-hover card border-0 shadow-sm h-100">
+              <div className="card-body p-4">
+                <h5
+                  className="mb-4"
+                  style={{ color: "#18265a", fontWeight: 850 }}
+                >
+                  Son 12 Ay Satılan Adet
+                </h5>
+
+                <div style={{ height: 330 }}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={chartData}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#edf2fb" />
+                      <XAxis dataKey="month" />
+                      <YAxis allowDecimals={false} />
+                      <Tooltip />
+                      <Bar
+                        dataKey="quantity"
+                        name="Adet"
+                        fill="#9b59b6"
+                        radius={[8, 8, 0, 0]}
+                      />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <style>
+          {`
+            .finance-card-hover {
+              border-radius: 18px;
+              transition:
+                box-shadow 0.23s cubic-bezier(.17,.67,.59,1.17),
+                transform 0.22s cubic-bezier(.17,.67,.59,1.17);
+            }
+
+            .finance-card-hover:hover {
+              box-shadow:
+                0 14px 34px rgba(44, 62, 100, 0.18),
+                0 2px 6px rgba(180, 206, 237, 0.16) !important;
+              transform: translateY(-2px) scale(1.01);
+            }
+          `}
+        </style>
+      </div>
+    </PageWrapper>
+  );
+}
+
+function StatCard({ icon, title, value }) {
+  return (
+    <div className="col-md-6 col-xl-3">
+      <div className="finance-card-hover card border-0 shadow-sm h-100">
+        <div className="card-body p-4">
+          <div style={{ fontSize: 30 }}>{icon}</div>
+
+          <div className="text-muted small mt-3">{title}</div>
+
+          <div className="h4 fw-bold mb-0" style={{ color: "#18265a" }}>
+            {value}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default ServicePartSalesPage;

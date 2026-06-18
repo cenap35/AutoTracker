@@ -36,6 +36,7 @@ import ServiceVehicleDetailPage from "../pages/ServiceVehicleDetailPage";
 import ServiceWorkOrdersPage from "../pages/ServiceWorkOrdersPage";
 import ServiceWorkOrderDetailPage from "../pages/ServiceWorkOrderDetailPage";
 import ServicePartsPage from "../pages/ServicePartsPage";
+import ServicePartSalesPage from "../pages/ServicePartSalesPage";
 import ServiceSettingsPage from "../pages/ServiceSettingsPage";
 import ServiceSetupPage from "../pages/ServiceSetupPage";
 import ServiceUpgradePage from "../pages/ServiceUpgradePage";
@@ -149,6 +150,7 @@ function AppRoutes() {
         />
 
         <Route path="parts" element={<ServicePartsPage />} />
+        <Route path="part-sales" element={<ServicePartSalesPage />} />
         <Route path="settings" element={<ServiceSettingsPage />} />
         <Route path="notes" element={<ServiceNotesPage />} />
       </Route>
