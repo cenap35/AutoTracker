@@ -27,7 +27,6 @@ export const sellPart = async (id, quantity) => {
   return response.data;
 };
 
-
 export const getPartStats = async () => {
   const response = await api.get("/serviceparts/stats");
   return response.data;
@@ -35,5 +34,15 @@ export const getPartStats = async () => {
 
 export const getMonthlyPartStats = async () => {
   const response = await api.get("/serviceparts/monthly-stats");
+  return response.data;
+};
+
+export const getTopPartSales = async () => {
+  const response = await api.get("/serviceparts/top-sales");
+  return response.data;
+};
+
+export const getPartSales = async () => {
+  const response = await api.get("/serviceparts/sales");
   return response.data;
 };

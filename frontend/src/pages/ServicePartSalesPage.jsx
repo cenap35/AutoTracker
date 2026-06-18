@@ -7,6 +7,8 @@ import ServicePageHeader from "../components/ServiceComponents/ServicePageHeader
 import {
   getPartStats,
   getMonthlyPartStats,
+  getTopPartSales,
+  getPartSales,
 } from "../services/servicePartService";
 
 import {
@@ -26,6 +28,9 @@ function ServicePartSalesPage() {
   const [monthlyStats, setMonthlyStats] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const [topSales, setTopSales] = useState(null);
+  const [sales, setSales] = useState([]);
+
   useEffect(() => {
     loadPageData();
   }, []);
@@ -34,13 +39,18 @@ function ServicePartSalesPage() {
     try {
       setLoading(true);
 
-      const [statsData, monthlyData] = await Promise.all([
-        getPartStats(),
-        getMonthlyPartStats(),
-      ]);
+      const [statsData, monthlyData, topSalesData, salesData] =
+        await Promise.all([
+          getPartStats(),
+          getMonthlyPartStats(),
+          getTopPartSales(),
+          getPartSales(),
+        ]);
 
       setStats(statsData);
       setMonthlyStats(monthlyData);
+      setTopSales(topSalesData);
+      setSales(salesData);
     } catch (err) {
       console.error(err);
       toast.error("Stok finans verileri yüklenemedi.");
@@ -77,102 +87,48 @@ function ServicePartSalesPage() {
           title="Stok Finans Raporu"
           subtitle="Stoktaki sermaye, beklenen kar, gerçekleşen satışlar ve aylık performans."
         />
-
+  
         <div className="row g-3 mb-4">
-          <StatCard
-            icon="🏦"
-            title="Stoktaki Sermaye"
-            value={`₺${formatCurrency(stats?.totalStockCost)}`}
-          />
-
-          <StatCard
-            icon="🧾"
-            title="Stok Satılırsa Ciro"
-            value={`₺${formatCurrency(stats?.totalPotentialRevenue)}`}
-          />
-
-          <StatCard
-            icon="📈"
-            title="Stok Satılırsa Kar"
-            value={`₺${formatCurrency(stats?.totalPotentialProfit)}`}
-          />
-
-          <StatCard
-            icon="✅"
-            title="Gerçekleşen Kar"
-            value={`₺${formatCurrency(stats?.totalRealizedProfit)}`}
-          />
-
-          <StatCard
-            icon="💰"
-            title="Gerçekleşen Ciro"
-            value={`₺${formatCurrency(stats?.totalSalesRevenue)}`}
-          />
-
-          <StatCard
-            icon="📦"
-            title="Satılan Adet"
-            value={stats?.totalSoldQuantity || 0}
-          />
-
-          <StatCard
-            icon="⚠️"
-            title="Kritik Stok"
-            value={stats?.criticalStockCount || 0}
-          />
+          <StatCard icon="🏦" title="Stoktaki Sermaye" value={`₺${formatCurrency(stats?.totalStockCost)}`} />
+          <StatCard icon="🧾" title="Stok Satılırsa Ciro" value={`₺${formatCurrency(stats?.totalPotentialRevenue)}`} />
+          <StatCard icon="📈" title="Stok Satılırsa Kar" value={`₺${formatCurrency(stats?.totalPotentialProfit)}`} />
+          <StatCard icon="✅" title="Gerçekleşen Kar" value={`₺${formatCurrency(stats?.totalRealizedProfit)}`} />
+          <StatCard icon="💰" title="Gerçekleşen Ciro" value={`₺${formatCurrency(stats?.totalSalesRevenue)}`} />
+          <StatCard icon="📦" title="Satılan Adet" value={stats?.totalSoldQuantity || 0} />
+          <StatCard icon="⚠️" title="Kritik Stok" value={stats?.criticalStockCount || 0} />
         </div>
-
+  
         <div className="row g-3">
           <div className="col-lg-8">
             <div className="finance-card-hover card border-0 shadow-sm h-100">
               <div className="card-body p-4">
-                <h5
-                  className="mb-4"
-                  style={{ color: "#18265a", fontWeight: 850 }}
-                >
+                <h5 className="mb-4" style={{ color: "#18265a", fontWeight: 850 }}>
                   Son 12 Ay Ciro / Kar
                 </h5>
-
+  
                 <div style={{ height: 330 }}>
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={chartData}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#edf2fb" />
                       <XAxis dataKey="month" />
                       <YAxis />
-                      <Tooltip
-                        formatter={(value) => `${formatCurrency(value)} ₺`}
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="revenue"
-                        name="Ciro"
-                        stroke="#3b60c5"
-                        strokeWidth={3}
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="profit"
-                        name="Kar"
-                        stroke="#1a906c"
-                        strokeWidth={3}
-                      />
+                      <Tooltip formatter={(value) => `${formatCurrency(value)} ₺`} />
+                      <Line type="monotone" dataKey="revenue" name="Ciro" stroke="#3b60c5" strokeWidth={3} />
+                      <Line type="monotone" dataKey="profit" name="Kar" stroke="#1a906c" strokeWidth={3} />
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
               </div>
             </div>
           </div>
-
+  
           <div className="col-lg-4">
             <div className="finance-card-hover card border-0 shadow-sm h-100">
               <div className="card-body p-4">
-                <h5
-                  className="mb-4"
-                  style={{ color: "#18265a", fontWeight: 850 }}
-                >
+                <h5 className="mb-4" style={{ color: "#18265a", fontWeight: 850 }}>
                   Son 12 Ay Satılan Adet
                 </h5>
-
+  
                 <div style={{ height: 330 }}>
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={chartData}>
@@ -180,12 +136,7 @@ function ServicePartSalesPage() {
                       <XAxis dataKey="month" />
                       <YAxis allowDecimals={false} />
                       <Tooltip />
-                      <Bar
-                        dataKey="quantity"
-                        name="Adet"
-                        fill="#9b59b6"
-                        radius={[8, 8, 0, 0]}
-                      />
+                      <Bar dataKey="quantity" name="Adet" fill="#9b59b6" radius={[8, 8, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
@@ -193,7 +144,102 @@ function ServicePartSalesPage() {
             </div>
           </div>
         </div>
-
+  
+        <div className="row g-3 mt-4">
+          <div className="col-lg-6">
+            <HighlightCard
+              icon="🏆"
+              title="En Çok Satan Parça"
+              main={topSales?.bestSellingPart?.partName || "Veri yok"}
+              sub={
+                topSales?.bestSellingPart
+                  ? `${topSales.bestSellingPart.totalQuantity} adet / ₺${formatCurrency(topSales.bestSellingPart.totalRevenue)} ciro`
+                  : "Henüz satış yok"
+              }
+            />
+          </div>
+  
+          <div className="col-lg-6">
+            <HighlightCard
+              icon="💎"
+              title="En Karlı Parça"
+              main={topSales?.mostProfitablePart?.partName || "Veri yok"}
+              sub={
+                topSales?.mostProfitablePart
+                  ? `₺${formatCurrency(topSales.mostProfitablePart.totalProfit)} toplam kar`
+                  : "Henüz satış yok"
+              }
+            />
+          </div>
+        </div>
+  
+        <div className="row g-3 mt-4">
+          <div className="col-12">
+            <div className="card border-0 shadow-sm finance-card-hover">
+              <div className="card-body p-4">
+                <div className="d-flex justify-content-between align-items-center mb-3">
+                  <h5 className="mb-0" style={{ color: "#18265a", fontWeight: 850 }}>
+                    Satış Geçmişi
+                  </h5>
+  
+                  <span className="badge bg-light text-dark border">
+                    {sales.length} satış
+                  </span>
+                </div>
+  
+                {sales.length === 0 ? (
+                  <div className="text-center p-4">
+                    <div style={{ fontSize: 36 }}>💸</div>
+                    <h6 className="mt-2 fw-bold">Henüz satış yok</h6>
+                    <p className="text-muted mb-0">
+                      Stok sayfasından satış yaptığınızda burada listelenir.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="table-responsive">
+                    <table className="table align-middle">
+                      <thead>
+                        <tr>
+                          <th>Tarih</th>
+                          <th>Parça</th>
+                          <th>Kod</th>
+                          <th>Adet</th>
+                          <th>Ciro</th>
+                          <th>Kar</th>
+                        </tr>
+                      </thead>
+  
+                      <tbody>
+                        {sales.map((sale) => (
+                          <tr key={sale.id}>
+                            <td>
+                              {new Date(sale.soldAt).toLocaleString("tr-TR", {
+                                day: "2-digit",
+                                month: "2-digit",
+                                year: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}
+                            </td>
+  
+                            <td className="fw-semibold">{sale.partName}</td>
+                            <td>{sale.partCode || "-"}</td>
+                            <td>{sale.quantity}</td>
+                            <td>₺{formatCurrency(sale.totalRevenue)}</td>
+                            <td className="text-success fw-bold">
+                              ₺{formatCurrency(sale.totalProfit)}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+  
         <style>
           {`
             .finance-card-hover {
@@ -202,7 +248,7 @@ function ServicePartSalesPage() {
                 box-shadow 0.23s cubic-bezier(.17,.67,.59,1.17),
                 transform 0.22s cubic-bezier(.17,.67,.59,1.17);
             }
-
+  
             .finance-card-hover:hover {
               box-shadow:
                 0 14px 34px rgba(44, 62, 100, 0.18),
@@ -229,6 +275,24 @@ function StatCard({ icon, title, value }) {
             {value}
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function HighlightCard({ icon, title, main, sub }) {
+  return (
+    <div className="finance-card-hover card border-0 shadow-sm h-100">
+      <div className="card-body p-4">
+        <div style={{ fontSize: 34 }}>{icon}</div>
+
+        <div className="text-muted small mt-3">{title}</div>
+
+        <h5 className="mt-1 mb-2" style={{ color: "#18265a", fontWeight: 850 }}>
+          {main}
+        </h5>
+
+        <p className="text-muted mb-0">{sub}</p>
       </div>
     </div>
   );

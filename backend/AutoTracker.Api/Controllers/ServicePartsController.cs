@@ -333,4 +333,90 @@ public class ServicePartsController : ControllerBase
             }
         });
     }
+
+    [HttpGet("top-sales")]
+    public async Task<IActionResult> GetTopPartSales()
+    {
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        var serviceBusiness = await _context.ServiceBusinesses
+            .FirstOrDefaultAsync(s => s.OwnerUserId == userId);
+
+        if (serviceBusiness == null)
+            return NotFound("Servis hesabı bulunamadı.");
+
+        var sales = await _context.ServicePartSales
+            .Where(s => s.ServiceBusinessId == serviceBusiness.Id)
+            .Include(s => s.ServicePart)
+            .ToListAsync();
+
+        var grouped = sales
+            .GroupBy(s => new
+            {
+                s.ServicePartId,
+                s.ServicePart.Name,
+                s.ServicePart.Code
+            })
+            .Select(g => new
+            {
+                ServicePartId = g.Key.ServicePartId,
+                PartName = g.Key.Name,
+                PartCode = g.Key.Code,
+                TotalQuantity = g.Sum(x => x.Quantity),
+                TotalRevenue = g.Sum(x => x.TotalRevenue),
+                TotalProfit = g.Sum(x => x.TotalProfit)
+            })
+            .ToList();
+
+        var bestSellingPart = grouped
+            .OrderByDescending(x => x.TotalQuantity)
+            .FirstOrDefault();
+
+        var mostProfitablePart = grouped
+            .OrderByDescending(x => x.TotalProfit)
+            .FirstOrDefault();
+
+        return Ok(new
+        {
+            BestSellingPart = bestSellingPart,
+            MostProfitablePart = mostProfitablePart,
+            TopParts = grouped
+                .OrderByDescending(x => x.TotalQuantity)
+                .Take(5)
+                .ToList()
+        });
+    }
+
+    [HttpGet("sales")]
+    public async Task<IActionResult> GetPartSales()
+    {
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        var serviceBusiness = await _context.ServiceBusinesses
+            .FirstOrDefaultAsync(s => s.OwnerUserId == userId);
+
+        if (serviceBusiness == null)
+            return NotFound("Servis hesabı bulunamadı.");
+
+        var sales = await _context.ServicePartSales
+            .Where(s => s.ServiceBusinessId == serviceBusiness.Id)
+            .Include(s => s.ServicePart)
+            .OrderByDescending(s => s.SoldAt)
+            .Select(s => new
+            {
+                s.Id,
+                s.ServicePartId,
+                PartName = s.ServicePart.Name,
+                PartCode = s.ServicePart.Code,
+                s.Quantity,
+                s.PurchasePrice,
+                s.SalePrice,
+                s.TotalRevenue,
+                s.TotalProfit,
+                s.SoldAt
+            })
+            .ToListAsync();
+
+        return Ok(sales);
+    }
 }
