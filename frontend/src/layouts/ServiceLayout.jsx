@@ -17,27 +17,27 @@ function ServiceLayout() {
 
         <nav className="service-nav">
           <NavLink to="/service/dashboard" className={linkClass}>
-            <span>📊</span> Dashboard
+            <span>📊</span> <b>Dashboard</b>
           </NavLink>
 
           <NavLink to="/service/customers" className={linkClass}>
-            <span>👥</span> Müşteriler
+            <span>👥</span> <b>Müşteriler</b>
           </NavLink>
 
           <NavLink to="/service/vehicles" className={linkClass}>
-            <span>🚗</span> Araçlar
+            <span>🚗</span> <b>Araçlar</b>
           </NavLink>
 
           <NavLink to="/service/work-orders" className={linkClass}>
-            <span>🔧</span> İş Emirleri
+            <span>🔧</span> <b>İş Emirleri</b>
           </NavLink>
 
           <NavLink to="/service/parts" className={linkClass}>
-            <span>📦</span> Stoklar
+            <span>📦</span> <b>Stoklar</b>
           </NavLink>
 
           <NavLink to="/service/settings" className={linkClass}>
-            <span>🏢</span> Servis Bilgileri
+            <span>🏢</span> <b>Servis Bilgileri</b>
           </NavLink>
         </nav>
       </aside>
@@ -61,22 +61,23 @@ function ServiceLayout() {
 
       <style>{`
         .service-shell {
-          min-height: 100vh;
+          height: 100vh;
           display: flex;
+          overflow: hidden;
           background:
             radial-gradient(circle at top right, rgba(59,96,197,.14), transparent 32%),
             linear-gradient(135deg, #f4f7ff 0%, #eef3fb 45%, #fffaf1 100%);
         }
 
         .service-sidebar {
-          width: 260px;
-          min-height: 100vh;
+          width: 270px;
+          height: 100vh;
+          flex-shrink: 0;
           padding: 24px 18px;
           background: linear-gradient(180deg, #101936 0%, #18265a 100%);
           color: white;
-          box-shadow: 12px 0 30px rgba(16, 25, 54, 0.18);
-          position: sticky;
-          top: 0;
+          box-shadow: 12px 0 30px rgba(16, 25, 54, 0.2);
+          overflow-y: auto;
         }
 
         .service-brand {
@@ -89,20 +90,20 @@ function ServiceLayout() {
         }
 
         .service-logo {
-          width: 44px;
-          height: 44px;
-          border-radius: 14px;
-          background: rgba(255,255,255,.13);
+          width: 46px;
+          height: 46px;
+          border-radius: 16px;
+          background: rgba(255,255,255,.14);
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 22px;
+          font-size: 23px;
           box-shadow: inset 0 0 0 1px rgba(255,255,255,.16);
         }
 
         .service-brand h5 {
           margin: 0;
-          font-weight: 800;
+          font-weight: 850;
           letter-spacing: .2px;
         }
 
@@ -120,12 +121,22 @@ function ServiceLayout() {
           display: flex;
           align-items: center;
           gap: 10px;
-          padding: 11px 12px;
-          border-radius: 14px;
+          padding: 12px 13px;
+          border-radius: 15px;
           color: rgba(255,255,255,.78);
           text-decoration: none;
-          font-weight: 650;
           transition: all .2s ease;
+        }
+
+        .service-nav-link span {
+          width: 24px;
+          text-align: center;
+          font-size: 1.05rem;
+        }
+
+        .service-nav-link b {
+          font-size: .95rem;
+          font-weight: 750;
         }
 
         .service-nav-link:hover {
@@ -143,26 +154,32 @@ function ServiceLayout() {
         .service-main {
           flex: 1;
           min-width: 0;
+          height: 100vh;
+          display: flex;
+          flex-direction: column;
+          overflow: hidden;
         }
 
         .service-topbar {
-          margin: 22px 24px 0;
-          padding: 18px 22px;
+          flex-shrink: 0;
+          margin: 18px 24px 0;
+          padding: 16px 22px;
           border-radius: 22px;
-          background: rgba(255,255,255,.78);
-          backdrop-filter: blur(10px);
-          border: 1px solid rgba(255,255,255,.8);
-          box-shadow: 0 12px 30px rgba(44, 62, 100, .08);
+          background: rgba(255,255,255,.86);
+          backdrop-filter: blur(12px);
+          border: 1px solid rgba(255,255,255,.9);
+          box-shadow: 0 12px 30px rgba(44, 62, 100, .09);
           display: flex;
           justify-content: space-between;
           align-items: center;
           gap: 16px;
+          z-index: 5;
         }
 
         .service-topbar h4 {
           margin: 0;
           color: #18265a;
-          font-weight: 800;
+          font-weight: 850;
         }
 
         .service-topbar p {
@@ -173,20 +190,24 @@ function ServiceLayout() {
 
         .service-exit-btn {
           text-decoration: none;
-          padding: 10px 14px;
+          padding: 10px 15px;
           border-radius: 14px;
           background: #18265a;
           color: white;
-          font-weight: 700;
+          font-weight: 750;
           white-space: nowrap;
+          box-shadow: 0 10px 24px rgba(24, 38, 90, .18);
         }
 
         .service-exit-btn:hover {
           color: white;
           background: #0f183d;
+          transform: translateY(-1px);
         }
 
         .service-content {
+          flex: 1;
+          overflow-y: auto;
           padding: 24px;
         }
 
@@ -208,54 +229,95 @@ function ServiceLayout() {
           font-weight: 650;
         }
 
+        .service-page-header {
+          padding: 20px 22px;
+          border-radius: 22px;
+          background: rgba(255,255,255,.88);
+          border: 1px solid rgba(255,255,255,.85);
+          box-shadow: 0 12px 30px rgba(44, 62, 100, .08);
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 16px;
+          margin-bottom: 18px;
+        }
+
+        .service-page-header h2 {
+          margin: 0;
+          color: #18265a;
+          font-weight: 850;
+        }
+
+        .service-page-header p {
+          margin: 6px 0 0;
+          color: #6d7890;
+        }
+
         @media (max-width: 768px) {
-          .service-shell {
-            flex-direction: column;
-          }
-
           .service-sidebar {
-            width: 100%;
-            min-height: auto;
-            position: static;
+            width: 76px;
+            padding: 16px 10px;
           }
 
-          .service-nav {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
+          .service-brand {
+            justify-content: center;
+            padding: 6px 0 18px;
+          }
+
+          .service-brand div:last-child {
+            display: none;
+          }
+
+          .service-logo {
+            width: 44px;
+            height: 44px;
+          }
+
+          .service-nav-link {
+            justify-content: center;
+            padding: 12px 8px;
+          }
+
+          .service-nav-link b {
+            display: none;
+          }
+
+          .service-nav-link span {
+            font-size: 1.25rem;
           }
 
           .service-topbar {
-            margin: 16px;
-            flex-direction: column;
-            align-items: flex-start;
+            margin: 12px 12px 0;
+            padding: 14px;
+            border-radius: 18px;
+          }
+
+          .service-topbar p {
+            display: none;
+          }
+
+          .service-topbar h4 {
+            font-size: 1rem;
+          }
+
+          .service-exit-btn {
+            padding: 9px 11px;
+            font-size: .82rem;
           }
 
           .service-content {
-            padding: 16px;
+            padding: 14px 12px;
           }
 
           .service-page-header {
-  padding: 20px 22px;
-  border-radius: 22px;
-  background: rgba(255,255,255,.88);
-  border: 1px solid rgba(255,255,255,.85);
-  box-shadow: 0 12px 30px rgba(44, 62, 100, .08);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-}
+            padding: 16px;
+            border-radius: 18px;
+            align-items: flex-start;
+          }
 
-.service-page-header h2 {
-  margin: 0;
-  color: #18265a;
-  font-weight: 850;
-}
-
-.service-page-header p {
-  margin: 6px 0 0;
-  color: #6d7890;
-}
-  
+          .service-page-header h2 {
+            font-size: 1.25rem;
+          }
         }
       `}</style>
     </div>
