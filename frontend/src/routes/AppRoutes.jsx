@@ -38,6 +38,7 @@ import ServicePartsPage from "../pages/ServicePartsPage";
 import ServiceSettingsPage from "../pages/ServiceSettingsPage";
 import ServiceSetupPage from "../pages/ServiceSetupPage";
 import ServiceUpgradePage from "../pages/ServiceUpgradePage";
+import ServiceNotesPage from "../pages/ServiceNotesPage";
 
 import NotFoundPage from "../pages/NotFoundPage";
 
@@ -147,6 +148,7 @@ function AppRoutes() {
 
         <Route path="parts" element={<ServicePartsPage />} />
         <Route path="settings" element={<ServiceSettingsPage />} />
+        <Route path="notes" element={<ServiceNotesPage />} />
       </Route>
 
       <Route

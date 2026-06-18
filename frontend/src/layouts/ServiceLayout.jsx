@@ -19,6 +19,7 @@ function ServiceLayout() {
           <NavLink to="/service/dashboard" className={linkClass}>
             <span>📊</span> <b>Dashboard</b>
           </NavLink>
+         
 
           <NavLink to="/service/customers" className={linkClass}>
             <span>👥</span> <b>Müşteriler</b>
@@ -34,6 +35,9 @@ function ServiceLayout() {
 
           <NavLink to="/service/parts" className={linkClass}>
             <span>📦</span> <b>Stoklar</b>
+          </NavLink>
+          <NavLink to="/service/notes" className={linkClass}>
+            <span>📝</span> <b>Notlar</b>
           </NavLink>
 
           <NavLink to="/service/settings" className={linkClass}>
