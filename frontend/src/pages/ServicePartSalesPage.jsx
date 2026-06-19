@@ -103,6 +103,18 @@ function ServicePartSalesPage() {
     quantity: item.totalQuantity,
   }));
 
+  const bestRevenueMonth = chartData.length
+    ? [...chartData].sort((a, b) => b.revenue - a.revenue)[0]
+    : null;
+
+  const worstRevenueMonth = chartData.length
+    ? [...chartData].sort((a, b) => a.revenue - b.revenue)[0]
+    : null;
+
+  const bestProfitMonth = chartData.length
+    ? [...chartData].sort((a, b) => b.profit - a.profit)[0]
+    : null;
+
   if (loading) {
     return (
       <PageWrapper>
@@ -450,6 +462,50 @@ function ServicePartSalesPage() {
               }
               tone="#1a906c"
             />
+          </div>
+
+          <div className="row g-3 mt-4">
+            <div className="col-md-4">
+              <HighlightCard
+                icon="🚀"
+                title="En Yüksek Ciro Ayı"
+                main={bestRevenueMonth?.month || "Veri yok"}
+                sub={
+                  bestRevenueMonth
+                    ? `₺${formatCurrency(bestRevenueMonth.revenue)} ciro`
+                    : "Henüz satış verisi yok"
+                }
+                tone="#3b60c5"
+              />
+            </div>
+
+            <div className="col-md-4">
+              <HighlightCard
+                icon="💚"
+                title="En Karlı Ay"
+                main={bestProfitMonth?.month || "Veri yok"}
+                sub={
+                  bestProfitMonth
+                    ? `₺${formatCurrency(bestProfitMonth.profit)} kar`
+                    : "Henüz satış verisi yok"
+                }
+                tone="#1a906c"
+              />
+            </div>
+
+            <div className="col-md-4">
+              <HighlightCard
+                icon="📉"
+                title="En Düşük Ciro Ayı"
+                main={worstRevenueMonth?.month || "Veri yok"}
+                sub={
+                  worstRevenueMonth
+                    ? `₺${formatCurrency(worstRevenueMonth.revenue)} ciro`
+                    : "Henüz satış verisi yok"
+                }
+                tone="#dc3545"
+              />
+            </div>
           </div>
         </div>
 
