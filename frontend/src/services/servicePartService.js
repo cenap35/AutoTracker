@@ -27,8 +27,14 @@ export const sellPart = async (id, quantity) => {
   return response.data;
 };
 
-export const getPartStats = async () => {
-  const response = await api.get("/serviceparts/stats");
+export const getPartStats = async (year, month) => {
+  const params = new URLSearchParams();
+
+  if (year) params.append("year", year);
+  if (month) params.append("month", month);
+
+  const response = await api.get(`/serviceparts/stats?${params.toString()}`);
+
   return response.data;
 };
 
@@ -37,13 +43,23 @@ export const getMonthlyPartStats = async () => {
   return response.data;
 };
 
-export const getTopPartSales = async () => {
-  const response = await api.get("/serviceparts/top-sales");
+export const getTopPartSales = async (year, month) => {
+  const params = {};
+
+  if (year) params.year = year;
+  if (month) params.month = month;
+
+  const response = await api.get("/serviceparts/top-sales", { params });
   return response.data;
 };
 
-export const getPartSales = async () => {
-  const response = await api.get("/serviceparts/sales");
+export const getPartSales = async (year, month) => {
+  const params = {};
+
+  if (year) params.year = year;
+  if (month) params.month = month;
+
+  const response = await api.get("/serviceparts/sales", { params });
   return response.data;
 };
 

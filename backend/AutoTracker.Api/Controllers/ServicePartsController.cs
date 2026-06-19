@@ -54,7 +54,9 @@ public class ServicePartsController : ControllerBase
     }
 
     [HttpGet("stats")]
-    public async Task<IActionResult> GetPartStats()
+    public async Task<IActionResult> GetPartStats(
+      [FromQuery] int? year,
+      [FromQuery] int? month)
     {
         var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
@@ -64,13 +66,56 @@ public class ServicePartsController : ControllerBase
         if (serviceBusiness == null)
             return NotFound("Servis hesabı bulunamadı.");
 
+        DateTime? startDate = null;
+        DateTime? endDate = null;
+        string periodLabel = "Tüm Zamanlar";
+
+        if (year.HasValue && month.HasValue)
+        {
+            startDate = new DateTime(
+                year.Value,
+                month.Value,
+                1,
+                0,
+                0,
+                0,
+                DateTimeKind.Utc
+            );
+
+            endDate = startDate.Value.AddMonths(1);
+            periodLabel = $"{month.Value:00}/{year.Value}";
+        }
+        else if (year.HasValue)
+        {
+            startDate = new DateTime(
+                year.Value,
+                1,
+                1,
+                0,
+                0,
+                0,
+                DateTimeKind.Utc
+            );
+
+            endDate = startDate.Value.AddYears(1);
+            periodLabel = year.Value.ToString();
+        }
+
         var parts = await _context.ServiceParts
             .Where(p => p.ServiceBusinessId == serviceBusiness.Id)
             .ToListAsync();
 
-        var sales = await _context.ServicePartSales
-            .Where(s => s.ServiceBusinessId == serviceBusiness.Id)
-            .ToListAsync();
+        var salesQuery = _context.ServicePartSales
+            .Where(s => s.ServiceBusinessId == serviceBusiness.Id);
+
+        if (startDate.HasValue && endDate.HasValue)
+        {
+            salesQuery = salesQuery.Where(s =>
+                s.SoldAt >= startDate.Value &&
+                s.SoldAt < endDate.Value);
+        }
+
+        var sales = await salesQuery.ToListAsync();
 
         var totalStockCost = parts.Sum(p => p.PurchasePrice * p.StockQuantity);
         var totalPotentialRevenue = parts.Sum(p => p.SalePrice * p.StockQuantity);
@@ -85,12 +130,16 @@ public class ServicePartsController : ControllerBase
 
         return Ok(new
         {
+            PeriodLabel = periodLabel,
+
             TotalStockCost = totalStockCost,
             TotalPotentialRevenue = totalPotentialRevenue,
             TotalPotentialProfit = totalPotentialProfit,
+
             TotalSalesRevenue = totalSalesRevenue,
             TotalRealizedProfit = totalRealizedProfit,
             TotalSoldQuantity = totalSoldQuantity,
+
             CriticalStockCount = criticalStockCount
         });
     }
@@ -337,8 +386,11 @@ public class ServicePartsController : ControllerBase
         });
     }
 
+
     [HttpGet("top-sales")]
-    public async Task<IActionResult> GetTopPartSales()
+    public async Task<IActionResult> GetTopPartSales(
+    [FromQuery] int? year,
+    [FromQuery] int? month)
     {
         var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
@@ -348,8 +400,31 @@ public class ServicePartsController : ControllerBase
         if (serviceBusiness == null)
             return NotFound("Servis hesabı bulunamadı.");
 
-        var sales = await _context.ServicePartSales
-            .Where(s => s.ServiceBusinessId == serviceBusiness.Id)
+        DateTime? startDate = null;
+        DateTime? endDate = null;
+
+        if (year.HasValue && month.HasValue)
+        {
+            startDate = new DateTime(year.Value, month.Value, 1, 0, 0, 0, DateTimeKind.Utc);
+            endDate = startDate.Value.AddMonths(1);
+        }
+        else if (year.HasValue)
+        {
+            startDate = new DateTime(year.Value, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            endDate = startDate.Value.AddYears(1);
+        }
+
+        var salesQuery = _context.ServicePartSales
+            .Where(s => s.ServiceBusinessId == serviceBusiness.Id);
+
+        if (startDate.HasValue && endDate.HasValue)
+        {
+            salesQuery = salesQuery.Where(s =>
+                s.SoldAt >= startDate.Value &&
+                s.SoldAt < endDate.Value);
+        }
+
+        var sales = await salesQuery
             .Include(s => s.ServicePart)
             .ToListAsync();
 
@@ -391,7 +466,9 @@ public class ServicePartsController : ControllerBase
     }
 
     [HttpGet("sales")]
-    public async Task<IActionResult> GetPartSales()
+    public async Task<IActionResult> GetPartSales(
+        [FromQuery] int? year,
+        [FromQuery] int? month)
     {
         var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
@@ -401,8 +478,31 @@ public class ServicePartsController : ControllerBase
         if (serviceBusiness == null)
             return NotFound("Servis hesabı bulunamadı.");
 
-        var sales = await _context.ServicePartSales
-            .Where(s => s.ServiceBusinessId == serviceBusiness.Id)
+        DateTime? startDate = null;
+        DateTime? endDate = null;
+
+        if (year.HasValue && month.HasValue)
+        {
+            startDate = new DateTime(year.Value, month.Value, 1, 0, 0, 0, DateTimeKind.Utc);
+            endDate = startDate.Value.AddMonths(1);
+        }
+        else if (year.HasValue)
+        {
+            startDate = new DateTime(year.Value, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            endDate = startDate.Value.AddYears(1);
+        }
+
+        var salesQuery = _context.ServicePartSales
+            .Where(s => s.ServiceBusinessId == serviceBusiness.Id);
+
+        if (startDate.HasValue && endDate.HasValue)
+        {
+            salesQuery = salesQuery.Where(s =>
+                s.SoldAt >= startDate.Value &&
+                s.SoldAt < endDate.Value);
+        }
+
+        var sales = await salesQuery
             .Include(s => s.ServicePart)
             .OrderByDescending(s => s.SoldAt)
             .Select(s => new
@@ -422,6 +522,7 @@ public class ServicePartsController : ControllerBase
 
         return Ok(sales);
     }
+
 
     [HttpGet("report-pdf")]
     public async Task<IActionResult> GetPartSalesReportPdf(

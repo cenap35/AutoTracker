@@ -32,10 +32,12 @@ function ServicePartSalesPage() {
   const [sales, setSales] = useState([]);
   const [reportYear, setReportYear] = useState(new Date().getFullYear());
   const [reportMonth, setReportMonth] = useState("");
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [selectedMonth, setSelectedMonth] = useState("");
 
   useEffect(() => {
     loadPageData();
-  }, []);
+  }, [selectedYear, selectedMonth]);
 
   const loadPageData = async () => {
     try {
@@ -43,10 +45,10 @@ function ServicePartSalesPage() {
 
       const [statsData, monthlyData, topSalesData, salesData] =
         await Promise.all([
-          getPartStats(),
+          getPartStats(selectedYear, selectedMonth),
           getMonthlyPartStats(),
-          getTopPartSales(),
-          getPartSales(),
+          getTopPartSales(selectedYear, selectedMonth),
+          getPartSales(selectedYear, selectedMonth),
         ]);
 
       setStats(statsData);
@@ -168,6 +170,65 @@ function ServicePartSalesPage() {
           </div>
         </div>
 
+        <div className="card border-0 shadow-sm p-3 mb-4">
+          <div className="d-flex justify-content-between align-items-center mb-3">
+            <div>
+              <h5
+                className="mb-1"
+                style={{ color: "#18265a", fontWeight: 850 }}
+              >
+                Ekran Dönemi
+              </h5>
+              <small className="text-muted">
+                Kartlardaki gerçekleşen ciro, kar ve satış adedi bu döneme göre
+                hesaplanır.
+              </small>
+            </div>
+
+            <span className="badge bg-light text-dark border">
+              Dönem: {stats?.periodLabel || "-"}
+            </span>
+          </div>
+
+          <div className="row g-2">
+            <div className="col-md-6">
+              <select
+                className="form-select"
+                value={selectedYear}
+                onChange={(e) => setSelectedYear(Number(e.target.value))}
+              >
+                {[2024, 2025, 2026, 2027].map((year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="col-md-6">
+              <select
+                className="form-select"
+                value={selectedMonth}
+                onChange={(e) => setSelectedMonth(e.target.value)}
+              >
+                <option value="">Tüm yıl</option>
+                <option value="1">Ocak</option>
+                <option value="2">Şubat</option>
+                <option value="3">Mart</option>
+                <option value="4">Nisan</option>
+                <option value="5">Mayıs</option>
+                <option value="6">Haziran</option>
+                <option value="7">Temmuz</option>
+                <option value="8">Ağustos</option>
+                <option value="9">Eylül</option>
+                <option value="10">Ekim</option>
+                <option value="11">Kasım</option>
+                <option value="12">Aralık</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
         <div className="row g-3 mb-4">
           <StatCard
             icon="🏦"
@@ -186,17 +247,19 @@ function ServicePartSalesPage() {
           />
           <StatCard
             icon="✅"
-            title="Gerçekleşen Kar"
+            title={`${stats?.periodLabel || "Dönem"} Karı`}
             value={`₺${formatCurrency(stats?.totalRealizedProfit)}`}
           />
+
           <StatCard
             icon="💰"
-            title="Gerçekleşen Ciro"
+            title={`${stats?.periodLabel || "Dönem"} Cirosu`}
             value={`₺${formatCurrency(stats?.totalSalesRevenue)}`}
           />
+
           <StatCard
             icon="📦"
-            title="Satılan Adet"
+            title={`${stats?.periodLabel || "Dönem"} Satılan Adet`}
             value={stats?.totalSoldQuantity || 0}
           />
           <StatCard
