@@ -200,7 +200,68 @@ public class ServiceAccountTransactionsController : ControllerBase
     });
   }
 
+  [HttpPost("from-work-order/{workOrderId:int}")]
+  public async Task<IActionResult> CreateFromWorkOrder(int workOrderId)
+  {
+    var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
+    var serviceBusiness = await _context.ServiceBusinesses
+        .FirstOrDefaultAsync(x => x.OwnerUserId == userId);
+
+    if (serviceBusiness == null)
+      return NotFound("Servis hesabı bulunamadı.");
+
+    var workOrder = await _context.ServiceWorkOrders
+        .Include(x => x.CustomerVehicle)
+        .ThenInclude(x => x.ServiceCustomer)
+        .FirstOrDefaultAsync(x =>
+            x.Id == workOrderId &&
+            x.ServiceBusinessId == serviceBusiness.Id);
+
+    if (workOrder == null)
+      return NotFound("İş emri bulunamadı.");
+
+    var exists = await _context.ServiceAccountTransactions
+        .AnyAsync(x =>
+            x.ServiceBusinessId == serviceBusiness.Id &&
+            x.ServiceWorkOrderId == workOrder.Id);
+
+    if (exists)
+      return BadRequest("Bu iş emri için zaten cari kayıt oluşturulmuş.");
+
+    var transaction = new ServiceAccountTransaction
+    {
+      ServiceBusinessId = serviceBusiness.Id,
+      ServiceCustomerId = workOrder.CustomerVehicle.ServiceCustomerId,
+      CustomerVehicleId = workOrder.CustomerVehicleId,
+      ServiceWorkOrderId = workOrder.Id,
+      Type = "Receivable",
+      Amount = workOrder.TotalCost,
+      PaidAmount = 0,
+      Description = $"İş emri alacağı: {workOrder.Title}",
+      TransactionDate = DateTime.UtcNow,
+      DueDate = null,
+      IsPaid = false
+    };
+
+    _context.ServiceAccountTransactions.Add(transaction);
+    await _context.SaveChangesAsync();
+
+    return Ok(new
+    {
+      transaction.Id,
+      transaction.Type,
+      transaction.Amount,
+      transaction.PaidAmount,
+      RemainingAmount = transaction.Amount - transaction.PaidAmount,
+      transaction.IsPaid,
+      transaction.Description,
+      transaction.TransactionDate,
+      transaction.DueDate,
+      CustomerName = workOrder.CustomerVehicle.ServiceCustomer.FullName,
+      Vehicle = workOrder.CustomerVehicle.Brand + " " + workOrder.CustomerVehicle.Model
+    });
+  }
 
 
 }

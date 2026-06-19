@@ -16,7 +16,10 @@ export const createAccountTransaction = async (transaction) => {
 };
 
 export const updateAccountTransaction = async (id, transaction) => {
-  const response = await api.put(`/serviceaccounttransactions/${id}`, transaction);
+  const response = await api.put(
+    `/serviceaccounttransactions/${id}`,
+    transaction,
+  );
   return response.data;
 };
 
@@ -25,6 +28,16 @@ export const deleteAccountTransaction = async (id) => {
 };
 
 export const markAccountTransactionPaid = async (id) => {
-  const response = await api.post(`/serviceaccounttransactions/${id}/mark-paid`);
+  const response = await api.post(
+    `/serviceaccounttransactions/${id}/mark-paid`,
+  );
+  return response.data;
+};
+
+export const createAccountTransactionFromWorkOrder = async (workOrderId) => {
+  const response = await api.post(
+    `/serviceaccounttransactions/from-work-order/${workOrderId}`,
+  );
+
   return response.data;
 };

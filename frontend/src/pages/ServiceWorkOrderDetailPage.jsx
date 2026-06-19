@@ -11,6 +11,7 @@ import {
 } from "../services/serviceWorkOrderService";
 
 import ServicePageHeader from "../components/ServiceComponents/ServicePageHeader";
+import { createAccountTransactionFromWorkOrder } from "../services/serviceAccountTransactionService";
 
 function ServiceWorkOrderDetailPage() {
   const { id } = useParams();
@@ -171,6 +172,21 @@ function ServiceWorkOrderDetailPage() {
     if (status === "InProgress") return "bi-gear";
     if (status === "Completed") return "bi-check-circle";
     return "bi-circle";
+  };
+
+  const handleCreateReceivable = async () => {
+    try {
+      await createAccountTransactionFromWorkOrder(workOrder.id);
+      toast.success("İş emrinden cari alacak kaydı oluşturuldu.");
+    } catch (err) {
+      console.error(err);
+
+      toast.error(
+        typeof err.response?.data === "string"
+          ? err.response.data
+          : "Cari alacak kaydı oluşturulamadı.",
+      );
+    }
   };
 
   if (loading) {
@@ -469,6 +485,16 @@ function ServiceWorkOrderDetailPage() {
                 </div>
 
                 <div className="d-grid gap-2">
+                  {workOrder.status === "Completed" && (
+                    <button
+                      className="btn btn-success w-100 mb-2"
+                      onClick={handleCreateReceivable}
+                    >
+                      <i className="bi bi-wallet2 me-2" />
+                      Cari Alacak Oluştur
+                    </button>
+                  )}
+
                   <div className="d-flex justify-content-between">
                     <span className="text-muted">İşçilik</span>
                     <strong>{workOrder.laborCost} ₺</strong>
