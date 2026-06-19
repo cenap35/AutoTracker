@@ -13,12 +13,14 @@ import {
 } from "../services/serviceAccountTransactionService";
 
 import { getCustomers } from "../services/serviceCustomerService";
+import { getCustomerVehicles } from "../services/customerVehicleService";
 
 function ServiceAccountTransactionsPage() {
   const [transactions, setTransactions] = useState([]);
   const [stats, setStats] = useState(null);
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [vehicles, setVehicles] = useState([]);
 
   const [form, setForm] = useState({
     serviceCustomerId: "",
@@ -28,6 +30,7 @@ function ServiceAccountTransactionsPage() {
     description: "",
     transactionDate: new Date().toISOString().split("T")[0],
     dueDate: "",
+    customerVehicleId: "",
   });
 
   useEffect(() => {
@@ -38,12 +41,15 @@ function ServiceAccountTransactionsPage() {
     try {
       setLoading(true);
 
-      const [transactionsData, statsData, customersData] = await Promise.all([
-        getAccountTransactions(),
-        getAccountTransactionStats(),
-        getCustomers(),
-      ]);
+      const [transactionsData, statsData, customersData, vehiclesData] =
+        await Promise.all([
+          getAccountTransactions(),
+          getAccountTransactionStats(),
+          getCustomers(),
+          getCustomerVehicles(),
+        ]);
 
+      setVehicles(vehiclesData);
       setTransactions(transactionsData);
       setStats(statsData);
       setCustomers(customersData);
@@ -60,13 +66,20 @@ function ServiceAccountTransactionsPage() {
       maximumFractionDigits: 0,
     });
 
+  const filteredVehicles = vehicles.filter(
+    (vehicle) =>
+      Number(vehicle.serviceCustomerId) === Number(form.serviceCustomerId),
+  );
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
       const payload = {
         serviceCustomerId: Number(form.serviceCustomerId),
-        customerVehicleId: null,
+        customerVehicleId: form.customerVehicleId
+          ? Number(form.customerVehicleId)
+          : null,
         serviceWorkOrderId: null,
         type: form.type,
         amount: Number(form.amount),
@@ -86,6 +99,7 @@ function ServiceAccountTransactionsPage() {
         description: "",
         transactionDate: new Date().toISOString().split("T")[0],
         dueDate: "",
+        customerVehicleId: "",
       });
 
       toast.success("Cari kayıt oluşturuldu.");
@@ -168,7 +182,10 @@ function ServiceAccountTransactionsPage() {
           />
         </div>
 
-        <form onSubmit={handleSubmit} className="card border-0 shadow-sm p-3 p-md-4 mb-4 cari-panel">
+        <form
+          onSubmit={handleSubmit}
+          className="card border-0 shadow-sm p-3 p-md-4 mb-4 cari-panel"
+        >
           <div className="mb-3">
             <h5 className="mb-1" style={{ color: "#18265a", fontWeight: 850 }}>
               Yeni Cari Kayıt
@@ -184,7 +201,11 @@ function ServiceAccountTransactionsPage() {
                 className="form-select"
                 value={form.serviceCustomerId}
                 onChange={(e) =>
-                  setForm({ ...form, serviceCustomerId: e.target.value })
+                  setForm({
+                    ...form,
+                    serviceCustomerId: e.target.value,
+                    customerVehicleId: "",
+                  })
                 }
                 required
               >
@@ -192,6 +213,24 @@ function ServiceAccountTransactionsPage() {
                 {customers.map((customer) => (
                   <option key={customer.id} value={customer.id}>
                     {customer.fullName}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="col-md-3">
+              <select
+                className="form-select"
+                value={form.customerVehicleId}
+                onChange={(e) =>
+                  setForm({ ...form, customerVehicleId: e.target.value })
+                }
+                disabled={!form.serviceCustomerId}
+              >
+                <option value="">Araç seç opsiyonel</option>
+
+                {filteredVehicles.map((vehicle) => (
+                  <option key={vehicle.id} value={vehicle.id}>
+                    {vehicle.brand} {vehicle.model} - {vehicle.plate}
                   </option>
                 ))}
               </select>
@@ -274,7 +313,10 @@ function ServiceAccountTransactionsPage() {
         <div className="card border-0 shadow-sm cari-panel">
           <div className="card-body p-4">
             <div className="d-flex justify-content-between align-items-center mb-3">
-              <h5 className="mb-0" style={{ color: "#18265a", fontWeight: 850 }}>
+              <h5
+                className="mb-0"
+                style={{ color: "#18265a", fontWeight: 850 }}
+              >
                 Cari Kayıtlar
               </h5>
 
@@ -341,7 +383,9 @@ function ServiceAccountTransactionsPage() {
                           )}
                         </td>
 
-                        <td className="text-muted">{item.description || "-"}</td>
+                        <td className="text-muted">
+                          {item.description || "-"}
+                        </td>
 
                         <td>
                           <div className="d-flex gap-2 justify-content-end">
