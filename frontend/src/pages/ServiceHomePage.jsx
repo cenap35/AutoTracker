@@ -53,6 +53,13 @@ const MODULES = [
     to: "/service/notes",
     color: "#ff7c3c",
   },
+  {
+    icon: "💼",
+    title: "Cari Takip",
+    text: "Müşteri hesap hareketlerini yönetin, bakiyeleri ve ödemeleri takip edin.",
+    to: "/service/account-transactions",
+    color: "#546e7a",
+  }
 ];
 
 const fadeUp = {

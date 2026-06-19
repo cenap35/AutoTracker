@@ -22,4 +22,5 @@ public class AppDbContext : DbContext
     public DbSet<ServicePart> ServiceParts { get; set; }
     public DbSet<ServiceNote> ServiceNotes { get; set; }
     public DbSet<ServicePartSale> ServicePartSales { get; set; }
+    public DbSet<ServiceAccountTransaction> ServiceAccountTransactions { get; set; }
 }

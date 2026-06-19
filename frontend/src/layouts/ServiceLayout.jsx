@@ -34,6 +34,9 @@ function ServiceLayout() {
           <NavLink to="/service/work-orders" className={linkClass}>
             <span>🔧</span> <b>İş Emirleri</b>
           </NavLink>
+          <NavLink to="/service/account-transactions" className={linkClass}>
+            <span>💼</span> <b>Cari Takip</b>
+          </NavLink>
 
           <NavLink to="/service/parts" className={linkClass}>
             <span>📦</span> <b>Stoklar</b>

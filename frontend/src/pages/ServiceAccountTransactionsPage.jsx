@@ -1,0 +1,417 @@
+import { useEffect, useState } from "react";
+import PageWrapper from "../components/PageWrapper";
+import LoadingSpinner from "../components/Common/LoadingSpinner";
+import ServicePageHeader from "../components/ServiceComponents/ServicePageHeader";
+import { toast } from "react-toastify";
+
+import {
+  getAccountTransactions,
+  getAccountTransactionStats,
+  createAccountTransaction,
+  deleteAccountTransaction,
+  markAccountTransactionPaid,
+} from "../services/serviceAccountTransactionService";
+
+import { getCustomers } from "../services/serviceCustomerService";
+
+function ServiceAccountTransactionsPage() {
+  const [transactions, setTransactions] = useState([]);
+  const [stats, setStats] = useState(null);
+  const [customers, setCustomers] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const [form, setForm] = useState({
+    serviceCustomerId: "",
+    type: "Receivable",
+    amount: "",
+    paidAmount: "0",
+    description: "",
+    transactionDate: new Date().toISOString().split("T")[0],
+    dueDate: "",
+  });
+
+  useEffect(() => {
+    loadPageData();
+  }, []);
+
+  const loadPageData = async () => {
+    try {
+      setLoading(true);
+
+      const [transactionsData, statsData, customersData] = await Promise.all([
+        getAccountTransactions(),
+        getAccountTransactionStats(),
+        getCustomers(),
+      ]);
+
+      setTransactions(transactionsData);
+      setStats(statsData);
+      setCustomers(customersData);
+    } catch (err) {
+      console.error(err);
+      toast.error("Cari takip verileri yüklenemedi.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatCurrency = (value) =>
+    Number(value || 0).toLocaleString("tr-TR", {
+      maximumFractionDigits: 0,
+    });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const payload = {
+        serviceCustomerId: Number(form.serviceCustomerId),
+        customerVehicleId: null,
+        serviceWorkOrderId: null,
+        type: form.type,
+        amount: Number(form.amount),
+        paidAmount: Number(form.paidAmount || 0),
+        description: form.description,
+        transactionDate: new Date(form.transactionDate).toISOString(),
+        dueDate: form.dueDate ? new Date(form.dueDate).toISOString() : null,
+      };
+
+      await createAccountTransaction(payload);
+
+      setForm({
+        serviceCustomerId: "",
+        type: "Receivable",
+        amount: "",
+        paidAmount: "0",
+        description: "",
+        transactionDate: new Date().toISOString().split("T")[0],
+        dueDate: "",
+      });
+
+      toast.success("Cari kayıt oluşturuldu.");
+      loadPageData();
+    } catch (err) {
+      console.error(err);
+      toast.error("Cari kayıt oluşturulamadı.");
+    }
+  };
+
+  const handleMarkPaid = async (id) => {
+    try {
+      await markAccountTransactionPaid(id);
+      toast.success("Kayıt ödendi olarak işaretlendi.");
+      loadPageData();
+    } catch (err) {
+      console.error(err);
+      toast.error("Kayıt güncellenemedi.");
+    }
+  };
+
+  const handleDelete = async (id) => {
+    const confirmed = window.confirm("Bu cari kaydı silmek istiyor musun?");
+    if (!confirmed) return;
+
+    try {
+      await deleteAccountTransaction(id);
+      toast.success("Cari kayıt silindi.");
+      loadPageData();
+    } catch (err) {
+      console.error(err);
+      toast.error("Cari kayıt silinemedi.");
+    }
+  };
+
+  if (loading) {
+    return (
+      <PageWrapper>
+        <LoadingSpinner text="Cari takip yükleniyor..." />
+      </PageWrapper>
+    );
+  }
+
+  return (
+    <PageWrapper>
+      <div>
+        <ServicePageHeader
+          icon="💳"
+          title="Cari Takip"
+          subtitle="Müşteri alacakları, servis borçları ve ödeme durumlarını yönetin."
+        />
+
+        <div className="row g-3 mb-4">
+          <StatCard
+            icon="📥"
+            title="Toplam Alacak"
+            value={`₺${formatCurrency(stats?.totalReceivable)}`}
+            tone="#1a906c"
+          />
+
+          <StatCard
+            icon="📤"
+            title="Toplam Verecek"
+            value={`₺${formatCurrency(stats?.totalPayable)}`}
+            tone="#dc3545"
+          />
+
+          <StatCard
+            icon="⚖️"
+            title="Net Durum"
+            value={`₺${formatCurrency(stats?.netBalance)}`}
+            tone="#3b60c5"
+          />
+
+          <StatCard
+            icon="⏳"
+            title="Bekleyen Kayıt"
+            value={stats?.waitingCount || 0}
+            tone="#b78b16"
+          />
+        </div>
+
+        <form onSubmit={handleSubmit} className="card border-0 shadow-sm p-3 p-md-4 mb-4 cari-panel">
+          <div className="mb-3">
+            <h5 className="mb-1" style={{ color: "#18265a", fontWeight: 850 }}>
+              Yeni Cari Kayıt
+            </h5>
+            <small className="text-muted">
+              Müşteri alacağı veya servis vereceği oluşturun.
+            </small>
+          </div>
+
+          <div className="row g-2">
+            <div className="col-md-3">
+              <select
+                className="form-select"
+                value={form.serviceCustomerId}
+                onChange={(e) =>
+                  setForm({ ...form, serviceCustomerId: e.target.value })
+                }
+                required
+              >
+                <option value="">Müşteri seç</option>
+                {customers.map((customer) => (
+                  <option key={customer.id} value={customer.id}>
+                    {customer.fullName}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="col-md-2">
+              <select
+                className="form-select"
+                value={form.type}
+                onChange={(e) => setForm({ ...form, type: e.target.value })}
+              >
+                <option value="Receivable">Alacak</option>
+                <option value="Payable">Verecek</option>
+              </select>
+            </div>
+
+            <div className="col-md-2">
+              <input
+                type="number"
+                className="form-control"
+                placeholder="Tutar"
+                value={form.amount}
+                onChange={(e) => setForm({ ...form, amount: e.target.value })}
+                required
+              />
+            </div>
+
+            <div className="col-md-2">
+              <input
+                type="number"
+                className="form-control"
+                placeholder="Ödenen"
+                value={form.paidAmount}
+                onChange={(e) =>
+                  setForm({ ...form, paidAmount: e.target.value })
+                }
+              />
+            </div>
+
+            <div className="col-md-3">
+              <input
+                className="form-control"
+                placeholder="Açıklama"
+                value={form.description}
+                onChange={(e) =>
+                  setForm({ ...form, description: e.target.value })
+                }
+              />
+            </div>
+
+            <div className="col-md-3">
+              <input
+                type="date"
+                className="form-control"
+                value={form.transactionDate}
+                onChange={(e) =>
+                  setForm({ ...form, transactionDate: e.target.value })
+                }
+              />
+            </div>
+
+            <div className="col-md-3">
+              <input
+                type="date"
+                className="form-control"
+                value={form.dueDate}
+                onChange={(e) => setForm({ ...form, dueDate: e.target.value })}
+              />
+            </div>
+
+            <div className="col-md-2">
+              <button className="btn btn-primary w-100">
+                <i className="bi bi-plus-circle me-2" />
+                Ekle
+              </button>
+            </div>
+          </div>
+        </form>
+
+        <div className="card border-0 shadow-sm cari-panel">
+          <div className="card-body p-4">
+            <div className="d-flex justify-content-between align-items-center mb-3">
+              <h5 className="mb-0" style={{ color: "#18265a", fontWeight: 850 }}>
+                Cari Kayıtlar
+              </h5>
+
+              <span className="badge bg-light text-dark border">
+                {transactions.length} kayıt
+              </span>
+            </div>
+
+            {transactions.length === 0 ? (
+              <div className="text-center p-5">
+                <div style={{ fontSize: 40 }}>💳</div>
+                <h6 className="mt-3 fw-bold">Henüz cari kayıt yok</h6>
+                <p className="text-muted mb-0">
+                  Yeni alacak veya verecek kaydı ekleyebilirsiniz.
+                </p>
+              </div>
+            ) : (
+              <div className="table-responsive">
+                <table className="table align-middle">
+                  <thead>
+                    <tr>
+                      <th>Müşteri</th>
+                      <th>Tip</th>
+                      <th>Tutar</th>
+                      <th>Ödenen</th>
+                      <th>Kalan</th>
+                      <th>Durum</th>
+                      <th>Açıklama</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {transactions.map((item) => (
+                      <tr key={item.id}>
+                        <td className="fw-semibold">{item.customerName}</td>
+
+                        <td>
+                          <span
+                            className={
+                              item.type === "Receivable"
+                                ? "badge bg-success"
+                                : "badge bg-danger"
+                            }
+                          >
+                            {item.type === "Receivable" ? "Alacak" : "Verecek"}
+                          </span>
+                        </td>
+
+                        <td>₺{formatCurrency(item.amount)}</td>
+                        <td>₺{formatCurrency(item.paidAmount)}</td>
+
+                        <td className="fw-bold">
+                          ₺{formatCurrency(item.remainingAmount)}
+                        </td>
+
+                        <td>
+                          {item.isPaid ? (
+                            <span className="badge bg-success">Ödendi</span>
+                          ) : (
+                            <span className="badge bg-warning text-dark">
+                              Bekliyor
+                            </span>
+                          )}
+                        </td>
+
+                        <td className="text-muted">{item.description || "-"}</td>
+
+                        <td>
+                          <div className="d-flex gap-2 justify-content-end">
+                            {!item.isPaid && (
+                              <button
+                                className="btn btn-outline-success btn-sm"
+                                onClick={() => handleMarkPaid(item.id)}
+                              >
+                                Ödendi
+                              </button>
+                            )}
+
+                            <button
+                              className="btn btn-outline-danger btn-sm"
+                              onClick={() => handleDelete(item.id)}
+                            >
+                              Sil
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <style>
+          {`
+            .cari-panel {
+              border-radius: 20px;
+            }
+          `}
+        </style>
+      </div>
+    </PageWrapper>
+  );
+}
+
+function StatCard({ icon, title, value, tone }) {
+  return (
+    <div className="col-sm-6 col-xl-3">
+      <div className="card border-0 shadow-sm h-100 cari-panel">
+        <div className="card-body p-3 d-flex align-items-center gap-3">
+          <div
+            className="d-flex align-items-center justify-content-center flex-shrink-0"
+            style={{
+              width: 52,
+              height: 52,
+              borderRadius: 16,
+              background: `${tone}18`,
+              color: tone,
+              fontSize: 24,
+            }}
+          >
+            {icon}
+          </div>
+
+          <div>
+            <div className="text-muted small">{title}</div>
+            <div className="h4 fw-bold mb-0" style={{ color: "#18265a" }}>
+              {value}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default ServiceAccountTransactionsPage;
