@@ -13,7 +13,7 @@ public class AppDbContext : DbContext
     public DbSet<Vehicle> Vehicles { get; set; } = null!;
     public DbSet<AppUser> AppUsers { get; set; } = null!;
     public DbSet<MaintenanceRecord> MaintenanceRecords { get; set; } = null!;
-    public DbSet<VehicleNote> VehicleNotes { get; set; }  = null!;
+    public DbSet<VehicleNote> VehicleNotes { get; set; } = null!;
     public DbSet<VehicleReminder> VehicleReminders { get; set; }
     public DbSet<ServiceBusiness> ServiceBusinesses { get; set; }
     public DbSet<ServiceCustomer> ServiceCustomers { get; set; }
@@ -23,4 +23,21 @@ public class AppDbContext : DbContext
     public DbSet<ServiceNote> ServiceNotes { get; set; }
     public DbSet<ServicePartSale> ServicePartSales { get; set; }
     public DbSet<ServiceAccountTransaction> ServiceAccountTransactions { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<ServiceAccountTransaction>()
+            .HasOne(x => x.ServiceWorkOrder)
+            .WithMany()
+            .HasForeignKey(x => x.ServiceWorkOrderId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        modelBuilder.Entity<ServiceAccountTransaction>()
+            .HasOne(x => x.CustomerVehicle)
+            .WithMany()
+            .HasForeignKey(x => x.CustomerVehicleId)
+            .OnDelete(DeleteBehavior.SetNull);
+    }
 }

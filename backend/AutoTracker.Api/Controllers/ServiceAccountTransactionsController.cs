@@ -29,10 +29,10 @@ public class ServiceAccountTransactionsController : ControllerBase
         .FirstOrDefaultAsync(x => x.OwnerUserId == userId);
 
     if (serviceBusiness == null)
-      return NotFound();
+      return NotFound("Servis hesabı bulunamadı.");
 
     var transactions = await _context.ServiceAccountTransactions
-        .Where(x => x.ServiceBusinessId == serviceBusiness.Id)
+        .Where(x => x.ServiceBusinessId == serviceBusiness.Id && !x.IsDeleted)
         .Include(x => x.ServiceCustomer)
         .Include(x => x.CustomerVehicle)
         .OrderByDescending(x => x.TransactionDate)
@@ -44,16 +44,25 @@ public class ServiceAccountTransactionsController : ControllerBase
           x.PaidAmount,
           RemainingAmount = x.Amount - x.PaidAmount,
           x.IsPaid,
+          x.PaidAt,
           x.Description,
           x.TransactionDate,
           x.DueDate,
+          x.ServiceWorkOrderId,
 
-          CustomerName = x.ServiceCustomer.FullName,
+          CustomerName = x.ServiceCustomer != null
+    ? x.ServiceCustomer.FullName
+    : x.CustomerNameSnapshot,
 
-          Vehicle =
-                x.CustomerVehicle != null
-                ? x.CustomerVehicle.Brand + " " + x.CustomerVehicle.Model
-                : null
+          Vehicle = x.CustomerVehicle != null
+    ? x.CustomerVehicle.Brand + " " + x.CustomerVehicle.Model
+    : x.VehicleSnapshot,
+
+          Plate = x.CustomerVehicle != null
+    ? x.CustomerVehicle.Plate
+    : x.PlateSnapshot,
+
+          x.SourceTitle
         })
         .ToListAsync();
 
@@ -61,8 +70,7 @@ public class ServiceAccountTransactionsController : ControllerBase
   }
 
   [HttpPost]
-  public async Task<IActionResult> CreateTransaction(
-      CreateServiceAccountTransactionDto dto)
+  public async Task<IActionResult> CreateTransaction(CreateServiceAccountTransactionDto dto)
   {
     var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
@@ -70,7 +78,27 @@ public class ServiceAccountTransactionsController : ControllerBase
         .FirstOrDefaultAsync(x => x.OwnerUserId == userId);
 
     if (serviceBusiness == null)
-      return NotFound();
+      return NotFound("Servis hesabı bulunamadı.");
+
+    var isPaid = dto.PaidAmount >= dto.Amount;
+
+    var customer = await _context.ServiceCustomers
+    .FirstOrDefaultAsync(x =>
+        x.Id == dto.ServiceCustomerId &&
+        x.ServiceBusinessId == serviceBusiness.Id);
+
+    if (customer == null)
+      return NotFound("Müşteri bulunamadı.");
+
+    CustomerVehicle? vehicle = null;
+
+    if (dto.CustomerVehicleId.HasValue)
+    {
+      vehicle = await _context.CustomerVehicles
+          .FirstOrDefaultAsync(x =>
+              x.Id == dto.CustomerVehicleId.Value &&
+              x.ServiceBusinessId == serviceBusiness.Id);
+    }
 
     var transaction = new ServiceAccountTransaction
     {
@@ -85,13 +113,68 @@ public class ServiceAccountTransactionsController : ControllerBase
 
       Description = dto.Description,
 
+      CustomerNameSnapshot = customer.FullName,
+      VehicleSnapshot = vehicle != null ? $"{vehicle.Brand} {vehicle.Model}" : null,
+      PlateSnapshot = vehicle?.Plate,
+      SourceTitle = dto.ServiceWorkOrderId.HasValue
+    ? "Manuel iş emri bağlantısı"
+    : "Manuel cari kayıt",
+
       TransactionDate = dto.TransactionDate,
       DueDate = dto.DueDate,
 
-      IsPaid = dto.Amount <= dto.PaidAmount
+      IsPaid = isPaid,
+      PaidAt = isPaid ? DateTime.UtcNow : null,
+      IsDeleted = false
     };
 
     _context.ServiceAccountTransactions.Add(transaction);
+    await _context.SaveChangesAsync();
+
+    return Ok(transaction);
+  }
+
+  [HttpPut("{id:int}")]
+  public async Task<IActionResult> UpdateTransaction(
+      int id,
+      UpdateServiceAccountTransactionDto dto)
+  {
+    var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+    var serviceBusiness = await _context.ServiceBusinesses
+        .FirstOrDefaultAsync(x => x.OwnerUserId == userId);
+
+    if (serviceBusiness == null)
+      return NotFound("Servis hesabı bulunamadı.");
+
+    var transaction = await _context.ServiceAccountTransactions
+        .FirstOrDefaultAsync(x =>
+            x.Id == id &&
+            x.ServiceBusinessId == serviceBusiness.Id &&
+            !x.IsDeleted);
+
+    if (transaction == null)
+      return NotFound("Cari kayıt bulunamadı.");
+
+    var wasPaid = transaction.IsPaid;
+    var isPaid = dto.IsPaid || dto.PaidAmount >= dto.Amount;
+
+    transaction.ServiceCustomerId = dto.ServiceCustomerId;
+    transaction.CustomerVehicleId = dto.CustomerVehicleId;
+    transaction.ServiceWorkOrderId = dto.ServiceWorkOrderId;
+    transaction.Type = dto.Type;
+    transaction.Amount = dto.Amount;
+    transaction.PaidAmount = dto.PaidAmount;
+    transaction.Description = dto.Description;
+    transaction.IsPaid = isPaid;
+    transaction.TransactionDate = dto.TransactionDate;
+    transaction.DueDate = dto.DueDate;
+
+    if (!wasPaid && isPaid)
+      transaction.PaidAt = DateTime.UtcNow;
+
+    if (!isPaid)
+      transaction.PaidAt = null;
 
     await _context.SaveChangesAsync();
 
@@ -101,61 +184,60 @@ public class ServiceAccountTransactionsController : ControllerBase
   [HttpPost("{id:int}/mark-paid")]
   public async Task<IActionResult> MarkPaid(int id)
   {
+    var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+    var serviceBusiness = await _context.ServiceBusinesses
+        .FirstOrDefaultAsync(x => x.OwnerUserId == userId);
+
+    if (serviceBusiness == null)
+      return NotFound("Servis hesabı bulunamadı.");
+
     var transaction = await _context.ServiceAccountTransactions
-        .FirstOrDefaultAsync(x => x.Id == id);
+        .FirstOrDefaultAsync(x =>
+            x.Id == id &&
+            x.ServiceBusinessId == serviceBusiness.Id &&
+            !x.IsDeleted);
 
     if (transaction == null)
-      return NotFound();
+      return NotFound("Cari kayıt bulunamadı.");
 
-    transaction.PaidAmount = transaction.Amount;
     transaction.IsPaid = true;
+    transaction.PaidAmount = transaction.Amount;
+    transaction.PaidAt = DateTime.UtcNow;
 
     await _context.SaveChangesAsync();
 
     return Ok(new
     {
       transaction.Id,
-      transaction.IsPaid
+      transaction.IsPaid,
+      transaction.PaidAmount,
+      transaction.PaidAt
     });
-  }
-
-  [HttpPut("{id:int}")]
-  public async Task<IActionResult> UpdateTransaction(
-  int id,
-  UpdateServiceAccountTransactionDto dto)
-  {
-    var transaction = await _context.ServiceAccountTransactions
-        .FirstOrDefaultAsync(x => x.Id == id);
-
-    if (transaction == null)
-      return NotFound();
-
-    transaction.ServiceCustomerId = dto.ServiceCustomerId;
-    transaction.CustomerVehicleId = dto.CustomerVehicleId;
-    transaction.ServiceWorkOrderId = dto.ServiceWorkOrderId;
-    transaction.Type = dto.Type;
-    transaction.Amount = dto.Amount;
-    transaction.PaidAmount = dto.PaidAmount;
-    transaction.Description = dto.Description;
-    transaction.IsPaid = dto.IsPaid || dto.PaidAmount >= dto.Amount;
-    transaction.TransactionDate = dto.TransactionDate;
-    transaction.DueDate = dto.DueDate;
-
-    await _context.SaveChangesAsync();
-
-    return Ok(transaction);
   }
 
   [HttpDelete("{id:int}")]
   public async Task<IActionResult> DeleteTransaction(int id)
   {
+    var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+    var serviceBusiness = await _context.ServiceBusinesses
+        .FirstOrDefaultAsync(x => x.OwnerUserId == userId);
+
+    if (serviceBusiness == null)
+      return NotFound("Servis hesabı bulunamadı.");
+
     var transaction = await _context.ServiceAccountTransactions
-        .FirstOrDefaultAsync(x => x.Id == id);
+        .FirstOrDefaultAsync(x =>
+            x.Id == id &&
+            x.ServiceBusinessId == serviceBusiness.Id &&
+            !x.IsDeleted);
 
     if (transaction == null)
-      return NotFound();
+      return NotFound("Cari kayıt bulunamadı.");
 
-    _context.ServiceAccountTransactions.Remove(transaction);
+    transaction.IsDeleted = true;
+
     await _context.SaveChangesAsync();
 
     return NoContent();
@@ -170,22 +252,24 @@ public class ServiceAccountTransactionsController : ControllerBase
         .FirstOrDefaultAsync(x => x.OwnerUserId == userId);
 
     if (serviceBusiness == null)
-      return NotFound();
+      return NotFound("Servis hesabı bulunamadı.");
 
     var transactions = await _context.ServiceAccountTransactions
-        .Where(x => x.ServiceBusinessId == serviceBusiness.Id)
+        .Where(x =>
+            x.ServiceBusinessId == serviceBusiness.Id &&
+            !x.IsDeleted)
         .ToListAsync();
 
     var totalReceivable = transactions
-        .Where(x => x.Type == "Receivable")
+        .Where(x => x.Type == "Receivable" && !x.IsPaid)
         .Sum(x => x.Amount - x.PaidAmount);
 
     var totalPayable = transactions
-        .Where(x => x.Type == "Payable")
+        .Where(x => x.Type == "Payable" && !x.IsPaid)
         .Sum(x => x.Amount - x.PaidAmount);
 
     var totalCollected = transactions
-        .Where(x => x.Type == "Receivable")
+        .Where(x => x.Type == "Receivable" && x.IsPaid)
         .Sum(x => x.PaidAmount);
 
     var waitingCount = transactions.Count(x => !x.IsPaid);
@@ -221,10 +305,13 @@ public class ServiceAccountTransactionsController : ControllerBase
     if (workOrder == null)
       return NotFound("İş emri bulunamadı.");
 
+    if (workOrder.Status != "Completed")
+      return BadRequest("Cari alacak oluşturmak için iş emri tamamlanmış olmalı.");
+
     var exists = await _context.ServiceAccountTransactions
         .AnyAsync(x =>
             x.ServiceBusinessId == serviceBusiness.Id &&
-            x.ServiceWorkOrderId == workOrder.Id);
+            x.ServiceWorkOrderId == workOrder.Id && !x.IsDeleted);
 
     if (exists)
       return BadRequest("Bu iş emri için zaten cari kayıt oluşturulmuş.");
@@ -235,13 +322,31 @@ public class ServiceAccountTransactionsController : ControllerBase
       ServiceCustomerId = workOrder.CustomerVehicle.ServiceCustomerId,
       CustomerVehicleId = workOrder.CustomerVehicleId,
       ServiceWorkOrderId = workOrder.Id,
+
       Type = "Receivable",
       Amount = workOrder.TotalCost,
       PaidAmount = 0,
+
       Description = $"İş emri alacağı: {workOrder.Title}",
+
+      CustomerNameSnapshot =
+     workOrder.CustomerVehicle.ServiceCustomer.FullName,
+
+      VehicleSnapshot =
+     $"{workOrder.CustomerVehicle.Brand} {workOrder.CustomerVehicle.Model}",
+
+      PlateSnapshot =
+     workOrder.CustomerVehicle.Plate,
+
+      SourceTitle =
+     workOrder.Title,
+
       TransactionDate = DateTime.UtcNow,
       DueDate = null,
-      IsPaid = false
+
+      IsPaid = false,
+      PaidAt = null,
+      IsDeleted = false
     };
 
     _context.ServiceAccountTransactions.Add(transaction);
@@ -251,17 +356,18 @@ public class ServiceAccountTransactionsController : ControllerBase
     {
       transaction.Id,
       transaction.Type,
+      transaction.SourceTitle,
       transaction.Amount,
       transaction.PaidAmount,
       RemainingAmount = transaction.Amount - transaction.PaidAmount,
       transaction.IsPaid,
+      transaction.PaidAt,
       transaction.Description,
       transaction.TransactionDate,
       transaction.DueDate,
       CustomerName = workOrder.CustomerVehicle.ServiceCustomer.FullName,
-      Vehicle = workOrder.CustomerVehicle.Brand + " " + workOrder.CustomerVehicle.Model
+      Vehicle = workOrder.CustomerVehicle.Brand + " " + workOrder.CustomerVehicle.Model,
+      Plate = workOrder.CustomerVehicle.Plate
     });
   }
-
-
 }

@@ -53,39 +53,48 @@ public class ServiceDashboardController : ControllerBase
                 w.ServiceBusinessId == serviceBusiness.Id &&
                 w.Status == "InProgress");
 
-        var totalRevenue = await _context.ServiceWorkOrders
-            .Where(w =>
-                w.ServiceBusinessId == serviceBusiness.Id &&
-                w.Status == "Completed")
-            .SumAsync(w => w.TotalCost);
+        // GELİR ARTIK CARİDEN GELİYOR
 
-        var currentMonth = DateTime.UtcNow.Month;
-        var currentYear = DateTime.UtcNow.Year;
+        var paidReceivablesQuery = _context.ServiceAccountTransactions
+            .Where(x =>
+                x.ServiceBusinessId == serviceBusiness.Id &&
+                x.Type == "Receivable" &&
+                x.IsPaid &&
+                !x.IsDeleted);
 
-        var monthlyRevenue = await _context.ServiceWorkOrders
-            .Where(w =>
-                w.ServiceBusinessId == serviceBusiness.Id &&
-                w.Status == "Completed" &&
-                w.CompletedAt != null &&
-                w.CompletedAt.Value.Month == currentMonth &&
-                w.CompletedAt.Value.Year == currentYear)
-            .SumAsync(w => w.TotalCost);
+        var totalRevenue = await paidReceivablesQuery
+            .SumAsync(x => (decimal?)x.PaidAmount) ?? 0;
 
-        var monthlyRevenueStats = await _context.ServiceWorkOrders
-            .Where(w =>
-                w.ServiceBusinessId == serviceBusiness.Id &&
-                w.Status == "Completed" &&
-                w.CompletedAt != null)
-            .GroupBy(w => new
+        var currentMonthStart = new DateTime(
+            DateTime.UtcNow.Year,
+            DateTime.UtcNow.Month,
+            1,
+            0,
+            0,
+            0,
+            DateTimeKind.Utc);
+
+        var nextMonthStart = currentMonthStart.AddMonths(1);
+
+        var monthlyRevenue = await paidReceivablesQuery
+            .Where(x =>
+                x.PaidAt != null &&
+                x.PaidAt >= currentMonthStart &&
+                x.PaidAt < nextMonthStart)
+            .SumAsync(x => (decimal?)x.PaidAmount) ?? 0;
+
+        var monthlyRevenueStats = await paidReceivablesQuery
+            .Where(x => x.PaidAt != null)
+            .GroupBy(x => new
             {
-                Year = w.CompletedAt!.Value.Year,
-                Month = w.CompletedAt!.Value.Month
+                Year = x.PaidAt!.Value.Year,
+                Month = x.PaidAt!.Value.Month
             })
             .Select(g => new
             {
                 year = g.Key.Year,
                 month = g.Key.Month,
-                revenue = g.Sum(w => w.TotalCost)
+                revenue = g.Sum(x => x.PaidAmount)
             })
             .OrderBy(x => x.year)
             .ThenBy(x => x.month)
@@ -116,15 +125,19 @@ public class ServiceDashboardController : ControllerBase
                 serviceBusiness.Name,
                 serviceBusiness.City
             },
+
             totalCustomers,
             totalVehicles,
+
             totalWorkOrders,
             completedWorkOrders,
             pendingWorkOrders,
             inProgressWorkOrders,
+
             totalRevenue,
             monthlyRevenue,
             monthlyRevenueStats,
+
             recentWorkOrders
         });
     }

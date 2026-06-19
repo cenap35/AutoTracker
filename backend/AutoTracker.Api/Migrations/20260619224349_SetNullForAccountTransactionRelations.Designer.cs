@@ -3,6 +3,7 @@ using System;
 using AutoTracker.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AutoTracker.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260619224349_SetNullForAccountTransactionRelations")]
+    partial class SetNullForAccountTransactionRelations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -170,10 +173,6 @@ namespace AutoTracker.Api.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("CustomerNameSnapshot")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<int?>("CustomerVehicleId")
                         .HasColumnType("integer");
 
@@ -196,9 +195,6 @@ namespace AutoTracker.Api.Migrations
                     b.Property<DateTime?>("PaidAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("PlateSnapshot")
-                        .HasColumnType("text");
-
                     b.Property<int>("ServiceBusinessId")
                         .HasColumnType("integer");
 
@@ -208,17 +204,11 @@ namespace AutoTracker.Api.Migrations
                     b.Property<int?>("ServiceWorkOrderId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("SourceTitle")
-                        .HasColumnType("text");
-
                     b.Property<DateTime>("TransactionDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Type")
                         .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("VehicleSnapshot")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
