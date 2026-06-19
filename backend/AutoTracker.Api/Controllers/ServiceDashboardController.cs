@@ -59,8 +59,7 @@ public class ServiceDashboardController : ControllerBase
             .Where(x =>
                 x.ServiceBusinessId == serviceBusiness.Id &&
                 x.Type == "Receivable" &&
-                x.IsPaid &&
-                !x.IsDeleted);
+                x.IsPaid);
 
         var totalRevenue = await paidReceivablesQuery
             .SumAsync(x => (decimal?)x.PaidAmount) ?? 0;
