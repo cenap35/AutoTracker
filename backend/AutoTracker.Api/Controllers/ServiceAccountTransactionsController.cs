@@ -131,7 +131,24 @@ public class ServiceAccountTransactionsController : ControllerBase
     _context.ServiceAccountTransactions.Add(transaction);
     await _context.SaveChangesAsync();
 
-    return Ok(transaction);
+    return Ok(new
+    {
+      transaction.Id,
+      transaction.Type,
+      transaction.SourceTitle,
+      transaction.Amount,
+      transaction.PaidAmount,
+      RemainingAmount = transaction.Amount - transaction.PaidAmount,
+      transaction.IsPaid,
+      transaction.PaidAt,
+      transaction.Description,
+      transaction.TransactionDate,
+      transaction.DueDate,
+      transaction.ServiceWorkOrderId,
+      CustomerName = transaction.CustomerNameSnapshot,
+      Vehicle = transaction.VehicleSnapshot,
+      Plate = transaction.PlateSnapshot
+    });
   }
 
   [HttpPut("{id:int}")]
@@ -178,7 +195,24 @@ public class ServiceAccountTransactionsController : ControllerBase
 
     await _context.SaveChangesAsync();
 
-    return Ok(transaction);
+    return Ok(new
+    {
+      transaction.Id,
+      transaction.Type,
+      transaction.SourceTitle,
+      transaction.Amount,
+      transaction.PaidAmount,
+      RemainingAmount = transaction.Amount - transaction.PaidAmount,
+      transaction.IsPaid,
+      transaction.PaidAt,
+      transaction.Description,
+      transaction.TransactionDate,
+      transaction.DueDate,
+      transaction.ServiceWorkOrderId,
+      CustomerName = transaction.CustomerNameSnapshot,
+      Vehicle = transaction.VehicleSnapshot,
+      Plate = transaction.PlateSnapshot
+    });
   }
 
   [HttpPost("{id:int}/mark-paid")]
