@@ -3,39 +3,70 @@ import { useNavigate } from "react-router-dom";
 function ServiceUpgradePage() {
   const navigate = useNavigate();
 
-  const handleFakePayment = () => {
-    navigate("/service/setup");
-  };
-
   return (
     <div className="container py-5">
       <div className="row justify-content-center">
-        <div className="col-lg-7">
-          <div className="card shadow-sm border-0 p-4">
-            <h2>Servis Yönetim Paneli</h2>
+        <div className="col-lg-8">
+          <div className="card border-0 shadow-lg p-5">
+            <div className="text-center mb-4">
+              <div style={{ fontSize: "60px" }}>🔧</div>
 
-            <p className="text-muted">
-              Müşteri, araç, iş emri ve servis gelirlerinizi tek panelden
-              yönetin.
-            </p>
+              <h1
+                className="mt-3"
+                style={{ color: "#18265a", fontWeight: 800 }}
+              >
+                AutoTracker Service
+              </h1>
 
-            <div className="border rounded p-3 my-4">
-              <h4>AutoTracker Service</h4>
-              <h2>299 TL / ay</h2>
+              <p className="text-muted">
+                Servisinizdeki müşteri, araç, iş emri ve cari hesap süreçlerini
+                tek panelden yönetin.
+              </p>
+            </div>
 
-              <ul>
-                <li>Müşteri yönetimi</li>
-                <li>Araç geçmişi</li>
-                <li>İş emri takibi</li>
-                <li>Dashboard ve gelir takibi</li>
-              </ul>
+            <div className="row g-3 mb-4">
+              <div className="col-md-6">
+                <div className="border rounded p-3 h-100">
+                  👥 Müşteri Yönetimi
+                </div>
+              </div>
+
+              <div className="col-md-6">
+                <div className="border rounded p-3 h-100">
+                  🚗 Araç Takibi
+                </div>
+              </div>
+
+              <div className="col-md-6">
+                <div className="border rounded p-3 h-100">
+                  🛠️ İş Emirleri
+                </div>
+              </div>
+
+              <div className="col-md-6">
+                <div className="border rounded p-3 h-100">
+                  💳 Cari Hesap Yönetimi
+                </div>
+              </div>
+
+              <div className="col-md-6">
+                <div className="border rounded p-3 h-100">
+                  📦 Stok ve Parça Takibi
+                </div>
+              </div>
+
+              <div className="col-md-6">
+                <div className="border rounded p-3 h-100">
+                  📊 Servis Dashboardu
+                </div>
+              </div>
             </div>
 
             <button
-              className="btn btn-primary w-100"
-              onClick={handleFakePayment}
+              className="btn btn-primary btn-lg w-100"
+              onClick={() => navigate("/service/setup")}
             >
-              Demo Ödeme Yap ve Devam Et
+              Servis Hesabı Oluştur
             </button>
           </div>
         </div>
