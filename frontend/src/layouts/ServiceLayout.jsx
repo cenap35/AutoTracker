@@ -19,6 +19,9 @@ function ServiceLayout() {
           <NavLink to="/service" end className={linkClass}>
             <span>🏠</span> <b>Ana Sayfa</b>
           </NavLink>
+          <hr
+            style={{ borderColor: "#fff", opacity: 0.15, margin: "10px 0" }}
+          />
           <NavLink to="/service/dashboard" className={linkClass}>
             <span>📊</span> <b>Panel</b>
           </NavLink>
@@ -37,20 +40,28 @@ function ServiceLayout() {
           <NavLink to="/service/account-transactions" className={linkClass}>
             <span>💼</span> <b>Cari Takip</b>
           </NavLink>
+          <hr
+            style={{ borderColor: "#fff", opacity: 0.15, margin: "10px 0" }}
+          />
 
-          <NavLink to="/service/parts" className={linkClass}>
-            <span>📦</span> <b>Stoklar</b>
-          </NavLink>
           <NavLink to="/service/part-sales" className={linkClass}>
             <span>💸</span> <b>Stok Finans</b>
           </NavLink>
+          <NavLink to="/service/parts" className={linkClass}>
+            <span>📦</span> <b>Stoklar</b>
+          </NavLink>
+
           <NavLink to="/service/notes" className={linkClass}>
             <span>📝</span> <b>Notlar</b>
           </NavLink>
-
+          <hr
+            style={{ borderColor: "#fff", opacity: 0.15, margin: "10px 0" }}
+          />
           <NavLink to="/service/settings" className={linkClass}>
             <span>🏢</span> <b>Servis Bilgileri</b>
           </NavLink>
+
+          
         </nav>
       </aside>
 
