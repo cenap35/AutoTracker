@@ -335,81 +335,112 @@ function ServiceAccountTransactionsPage() {
               </div>
             ) : (
               <div className="table-responsive">
-                <table className="table align-middle">
-                  <thead>
-                    <tr>
-                      <th>Müşteri</th>
-                      <th>Tip</th>
-                      <th>Tutar</th>
-                      <th>Ödenen</th>
-                      <th>Kalan</th>
-                      <th>Durum</th>
-                      <th>Açıklama</th>
-                      <th></th>
-                    </tr>
-                  </thead>
+               <table className="table align-middle">
+  <thead>
+    <tr>
+      <th>Tarih</th>
+      <th>Müşteri</th>
+      <th>Araç</th>
+      <th>Kaynak</th>
+      <th>Tip</th>
+      <th>Tutar</th>
+      <th>Ödenen</th>
+      <th>Kalan</th>
+      <th>Durum</th>
+      <th>Açıklama</th>
+      <th></th>
+    </tr>
+  </thead>
 
-                  <tbody>
-                    {transactions.map((item) => (
-                      <tr key={item.id}>
-                        <td className="fw-semibold">{item.customerName}</td>
+  <tbody>
+    {transactions.map((item) => (
+      <tr key={item.id}>
+        <td className="text-muted small">
+          {item.transactionDate
+            ? new Date(item.transactionDate).toLocaleDateString("tr-TR")
+            : "-"}
+        </td>
 
-                        <td>
-                          <span
-                            className={
-                              item.type === "Receivable"
-                                ? "badge bg-success"
-                                : "badge bg-danger"
-                            }
-                          >
-                            {item.type === "Receivable" ? "Alacak" : "Verecek"}
-                          </span>
-                        </td>
+        <td className="fw-semibold">{item.customerName || "-"}</td>
 
-                        <td>₺{formatCurrency(item.amount)}</td>
-                        <td>₺{formatCurrency(item.paidAmount)}</td>
+        <td>
+          {item.vehicle ? (
+            <div>
+              <div className="fw-semibold">{item.vehicle}</div>
+              <small className="text-muted">{item.plate || "-"}</small>
+            </div>
+          ) : (
+            <span className="text-muted">-</span>
+          )}
+        </td>
 
-                        <td className="fw-bold">
-                          ₺{formatCurrency(item.remainingAmount)}
-                        </td>
+        <td className="text-muted">
+          {item.sourceTitle || "-"}
+        </td>
 
-                        <td>
-                          {item.isPaid ? (
-                            <span className="badge bg-success">Ödendi</span>
-                          ) : (
-                            <span className="badge bg-warning text-dark">
-                              Bekliyor
-                            </span>
-                          )}
-                        </td>
+        <td>
+          <span
+            className={
+              item.type === "Receivable"
+                ? "badge bg-success"
+                : "badge bg-danger"
+            }
+          >
+            {item.type === "Receivable" ? "Alacak" : "Verecek"}
+          </span>
+        </td>
 
-                        <td className="text-muted">
-                          {item.description || "-"}
-                        </td>
+        <td>₺{formatCurrency(item.amount)}</td>
+        <td>₺{formatCurrency(item.paidAmount)}</td>
 
-                        <td>
-                          <div className="d-flex gap-2 justify-content-end">
-                            {!item.isPaid && (
-                              <button
-                                className="btn btn-outline-success btn-sm"
-                                onClick={() => handleMarkPaid(item.id)}
-                              >
-                                Ödendi
-                              </button>
-                            )}
+        <td className="fw-bold">
+          ₺{formatCurrency(item.remainingAmount)}
+        </td>
 
-                            <button
-                              className="btn btn-outline-danger btn-sm"
-                              onClick={() => handleDelete(item.id)}
-                            >
-                              Sil
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+        <td>
+          {item.isPaid ? (
+            <div>
+              <span className="badge bg-success">Ödendi</span>
+              {item.paidAt && (
+                <div className="text-muted small mt-1">
+                  {new Date(item.paidAt).toLocaleDateString("tr-TR")}
+                </div>
+              )}
+            </div>
+          ) : (
+            <span className="badge bg-warning text-dark">
+              Bekliyor
+            </span>
+          )}
+        </td>
+
+        <td className="text-muted">
+          {item.description || "-"}
+        </td>
+
+        <td>
+          <div className="d-flex gap-2 justify-content-end">
+            {!item.isPaid && (
+              <button
+                className="btn btn-outline-success btn-sm"
+                onClick={() => handleMarkPaid(item.id)}
+              >
+                Ödendi
+              </button>
+            )}
+
+            <button
+              className="btn btn-outline-danger btn-sm"
+              onClick={() => handleDelete(item.id)}
+            >
+              Sil
+            </button>
+          </div>
+        </td>
+      </tr>
+    ))}
+  </tbody>
+</table>
               </div>
             )}
           </div>
