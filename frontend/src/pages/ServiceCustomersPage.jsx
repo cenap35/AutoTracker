@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import PageWrapper from "../components/PageWrapper";
 import LoadingSpinner from "../components/Common/LoadingSpinner";
@@ -20,6 +20,9 @@ function ServiceCustomersPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const [submitted, setSubmitted] = useState(false);
+  const [editSubmitted, setEditSubmitted] = useState(false);
+
   const [form, setForm] = useState({
     fullName: "",
     phone: "",
@@ -35,6 +38,52 @@ function ServiceCustomersPage() {
   useEffect(() => {
     loadCustomers();
   }, []);
+
+  const validateCustomer = (data) => {
+    const phoneRegex = /^[0-9+\-\s()]+$/;
+
+    return {
+      fullName: !data.fullName.trim()
+        ? "Ad soyad zorunludur."
+        : data.fullName.trim().length < 3
+          ? "Ad soyad en az 3 karakter olmalı."
+          : data.fullName.trim().length > 100
+            ? "Ad soyad en fazla 100 karakter olabilir."
+            : "",
+
+      phone: !data.phone.trim()
+        ? "Telefon zorunludur."
+        : data.phone.trim().length < 10
+          ? "Telefon en az 10 karakter olmalı."
+          : data.phone.trim().length > 20
+            ? "Telefon en fazla 20 karakter olabilir."
+            : !phoneRegex.test(data.phone.trim())
+              ? "Telefon sadece rakam, boşluk, +, -, ( ) içerebilir."
+              : "",
+
+      note:
+        data.note.trim().length > 250
+          ? "Not en fazla 250 karakter olabilir."
+          : "",
+    };
+  };
+
+  const formErrors = useMemo(() => validateCustomer(form), [form]);
+  const editErrors = useMemo(() => validateCustomer(editForm), [editForm]);
+
+  const isFormValid = Object.values(formErrors).every((err) => !err);
+  const isEditFormValid = Object.values(editErrors).every((err) => !err);
+
+  const shouldShowError = (field) => submitted && formErrors[field];
+  const shouldShowEditError = (field) => editSubmitted && editErrors[field];
+
+  const getInputClass = (field) =>
+    `form-control ${shouldShowError(field) ? "is-invalid" : ""}`;
+
+  const getEditInputClass = (field) =>
+    `form-control ${shouldShowEditError(field) ? "is-invalid" : ""}`;
+
+  const onlyPhoneChars = (value) => value.replace(/[^0-9+\-\s()]/g, "");
 
   const loadCustomers = async () => {
     try {
@@ -57,6 +106,7 @@ function ServiceCustomersPage() {
       phone: "",
       note: "",
     });
+    setSubmitted(false);
   };
 
   const cancelEdit = () => {
@@ -66,13 +116,25 @@ function ServiceCustomersPage() {
       phone: "",
       note: "",
     });
+    setEditSubmitted(false);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitted(true);
+
+    if (!isFormValid) {
+      toast.warning("Lütfen müşteri bilgilerini kontrol et.");
+      return;
+    }
 
     try {
-      const createdCustomer = await createCustomer(form);
+      const createdCustomer = await createCustomer({
+        fullName: form.fullName.trim(),
+        phone: form.phone.trim(),
+        note: form.note.trim(),
+      });
+
       setCustomers([createdCustomer, ...customers]);
       resetForm();
       toast.success("Müşteri eklendi.");
@@ -84,19 +146,30 @@ function ServiceCustomersPage() {
 
   const startEdit = (customer) => {
     setEditingCustomerId(customer.id);
+    setEditSubmitted(false);
 
     setEditForm({
-      fullName: customer.fullName,
-      phone: customer.phone,
+      fullName: customer.fullName || "",
+      phone: customer.phone || "",
       note: customer.note || "",
     });
   };
 
   const handleUpdate = async (e, id) => {
     e.preventDefault();
+    setEditSubmitted(true);
+
+    if (!isEditFormValid) {
+      toast.warning("Lütfen müşteri bilgilerini kontrol et.");
+      return;
+    }
 
     try {
-      const updatedCustomer = await updateCustomer(id, editForm);
+      const updatedCustomer = await updateCustomer(id, {
+        fullName: editForm.fullName.trim(),
+        phone: editForm.phone.trim(),
+        note: editForm.note.trim(),
+      });
 
       setCustomers(
         customers.map((customer) =>
@@ -177,7 +250,11 @@ function ServiceCustomersPage() {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="card border-0 shadow-sm p-3">
+        <form
+          onSubmit={handleSubmit}
+          noValidate
+          className="card border-0 shadow-sm p-3"
+        >
           <div className="mb-3">
             <h5 className="mb-1" style={{ color: "#18265a", fontWeight: 800 }}>
               Yeni Müşteri
@@ -187,37 +264,67 @@ function ServiceCustomersPage() {
             </small>
           </div>
 
-          <div className="row g-2">
+          <div className="row g-2 align-items-start">
             <div className="col-md-4">
               <input
-                className="form-control"
+                className={getInputClass("fullName")}
                 placeholder="Ad Soyad"
                 value={form.fullName}
-                onChange={(e) => setForm({ ...form, fullName: e.target.value })}
-                required
+                maxLength={100}
+                onChange={(e) =>
+                  setForm({ ...form, fullName: e.target.value })
+                }
               />
+
+              {shouldShowError("fullName") && (
+                <div className="invalid-feedback d-block">
+                  {formErrors.fullName}
+                </div>
+              )}
             </div>
 
             <div className="col-md-3">
               <input
-                className="form-control"
+                className={getInputClass("phone")}
                 placeholder="Telefon"
                 value={form.phone}
-                onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                maxLength={20}
+                onChange={(e) =>
+                  setForm({ ...form, phone: onlyPhoneChars(e.target.value) })
+                }
               />
+
+              {shouldShowError("phone") && (
+                <div className="invalid-feedback d-block">
+                  {formErrors.phone}
+                </div>
+              )}
             </div>
 
             <div className="col-md-3">
               <input
-                className="form-control"
+                className={getInputClass("note")}
                 placeholder="Not"
                 value={form.note}
+                maxLength={250}
                 onChange={(e) => setForm({ ...form, note: e.target.value })}
               />
+
+              <div className="d-flex justify-content-between mt-1">
+                <div>
+                  {shouldShowError("note") && (
+                    <div className="invalid-feedback d-block">
+                      {formErrors.note}
+                    </div>
+                  )}
+                </div>
+
+                <small className="text-muted">{form.note.length}/250</small>
+              </div>
             </div>
 
             <div className="col-md-2">
-              <button className="btn btn-primary w-100">
+              <button className="btn btn-primary w-100" disabled={!isFormValid}>
                 <i className="bi bi-plus-circle me-1" />
                 Ekle
               </button>
@@ -243,39 +350,56 @@ function ServiceCustomersPage() {
             >
               <div className="card-body">
                 {editingCustomerId === customer.id ? (
-                  <form onSubmit={(e) => handleUpdate(e, customer.id)}>
-                    <div className="row g-2 align-items-center">
+                  <form
+                    onSubmit={(e) => handleUpdate(e, customer.id)}
+                    noValidate
+                  >
+                    <div className="row g-2 align-items-start">
                       <div className="col-md-4">
                         <input
-                          className="form-control"
+                          className={getEditInputClass("fullName")}
                           value={editForm.fullName}
+                          maxLength={100}
                           onChange={(e) =>
                             setEditForm({
                               ...editForm,
                               fullName: e.target.value,
                             })
                           }
-                          required
                         />
+
+                        {shouldShowEditError("fullName") && (
+                          <div className="invalid-feedback d-block">
+                            {editErrors.fullName}
+                          </div>
+                        )}
                       </div>
 
                       <div className="col-md-3">
                         <input
-                          className="form-control"
+                          className={getEditInputClass("phone")}
                           value={editForm.phone}
+                          maxLength={20}
                           onChange={(e) =>
                             setEditForm({
                               ...editForm,
-                              phone: e.target.value,
+                              phone: onlyPhoneChars(e.target.value),
                             })
                           }
                         />
+
+                        {shouldShowEditError("phone") && (
+                          <div className="invalid-feedback d-block">
+                            {editErrors.phone}
+                          </div>
+                        )}
                       </div>
 
                       <div className="col-md-3">
                         <input
-                          className="form-control"
+                          className={getEditInputClass("note")}
                           value={editForm.note}
+                          maxLength={250}
                           onChange={(e) =>
                             setEditForm({
                               ...editForm,
@@ -283,10 +407,19 @@ function ServiceCustomersPage() {
                             })
                           }
                         />
+
+                        {shouldShowEditError("note") && (
+                          <div className="invalid-feedback d-block">
+                            {editErrors.note}
+                          </div>
+                        )}
                       </div>
 
                       <div className="col-md-2 d-flex gap-2">
-                        <button className="btn btn-success w-100">
+                        <button
+                          className="btn btn-success w-100"
+                          disabled={!isEditFormValid}
+                        >
                           Kaydet
                         </button>
 
@@ -398,6 +531,11 @@ function ServiceCustomersPage() {
               0 2px 6px rgba(180, 206, 237, 0.16);
             background: linear-gradient(95deg, #f5f9ff 88%, #e8f1fd 100%);
             transform: translateY(-2px) scale(1.017);
+          }
+
+          .btn:disabled {
+            opacity: .55;
+            cursor: not-allowed;
           }
         `}
       </style>
