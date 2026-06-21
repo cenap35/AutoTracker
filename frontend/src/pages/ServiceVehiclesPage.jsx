@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import PageWrapper from "../components/PageWrapper";
 import LoadingSpinner from "../components/Common/LoadingSpinner";
@@ -21,6 +21,8 @@ function ServiceVehiclesPage() {
   const [editingVehicleId, setEditingVehicleId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const [editSubmitted, setEditSubmitted] = useState(false);
 
   const [form, setForm] = useState({
     serviceCustomerId: "",
@@ -41,6 +43,77 @@ function ServiceVehiclesPage() {
     currentMileage: "",
     chassisNumber: "",
   });
+
+  const validateVehicle = (data) => {
+    const currentYear = new Date().getFullYear();
+
+    return {
+      serviceCustomerId: !data.serviceCustomerId
+        ? "Müşteri seçimi zorunludur."
+        : "",
+
+      brand: !data.brand.trim()
+        ? "Marka zorunludur."
+        : data.brand.trim().length < 2
+          ? "Marka en az 2 karakter olmalı."
+          : data.brand.trim().length > 50
+            ? "Marka en fazla 50 karakter olabilir."
+            : "",
+
+      model: !data.model.trim()
+        ? "Model zorunludur."
+        : data.model.trim().length > 50
+          ? "Model en fazla 50 karakter olabilir."
+          : "",
+
+      year:
+        data.year &&
+        (Number(data.year) < 1900 || Number(data.year) > currentYear + 1)
+          ? `Yıl 1900 ile ${currentYear + 1} arasında olmalı.`
+          : "",
+
+      plate: !data.plate.trim()
+        ? "Plaka zorunludur."
+        : data.plate.trim().length < 5
+          ? "Plaka en az 5 karakter olmalı."
+          : data.plate.trim().length > 20
+            ? "Plaka en fazla 20 karakter olabilir."
+            : "",
+
+      currentMileage:
+        data.currentMileage &&
+        (Number(data.currentMileage) < 0 ||
+          Number(data.currentMileage) > 2000000)
+          ? "Kilometre 0 ile 2.000.000 arasında olmalı."
+          : "",
+
+      chassisNumber:
+        data.chassisNumber.trim().length > 50
+          ? "Şasi no en fazla 50 karakter olabilir."
+          : "",
+    };
+  };
+
+  const formErrors = useMemo(() => validateVehicle(form), [form]);
+  const editErrors = useMemo(() => validateVehicle(editForm), [editForm]);
+
+  const isFormValid = Object.values(formErrors).every((err) => !err);
+  const isEditFormValid = Object.values(editErrors).every((err) => !err);
+
+  const shouldShowError = (field) => submitted && formErrors[field];
+  const shouldShowEditError = (field) => editSubmitted && editErrors[field];
+
+  const getInputClass = (field) =>
+    `form-control ${shouldShowError(field) ? "is-invalid" : ""}`;
+
+  const getSelectClass = (field) =>
+    `form-select ${shouldShowError(field) ? "is-invalid" : ""}`;
+
+  const getEditInputClass = (field) =>
+    `form-control ${shouldShowEditError(field) ? "is-invalid" : ""}`;
+
+  const getEditSelectClass = (field) =>
+    `form-select ${shouldShowEditError(field) ? "is-invalid" : ""}`;
 
   useEffect(() => {
     loadPageData();
@@ -77,6 +150,7 @@ function ServiceVehiclesPage() {
       currentMileage: "",
       chassisNumber: "",
     });
+    setSubmitted(false);
   };
 
   const cancelEdit = () => {
@@ -91,17 +165,27 @@ function ServiceVehiclesPage() {
       currentMileage: "",
       chassisNumber: "",
     });
+    setEditSubmitted(false);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitted(true);
+
+    if (!isFormValid) {
+      toast.warning("Lütfen araç bilgilerini kontrol et.");
+      return;
+    }
 
     try {
       const createdVehicle = await createCustomerVehicle({
-        ...form,
         serviceCustomerId: Number(form.serviceCustomerId),
-        year: Number(form.year),
-        currentMileage: Number(form.currentMileage),
+        brand: form.brand.trim(),
+        model: form.model.trim(),
+        year: form.year ? Number(form.year) : null,
+        plate: form.plate.trim().toUpperCase(),
+        currentMileage: form.currentMileage ? Number(form.currentMileage) : 0,
+        chassisNumber: form.chassisNumber.trim().toUpperCase(),
       });
 
       setVehicles([createdVehicle, ...vehicles]);
@@ -117,25 +201,38 @@ function ServiceVehiclesPage() {
     setEditingVehicleId(vehicle.id);
 
     setEditForm({
-      serviceCustomerId: vehicle.serviceCustomerId,
-      brand: vehicle.brand,
-      model: vehicle.model,
-      year: vehicle.year,
-      plate: vehicle.plate,
-      currentMileage: vehicle.currentMileage,
+      serviceCustomerId: vehicle.serviceCustomerId || "",
+      brand: vehicle.brand || "",
+      model: vehicle.model || "",
+      year: vehicle.year || "",
+      plate: vehicle.plate || "",
+      currentMileage: vehicle.currentMileage ?? "",
       chassisNumber: vehicle.chassisNumber || "",
     });
+
+    setEditSubmitted(false);
   };
 
   const handleUpdate = async (e, id) => {
     e.preventDefault();
+    setEditSubmitted(true);
+
+    if (!isEditFormValid) {
+      toast.warning("Lütfen araç bilgilerini kontrol et.");
+      return;
+    }
 
     try {
       const updatedVehicle = await updateCustomerVehicle(id, {
-        ...editForm,
         serviceCustomerId: Number(editForm.serviceCustomerId),
-        year: Number(editForm.year),
-        currentMileage: Number(editForm.currentMileage),
+        brand: editForm.brand.trim(),
+        model: editForm.model.trim(),
+        year: editForm.year ? Number(editForm.year) : null,
+        plate: editForm.plate.trim().toUpperCase(),
+        currentMileage: editForm.currentMileage
+          ? Number(editForm.currentMileage)
+          : 0,
+        chassisNumber: editForm.chassisNumber.trim().toUpperCase(),
       });
 
       setVehicles(
@@ -219,7 +316,11 @@ function ServiceVehiclesPage() {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="card border-0 shadow-sm p-3">
+        <form
+          onSubmit={handleSubmit}
+          noValidate
+          className="card border-0 shadow-sm p-3"
+        >
           <div className="mb-3">
             <h5 className="mb-1" style={{ color: "#18265a", fontWeight: 800 }}>
               Yeni Araç
@@ -232,12 +333,11 @@ function ServiceVehiclesPage() {
           <div className="row g-2">
             <div className="col-md-4">
               <select
-                className="form-select"
+                className={getSelectClass("serviceCustomerId")}
                 value={form.serviceCustomerId}
                 onChange={(e) =>
                   setForm({ ...form, serviceCustomerId: e.target.value })
                 }
-                required
               >
                 <option value="">Müşteri seç</option>
                 {customers.map((customer) => (
@@ -246,73 +346,125 @@ function ServiceVehiclesPage() {
                   </option>
                 ))}
               </select>
+
+              {shouldShowError("serviceCustomerId") && (
+                <div className="invalid-feedback d-block">
+                  {formErrors.serviceCustomerId}
+                </div>
+              )}
             </div>
 
             <div className="col-md-2">
               <input
-                className="form-control"
+                className={getInputClass("brand")}
                 placeholder="Marka"
                 value={form.brand}
+                maxLength={50}
                 onChange={(e) => setForm({ ...form, brand: e.target.value })}
-                required
               />
+
+              {shouldShowError("brand") && (
+                <div className="invalid-feedback d-block">
+                  {formErrors.brand}
+                </div>
+              )}
             </div>
 
             <div className="col-md-2">
               <input
-                className="form-control"
+                className={getInputClass("model")}
                 placeholder="Model"
                 value={form.model}
+                maxLength={50}
                 onChange={(e) => setForm({ ...form, model: e.target.value })}
-                required
               />
+
+              {shouldShowError("model") && (
+                <div className="invalid-feedback d-block">
+                  {formErrors.model}
+                </div>
+              )}
             </div>
 
             <div className="col-md-2">
               <input
                 type="number"
-                className="form-control"
+                className={getInputClass("year")}
                 placeholder="Yıl"
                 value={form.year}
+                min="1900"
+                max={new Date().getFullYear() + 1}
                 onChange={(e) => setForm({ ...form, year: e.target.value })}
               />
+
+              {shouldShowError("year") && (
+                <div className="invalid-feedback d-block">
+                  {formErrors.year}
+                </div>
+              )}
             </div>
 
             <div className="col-md-2">
               <input
-                className="form-control"
+                className={getInputClass("plate")}
                 placeholder="Plaka"
                 value={form.plate}
-                onChange={(e) => setForm({ ...form, plate: e.target.value })}
-                required
+                maxLength={20}
+                onChange={(e) =>
+                  setForm({ ...form, plate: e.target.value.toUpperCase() })
+                }
               />
+
+              {shouldShowError("plate") && (
+                <div className="invalid-feedback d-block">
+                  {formErrors.plate}
+                </div>
+              )}
             </div>
 
             <div className="col-md-3">
               <input
                 type="number"
-                className="form-control"
+                className={getInputClass("currentMileage")}
                 placeholder="Kilometre"
                 value={form.currentMileage}
+                min="0"
+                max="2000000"
                 onChange={(e) =>
                   setForm({ ...form, currentMileage: e.target.value })
                 }
               />
+
+              {shouldShowError("currentMileage") && (
+                <div className="invalid-feedback d-block">
+                  {formErrors.currentMileage}
+                </div>
+              )}
             </div>
 
             <div className="col-md-6">
               <input
-                className="form-control"
+                className={getInputClass("chassisNumber")}
                 placeholder="Şasi No"
                 value={form.chassisNumber}
+                maxLength={50}
                 onChange={(e) =>
-                  setForm({ ...form, chassisNumber: e.target.value })
+                  setForm({
+                    ...form,
+                    chassisNumber: e.target.value.toUpperCase(),
+                  })
                 }
               />
+
+              {shouldShowError("chassisNumber") && (
+                <div className="invalid-feedback d-block">
+                  {formErrors.chassisNumber}
+                </div>
+              )}
             </div>
 
             <div className="col-md-3">
-              <button className="btn btn-primary w-100">
+              <button className="btn btn-primary w-100" disabled={!isFormValid}>
                 <i className="bi bi-plus-circle me-1" />
                 Araç Ekle
               </button>
@@ -338,11 +490,14 @@ function ServiceVehiclesPage() {
             >
               <div className="card-body">
                 {editingVehicleId === vehicle.id ? (
-                  <form onSubmit={(e) => handleUpdate(e, vehicle.id)}>
+                  <form
+                    onSubmit={(e) => handleUpdate(e, vehicle.id)}
+                    noValidate
+                  >
                     <div className="row g-2">
                       <div className="col-md-4">
                         <select
-                          className="form-select"
+                          className={getEditSelectClass("serviceCustomerId")}
                           value={editForm.serviceCustomerId}
                           onChange={(e) =>
                             setEditForm({
@@ -350,7 +505,6 @@ function ServiceVehiclesPage() {
                               serviceCustomerId: e.target.value,
                             })
                           }
-                          required
                         >
                           <option value="">Müşteri seç</option>
                           {customers.map((customer) => (
@@ -359,62 +513,99 @@ function ServiceVehiclesPage() {
                             </option>
                           ))}
                         </select>
+
+                        {shouldShowEditError("serviceCustomerId") && (
+                          <div className="invalid-feedback d-block">
+                            {editErrors.serviceCustomerId}
+                          </div>
+                        )}
                       </div>
 
                       <div className="col-md-2">
                         <input
-                          className="form-control"
+                          className={getEditInputClass("brand")}
                           placeholder="Marka"
                           value={editForm.brand}
+                          maxLength={50}
                           onChange={(e) =>
                             setEditForm({ ...editForm, brand: e.target.value })
                           }
-                          required
                         />
+
+                        {shouldShowEditError("brand") && (
+                          <div className="invalid-feedback d-block">
+                            {editErrors.brand}
+                          </div>
+                        )}
                       </div>
 
                       <div className="col-md-2">
                         <input
-                          className="form-control"
+                          className={getEditInputClass("model")}
                           placeholder="Model"
                           value={editForm.model}
+                          maxLength={50}
                           onChange={(e) =>
                             setEditForm({ ...editForm, model: e.target.value })
                           }
-                          required
                         />
+
+                        {shouldShowEditError("model") && (
+                          <div className="invalid-feedback d-block">
+                            {editErrors.model}
+                          </div>
+                        )}
                       </div>
 
                       <div className="col-md-2">
                         <input
                           type="number"
-                          className="form-control"
+                          className={getEditInputClass("year")}
                           placeholder="Yıl"
                           value={editForm.year}
+                          min="1900"
+                          max={new Date().getFullYear() + 1}
                           onChange={(e) =>
                             setEditForm({ ...editForm, year: e.target.value })
                           }
                         />
+
+                        {shouldShowEditError("year") && (
+                          <div className="invalid-feedback d-block">
+                            {editErrors.year}
+                          </div>
+                        )}
                       </div>
 
                       <div className="col-md-2">
                         <input
-                          className="form-control"
+                          className={getEditInputClass("plate")}
                           placeholder="Plaka"
                           value={editForm.plate}
+                          maxLength={20}
                           onChange={(e) =>
-                            setEditForm({ ...editForm, plate: e.target.value })
+                            setEditForm({
+                              ...editForm,
+                              plate: e.target.value.toUpperCase(),
+                            })
                           }
-                          required
                         />
+
+                        {shouldShowEditError("plate") && (
+                          <div className="invalid-feedback d-block">
+                            {editErrors.plate}
+                          </div>
+                        )}
                       </div>
 
                       <div className="col-md-3">
                         <input
                           type="number"
-                          className="form-control"
+                          className={getEditInputClass("currentMileage")}
                           placeholder="Kilometre"
                           value={editForm.currentMileage}
+                          min="0"
+                          max="2000000"
                           onChange={(e) =>
                             setEditForm({
                               ...editForm,
@@ -422,24 +613,40 @@ function ServiceVehiclesPage() {
                             })
                           }
                         />
+
+                        {shouldShowEditError("currentMileage") && (
+                          <div className="invalid-feedback d-block">
+                            {editErrors.currentMileage}
+                          </div>
+                        )}
                       </div>
 
                       <div className="col-md-6">
                         <input
-                          className="form-control"
+                          className={getEditInputClass("chassisNumber")}
                           placeholder="Şasi No"
                           value={editForm.chassisNumber}
+                          maxLength={50}
                           onChange={(e) =>
                             setEditForm({
                               ...editForm,
-                              chassisNumber: e.target.value,
+                              chassisNumber: e.target.value.toUpperCase(),
                             })
                           }
                         />
+
+                        {shouldShowEditError("chassisNumber") && (
+                          <div className="invalid-feedback d-block">
+                            {editErrors.chassisNumber}
+                          </div>
+                        )}
                       </div>
 
                       <div className="col-md-3 d-flex gap-2">
-                        <button className="btn btn-success w-100">
+                        <button
+                          className="btn btn-success w-100"
+                          disabled={!isEditFormValid}
+                        >
                           Kaydet
                         </button>
 
@@ -554,21 +761,26 @@ function ServiceVehiclesPage() {
 
       <style>
         {`
-          .vehicle-card-hover {
-            transition:
-              box-shadow 0.23s cubic-bezier(.17,.67,.59,1.17),
-              transform 0.22s cubic-bezier(.17,.67,.59,1.17),
-              background 0.18s cubic-bezier(.17,.67,.59,1.17);
-          }
+    .vehicle-card-hover {
+      transition:
+        box-shadow 0.23s cubic-bezier(.17,.67,.59,1.17),
+        transform 0.22s cubic-bezier(.17,.67,.59,1.17),
+        background 0.18s cubic-bezier(.17,.67,.59,1.17);
+    }
 
-          .vehicle-card-hover:hover {
-            box-shadow:
-              0 14px 34px rgba(44, 62, 100, 0.18),
-              0 2px 6px rgba(180, 206, 237, 0.16);
-            background: linear-gradient(95deg, #f5fff9 88%, #e8f8ef 100%);
-            transform: translateY(-2px) scale(1.017);
-          }
-        `}
+    .vehicle-card-hover:hover {
+      box-shadow:
+        0 14px 34px rgba(44, 62, 100, 0.18),
+        0 2px 6px rgba(180, 206, 237, 0.16);
+      background: linear-gradient(95deg, #f5fff9 88%, #e8f8ef 100%);
+      transform: translateY(-2px) scale(1.017);
+    }
+
+    .btn:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+    }
+  `}
       </style>
     </PageWrapper>
   );
