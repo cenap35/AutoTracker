@@ -76,9 +76,9 @@ public class CustomerVehiclesController : ControllerBase
         {
             Brand = dto.Brand,
             Model = dto.Model,
-            Year = dto.Year,
+            Year = dto.Year ?? 0,
             Plate = dto.Plate,
-            CurrentMileage = dto.CurrentMileage,
+            CurrentMileage = dto.CurrentMileage ?? 0,
             ChassisNumber = dto.ChassisNumber,
             ServiceCustomerId = customer.Id,
             ServiceBusinessId = serviceBusiness.Id
@@ -189,9 +189,9 @@ public class CustomerVehiclesController : ControllerBase
         vehicle.ServiceCustomerId = customer.Id;
         vehicle.Brand = dto.Brand;
         vehicle.Model = dto.Model;
-        vehicle.Year = dto.Year;
+        vehicle.Year = dto.Year ?? 0;
         vehicle.Plate = dto.Plate;
-        vehicle.CurrentMileage = dto.CurrentMileage;
+        vehicle.CurrentMileage = dto.CurrentMileage ?? 0;
         vehicle.ChassisNumber = dto.ChassisNumber;
 
         await _context.SaveChangesAsync();
