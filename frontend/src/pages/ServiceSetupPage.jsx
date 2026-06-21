@@ -7,6 +7,7 @@ import api from "../api/axios";
 function ServiceSetupPage() {
   const navigate = useNavigate();
   const [saving, setSaving] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   const [form, setForm] = useState({
     name: "",
@@ -15,19 +16,68 @@ function ServiceSetupPage() {
     address: "",
   });
 
-  const isFormValid = useMemo(() => {
-    return (
-      form.name.trim().length >= 2 &&
-      form.phone.trim().length >= 5 &&
-      form.city.trim().length >= 2 &&
-      form.address.trim().length >= 5
-    );
+  const errors = useMemo(() => {
+    const phoneRegex = /^[0-9+\-\s()]+$/;
+
+    return {
+      name: !form.name.trim()
+        ? "Servis adı zorunludur."
+        : form.name.trim().length < 3
+          ? "Servis adı en az 3 karakter olmalı."
+          : form.name.trim().length > 100
+            ? "Servis adı en fazla 100 karakter olabilir."
+            : "",
+
+      phone: !form.phone.trim()
+        ? "Telefon zorunludur."
+        : form.phone.trim().length < 10
+          ? "Telefon en az 10 karakter olmalı."
+          : form.phone.trim().length > 20
+            ? "Telefon en fazla 20 karakter olabilir."
+            : !phoneRegex.test(form.phone.trim())
+              ? "Telefon sadece rakam, boşluk, +, -, ( ) içerebilir."
+              : "",
+
+      city: !form.city.trim()
+        ? "Şehir zorunludur."
+        : form.city.trim().length < 2
+          ? "Şehir en az 2 karakter olmalı."
+          : form.city.trim().length > 50
+            ? "Şehir en fazla 50 karakter olabilir."
+            : "",
+
+      address: !form.address.trim()
+        ? "Adres zorunludur."
+        : form.address.trim().length < 5
+          ? "Adres en az 5 karakter olmalı."
+          : form.address.trim().length > 250
+            ? "Adres en fazla 250 karakter olabilir."
+            : "",
+    };
   }, [form]);
+
+  const isFormValid = Object.values(errors).every((error) => !error);
+
+  const shouldShowError = (field) => submitted && errors[field];
+
+  const getInputClass = (field) =>
+    `form-control setup-input ${shouldShowError(field) ? "is-invalid" : ""}`;
+
+  const updateField = (field, value) => {
+    setForm((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitted(true);
 
-    if (!isFormValid || saving) return;
+    if (!isFormValid || saving) {
+      toast.warning("Lütfen formdaki eksik veya hatalı alanları düzelt.");
+      return;
+    }
 
     try {
       setSaving(true);
@@ -111,59 +161,83 @@ function ServiceSetupPage() {
                   </div>
                 </div>
 
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} noValidate>
                   <div className="row g-3">
                     <div className="col-md-6">
                       <label className="form-label">Servis Adı</label>
                       <input
-                        className="form-control setup-input"
+                        className={getInputClass("name")}
                         placeholder="Örn: ABC Oto Servis"
                         value={form.name}
-                        onChange={(e) =>
-                          setForm({ ...form, name: e.target.value })
-                        }
-                        required
+                        maxLength={100}
+                        onChange={(e) => updateField("name", e.target.value)}
                       />
+
+                      {shouldShowError("name") && (
+                        <div className="invalid-feedback">{errors.name}</div>
+                      )}
                     </div>
 
                     <div className="col-md-6">
                       <label className="form-label">Telefon</label>
                       <input
-                        className="form-control setup-input"
+                        className={getInputClass("phone")}
                         placeholder="Örn: 05xx xxx xx xx"
                         value={form.phone}
-                        onChange={(e) =>
-                          setForm({ ...form, phone: e.target.value })
-                        }
-                        required
+                        maxLength={20}
+                        onChange={(e) => {
+                          const onlyPhoneChars = e.target.value.replace(
+                            /[^0-9+\-\s()]/g,
+                            "",
+                          );
+                          updateField("phone", onlyPhoneChars);
+                        }}
                       />
+
+                      {shouldShowError("phone") && (
+                        <div className="invalid-feedback">{errors.phone}</div>
+                      )}
                     </div>
 
                     <div className="col-md-12">
                       <label className="form-label">Şehir</label>
                       <input
-                        className="form-control setup-input"
+                        className={getInputClass("city")}
                         placeholder="Örn: Manisa"
                         value={form.city}
-                        onChange={(e) =>
-                          setForm({ ...form, city: e.target.value })
-                        }
-                        required
+                        maxLength={50}
+                        onChange={(e) => updateField("city", e.target.value)}
                       />
+
+                      {shouldShowError("city") && (
+                        <div className="invalid-feedback">{errors.city}</div>
+                      )}
                     </div>
 
                     <div className="col-md-12">
                       <label className="form-label">Adres</label>
                       <textarea
-                        className="form-control setup-input"
+                        className={getInputClass("address")}
                         placeholder="Servis adresinizi yazın"
                         rows="4"
                         value={form.address}
-                        onChange={(e) =>
-                          setForm({ ...form, address: e.target.value })
-                        }
-                        required
+                        maxLength={250}
+                        onChange={(e) => updateField("address", e.target.value)}
                       />
+
+                      <div className="d-flex justify-content-between mt-1">
+                        <div>
+                          {shouldShowError("address") && (
+                            <div className="invalid-feedback d-block">
+                              {errors.address}
+                            </div>
+                          )}
+                        </div>
+
+                        <small className="text-muted">
+                          {form.address.length}/250
+                        </small>
+                      </div>
                     </div>
                   </div>
 
@@ -313,6 +387,14 @@ function ServiceSetupPage() {
             .setup-input:focus {
               border-color: #3b60c5;
               box-shadow: 0 0 0 .2rem rgba(59, 96, 197, .12);
+            }
+
+            .setup-input.is-invalid {
+              border-color: #dc3545;
+            }
+
+            .setup-input.is-invalid:focus {
+              box-shadow: 0 0 0 .2rem rgba(220, 53, 69, .12);
             }
 
             .setup-warning {
