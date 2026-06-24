@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import PageWrapper from "../components/PageWrapper";
 import LoadingSpinner from "../components/Common/LoadingSpinner";
@@ -22,6 +22,8 @@ function ServiceWorkOrdersPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const [submitted, setSubmitted] = useState(false);
+
   const [form, setForm] = useState({
     customerVehicleId: "",
     title: "",
@@ -31,6 +33,63 @@ function ServiceWorkOrdersPage() {
     partsCost: "",
     status: "Pending",
   });
+
+  const validateWorkOrder = (data) => {
+    return {
+      customerVehicleId: !data.customerVehicleId
+        ? "Araç seçimi zorunludur."
+        : "",
+
+      title: !data.title.trim()
+        ? "İş emri başlığı zorunludur."
+        : data.title.trim().length < 3
+          ? "Başlık en az 3 karakter olmalı."
+          : data.title.trim().length > 100
+            ? "Başlık en fazla 100 karakter olabilir."
+            : "",
+
+      description:
+        data.description.trim().length > 500
+          ? "Açıklama en fazla 500 karakter olabilir."
+          : "",
+
+      mileage:
+        data.mileage &&
+        (Number(data.mileage) < 0 || Number(data.mileage) > 2000000)
+          ? "Kilometre 0 ile 2.000.000 arasında olmalı."
+          : "",
+
+      laborCost:
+        data.laborCost === ""
+          ? "İşçilik tutarı zorunludur."
+          : Number(data.laborCost) < 0 || Number(data.laborCost) > 1000000
+            ? "İşçilik 0 ile 1.000.000 arasında olmalı."
+            : "",
+
+      partsCost:
+        data.partsCost === ""
+          ? "Parça tutarı zorunludur."
+          : Number(data.partsCost) < 0 || Number(data.partsCost) > 1000000
+            ? "Parça tutarı 0 ile 1.000.000 arasında olmalı."
+            : "",
+
+      status: !["Pending", "InProgress", "Completed"].includes(data.status)
+        ? "Geçerli bir durum seçiniz."
+        : "",
+    };
+  };
+
+  const formErrors = useMemo(() => validateWorkOrder(form), [form]);
+
+  const isFormValid = Object.values(formErrors).every((err) => !err);
+
+  const shouldShowError = (field) => submitted && formErrors[field];
+
+  const getInputClass = (field) =>
+    `form-control ${shouldShowError(field) ? "is-invalid" : ""}`;
+
+  const getSelectClass = (field) =>
+    `form-select ${shouldShowError(field) ? "is-invalid" : ""}`;
 
   useEffect(() => {
     loadPageData();
@@ -110,14 +169,22 @@ function ServiceWorkOrdersPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitted(true);
+
+    if (!isFormValid) {
+      toast.warning("Lütfen iş emri bilgilerini kontrol et.");
+      return;
+    }
 
     try {
       const createdOrder = await createServiceWorkOrder({
-        ...form,
         customerVehicleId: Number(form.customerVehicleId),
-        mileage: Number(form.mileage),
+        title: form.title.trim(),
+        description: form.description.trim(),
+        mileage: form.mileage ? Number(form.mileage) : 0,
         laborCost: Number(form.laborCost),
         partsCost: Number(form.partsCost),
+        status: form.status,
       });
 
       setWorkOrders([createdOrder, ...workOrders]);
@@ -132,6 +199,7 @@ function ServiceWorkOrdersPage() {
         status: "Pending",
       });
 
+      setSubmitted(false);
       toast.success("İş emri oluşturuldu.");
     } catch (err) {
       console.error(err);
@@ -219,7 +287,11 @@ function ServiceWorkOrdersPage() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="card border-0 shadow-sm p-3">
+        <form
+          onSubmit={handleSubmit}
+          noValidate
+          className="card border-0 shadow-sm p-3"
+        >
           <div className="mb-3">
             <h5 className="mb-1" style={{ color: "#18265a", fontWeight: 800 }}>
               Yeni İş Emri
@@ -232,12 +304,11 @@ function ServiceWorkOrdersPage() {
           <div className="row g-2">
             <div className="col-md-4">
               <select
-                className="form-select"
+                className={getSelectClass("customerVehicleId")}
                 value={form.customerVehicleId}
                 onChange={(e) =>
                   setForm({ ...form, customerVehicleId: e.target.value })
                 }
-                required
               >
                 <option value="">Araç seç</option>
                 {vehicles.map((vehicle) => (
@@ -247,66 +318,117 @@ function ServiceWorkOrdersPage() {
                   </option>
                 ))}
               </select>
+
+              {shouldShowError("customerVehicleId") && (
+                <div className="invalid-feedback d-block">
+                  {formErrors.customerVehicleId}
+                </div>
+              )}
             </div>
 
             <div className="col-md-4">
               <input
-                className="form-control"
+                className={getInputClass("title")}
                 placeholder="İşlem başlığı"
                 value={form.title}
+                maxLength={100}
                 onChange={(e) => setForm({ ...form, title: e.target.value })}
-                required
               />
+
+              {shouldShowError("title") && (
+                <div className="invalid-feedback d-block">
+                  {formErrors.title}
+                </div>
+              )}
             </div>
 
             <div className="col-md-4">
               <input
-                className="form-control"
+                className={getInputClass("description")}
                 placeholder="Açıklama"
                 value={form.description}
+                maxLength={500}
                 onChange={(e) =>
                   setForm({ ...form, description: e.target.value })
                 }
               />
+
+              <div className="d-flex justify-content-between mt-1">
+                <div>
+                  {shouldShowError("description") && (
+                    <div className="invalid-feedback d-block">
+                      {formErrors.description}
+                    </div>
+                  )}
+                </div>
+
+                <small className="text-muted">
+                  {form.description.length}/500
+                </small>
+              </div>
             </div>
 
             <div className="col-md-3">
               <input
                 type="number"
-                className="form-control"
+                className={getInputClass("mileage")}
                 placeholder="Kilometre"
                 value={form.mileage}
+                min="0"
+                max="2000000"
                 onChange={(e) => setForm({ ...form, mileage: e.target.value })}
               />
+
+              {shouldShowError("mileage") && (
+                <div className="invalid-feedback d-block">
+                  {formErrors.mileage}
+                </div>
+              )}
             </div>
 
             <div className="col-md-3">
               <input
                 type="number"
-                className="form-control"
+                className={getInputClass("laborCost")}
                 placeholder="İşçilik"
                 value={form.laborCost}
+                min="0"
+                max="1000000"
                 onChange={(e) =>
                   setForm({ ...form, laborCost: e.target.value })
                 }
               />
+
+              {shouldShowError("laborCost") && (
+                <div className="invalid-feedback d-block">
+                  {formErrors.laborCost}
+                </div>
+              )}
             </div>
 
             <div className="col-md-3">
               <input
                 type="number"
-                className="form-control"
+                className={getInputClass("partsCost")}
                 placeholder="Parça"
                 value={form.partsCost}
+                min="0"
+                max="1000000"
                 onChange={(e) =>
                   setForm({ ...form, partsCost: e.target.value })
                 }
               />
+
+              {shouldShowError("partsCost") && (
+                <div className="invalid-feedback d-block">
+                  {formErrors.partsCost}
+                </div>
+              )}
             </div>
 
             <div className="col-md-2">
               <select
-                className="form-select"
+                className={getSelectClass("status")}
                 value={form.status}
                 onChange={(e) => setForm({ ...form, status: e.target.value })}
               >
@@ -314,10 +436,16 @@ function ServiceWorkOrdersPage() {
                 <option value="InProgress">İşlemde</option>
                 <option value="Completed">Tamamlandı</option>
               </select>
+
+              {shouldShowError("status") && (
+                <div className="invalid-feedback d-block">
+                  {formErrors.status}
+                </div>
+              )}
             </div>
 
             <div className="col-md-1">
-              <button className="btn btn-primary w-100">
+              <button className="btn btn-primary w-100" disabled={!isFormValid}>
                 <i className="bi bi-plus-circle" />
               </button>
             </div>
@@ -530,6 +658,10 @@ function ServiceWorkOrdersPage() {
               0 2px 6px rgba(180, 206, 237, 0.16);
             background: linear-gradient(95deg, #fffaf0 88%, #fff3d6 100%);
             transform: translateY(-2px) scale(1.017);
+          }
+            .btn:disabled {
+            opacity: .40;
+            cursor: not-allowed;
           }
         `}
       </style>
