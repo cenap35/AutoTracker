@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import PageWrapper from "../components/PageWrapper";
 import LoadingSpinner from "../components/Common/LoadingSpinner";
 import ServicePageHeader from "../components/ServiceComponents/ServicePageHeader";
@@ -21,6 +21,7 @@ function ServiceAccountTransactionsPage() {
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [vehicles, setVehicles] = useState([]);
+  const [submitted, setSubmitted] = useState(false);
 
   const [form, setForm] = useState({
     serviceCustomerId: "",
@@ -32,6 +33,63 @@ function ServiceAccountTransactionsPage() {
     dueDate: "",
     customerVehicleId: "",
   });
+
+  const validateTransaction = (data) => {
+    const amount = Number(data.amount);
+    const paidAmount = Number(data.paidAmount || 0);
+
+    return {
+      serviceCustomerId: !data.serviceCustomerId
+        ? "Müşteri seçimi zorunludur."
+        : "",
+
+      type: !["Receivable", "Payable"].includes(data.type)
+        ? "Geçerli bir cari tipi seçiniz."
+        : "",
+
+      amount:
+        data.amount === ""
+          ? "Tutar zorunludur."
+          : amount <= 0 || amount > 1000000
+            ? "Tutar 0.01 ile 1.000.000 arasında olmalı."
+            : "",
+
+      paidAmount:
+        data.paidAmount === ""
+          ? "Ödenen tutar zorunludur."
+          : paidAmount < 0 || paidAmount > 1000000
+            ? "Ödenen tutar 0 ile 1.000.000 arasında olmalı."
+            : paidAmount > amount
+              ? "Ödenen tutar toplam tutardan büyük olamaz."
+              : "",
+
+      description:
+        data.description.trim().length > 500
+          ? "Açıklama en fazla 500 karakter olabilir."
+          : "",
+
+      transactionDate: !data.transactionDate ? "İşlem tarihi zorunludur." : "",
+
+      dueDate:
+        data.dueDate &&
+        data.transactionDate &&
+        new Date(data.dueDate) < new Date(data.transactionDate)
+          ? "Vade tarihi işlem tarihinden önce olamaz."
+          : "",
+    };
+  };
+
+  const formErrors = useMemo(() => validateTransaction(form), [form]);
+
+  const isFormValid = Object.values(formErrors).every((err) => !err);
+
+  const shouldShowError = (field) => submitted && formErrors[field];
+
+  const getInputClass = (field) =>
+    `form-control ${shouldShowError(field) ? "is-invalid" : ""}`;
+
+  const getSelectClass = (field) =>
+    `form-select ${shouldShowError(field) ? "is-invalid" : ""}`;
 
   useEffect(() => {
     loadPageData();
@@ -73,6 +131,13 @@ function ServiceAccountTransactionsPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitted(true);
+
+    if (!isFormValid) {
+      toast.warning("Lütfen cari kayıt bilgilerini kontrol et.");
+
+      return;
+    }
 
     try {
       const payload = {
@@ -84,7 +149,7 @@ function ServiceAccountTransactionsPage() {
         type: form.type,
         amount: Number(form.amount),
         paidAmount: Number(form.paidAmount || 0),
-        description: form.description,
+        description: form.description.trim(),
         transactionDate: new Date(form.transactionDate).toISOString(),
         dueDate: form.dueDate ? new Date(form.dueDate).toISOString() : null,
       };
@@ -101,6 +166,7 @@ function ServiceAccountTransactionsPage() {
         dueDate: "",
         customerVehicleId: "",
       });
+      setSubmitted(false);
 
       toast.success("Cari kayıt oluşturuldu.");
       loadPageData();
@@ -184,6 +250,7 @@ function ServiceAccountTransactionsPage() {
 
         <form
           onSubmit={handleSubmit}
+          noValidate
           className="card border-0 shadow-sm p-3 p-md-4 mb-4 cari-panel"
         >
           <div className="mb-3">
@@ -198,7 +265,7 @@ function ServiceAccountTransactionsPage() {
           <div className="row g-2">
             <div className="col-md-3">
               <select
-                className="form-select"
+                className={getSelectClass("serviceCustomerId")}
                 value={form.serviceCustomerId}
                 onChange={(e) =>
                   setForm({
@@ -207,7 +274,6 @@ function ServiceAccountTransactionsPage() {
                     customerVehicleId: "",
                   })
                 }
-                required
               >
                 <option value="">Müşteri seç</option>
                 {customers.map((customer) => (
@@ -216,6 +282,12 @@ function ServiceAccountTransactionsPage() {
                   </option>
                 ))}
               </select>
+
+              {shouldShowError("serviceCustomerId") && (
+                <div className="invalid-feedback d-block">
+                  {formErrors.serviceCustomerId}
+                </div>
+              )}
             </div>
             <div className="col-md-3">
               <select
@@ -238,71 +310,137 @@ function ServiceAccountTransactionsPage() {
 
             <div className="col-md-2">
               <select
-                className="form-select"
+                className={getSelectClass("type")}
                 value={form.type}
                 onChange={(e) => setForm({ ...form, type: e.target.value })}
               >
                 <option value="Receivable">Alacak</option>
                 <option value="Payable">Verecek</option>
               </select>
+
+              {shouldShowError("type") && (
+                <div className="invalid-feedback d-block">
+                  {formErrors.type}
+                </div>
+              )}
             </div>
 
             <div className="col-md-2">
               <input
                 type="number"
-                className="form-control"
+                className={getInputClass("amount")}
                 placeholder="Tutar"
                 value={form.amount}
+                min="0.01"
+                max="1000000"
+                step="0.01"
                 onChange={(e) => setForm({ ...form, amount: e.target.value })}
-                required
               />
+
+              <div className="mt-1">
+                <small className="text-muted">Tutar</small>
+              </div>
+
+              {shouldShowError("amount") && (
+                <div className="invalid-feedback d-block">
+                  {formErrors.amount}
+                </div>
+              )}
             </div>
 
             <div className="col-md-2">
               <input
                 type="number"
-                className="form-control"
+                className={getInputClass("paidAmount")}
                 placeholder="Ödenen"
                 value={form.paidAmount}
+                min="0"
+                max="1000000"
+                step="0.01"
                 onChange={(e) =>
                   setForm({ ...form, paidAmount: e.target.value })
                 }
               />
+
+              <div className="mt-1">
+                <small className="text-muted">Ödenen tutarı giriniz</small>
+              </div>
+
+              {shouldShowError("paidAmount") && (
+                <div className="invalid-feedback d-block">
+                  {formErrors.paidAmount}
+                </div>
+              )}
             </div>
 
             <div className="col-md-3">
               <input
-                className="form-control"
+                className={getInputClass("description")}
                 placeholder="Açıklama"
                 value={form.description}
+                maxLength={500}
                 onChange={(e) =>
                   setForm({ ...form, description: e.target.value })
                 }
               />
+
+              <div className="d-flex justify-content-between mt-1">
+                <div>
+                  {shouldShowError("description") && (
+                    <div className="invalid-feedback d-block">
+                      {formErrors.description}
+                    </div>
+                  )}
+                </div>
+
+                <small className="text-muted">
+                  {form.description.length}/500
+                </small>
+              </div>
             </div>
 
             <div className="col-md-3">
               <input
                 type="date"
-                className="form-control"
+                className={getInputClass("transactionDate")}
                 value={form.transactionDate}
                 onChange={(e) =>
                   setForm({ ...form, transactionDate: e.target.value })
                 }
               />
+
+              <div className="mt-1">
+                <small className="text-muted">İşlem Tarihi</small>
+              </div>
+
+              {shouldShowError("transactionDate") && (
+                <div className="invalid-feedback d-block">
+                  {formErrors.transactionDate}
+                </div>
+              )}
             </div>
 
             <div className="col-md-3">
               <input
                 type="date"
-                className="form-control"
+                className={getInputClass("dueDate")}
                 value={form.dueDate}
                 onChange={(e) => setForm({ ...form, dueDate: e.target.value })}
               />
+
+              <div className="mt-1">
+                <small className="text-muted">Vade</small>
+              </div>
+
+              {shouldShowError("dueDate") && (
+                <div className="invalid-feedback d-block">
+                  {formErrors.dueDate}
+                </div>
+              )}
             </div>
 
             <div className="col-md-2">
-              <button className="btn btn-primary w-100">
+              <button className="btn btn-primary w-100" disabled={!isFormValid}>
                 <i className="bi bi-plus-circle me-2" />
                 Ekle
               </button>
@@ -335,112 +473,120 @@ function ServiceAccountTransactionsPage() {
               </div>
             ) : (
               <div className="table-responsive">
-               <table className="table align-middle">
-  <thead>
-    <tr>
-      <th>Tarih</th>
-      <th>Müşteri</th>
-      <th>Araç</th>
-      <th>Kaynak</th>
-      <th>Tip</th>
-      <th>Tutar</th>
-      <th>Ödenen</th>
-      <th>Kalan</th>
-      <th>Durum</th>
-      <th>Açıklama</th>
-      <th></th>
-    </tr>
-  </thead>
+                <table className="table align-middle">
+                  <thead>
+                    <tr>
+                      <th>Tarih</th>
+                      <th>Müşteri</th>
+                      <th>Araç</th>
+                      <th>Kaynak</th>
+                      <th>Tip</th>
+                      <th>Tutar</th>
+                      <th>Ödenen</th>
+                      <th>Kalan</th>
+                      <th>Durum</th>
+                      <th>Açıklama</th>
+                      <th></th>
+                    </tr>
+                  </thead>
 
-  <tbody>
-    {transactions.map((item) => (
-      <tr key={item.id}>
-        <td className="text-muted small">
-          {item.transactionDate
-            ? new Date(item.transactionDate).toLocaleDateString("tr-TR")
-            : "-"}
-        </td>
+                  <tbody>
+                    {transactions.map((item) => (
+                      <tr key={item.id}>
+                        <td className="text-muted small">
+                          {item.transactionDate
+                            ? new Date(item.transactionDate).toLocaleDateString(
+                                "tr-TR",
+                              )
+                            : "-"}
+                        </td>
 
-        <td className="fw-semibold">{item.customerName || "-"}</td>
+                        <td className="fw-semibold">
+                          {item.customerName || "-"}
+                        </td>
 
-        <td>
-          {item.vehicle ? (
-            <div>
-              <div className="fw-semibold">{item.vehicle}</div>
-              <small className="text-muted">{item.plate || "-"}</small>
-            </div>
-          ) : (
-            <span className="text-muted">-</span>
-          )}
-        </td>
+                        <td>
+                          {item.vehicle ? (
+                            <div>
+                              <div className="fw-semibold">{item.vehicle}</div>
+                              <small className="text-muted">
+                                {item.plate || "-"}
+                              </small>
+                            </div>
+                          ) : (
+                            <span className="text-muted">-</span>
+                          )}
+                        </td>
 
-        <td className="text-muted">
-          {item.sourceTitle || "-"}
-        </td>
+                        <td className="text-muted">
+                          {item.sourceTitle || "-"}
+                        </td>
 
-        <td>
-          <span
-            className={
-              item.type === "Receivable"
-                ? "badge bg-success"
-                : "badge bg-danger"
-            }
-          >
-            {item.type === "Receivable" ? "Alacak" : "Verecek"}
-          </span>
-        </td>
+                        <td>
+                          <span
+                            className={
+                              item.type === "Receivable"
+                                ? "badge bg-success"
+                                : "badge bg-danger"
+                            }
+                          >
+                            {item.type === "Receivable" ? "Alacak" : "Verecek"}
+                          </span>
+                        </td>
 
-        <td>₺{formatCurrency(item.amount)}</td>
-        <td>₺{formatCurrency(item.paidAmount)}</td>
+                        <td>₺{formatCurrency(item.amount)}</td>
+                        <td>₺{formatCurrency(item.paidAmount)}</td>
 
-        <td className="fw-bold">
-          ₺{formatCurrency(item.remainingAmount)}
-        </td>
+                        <td className="fw-bold">
+                          ₺{formatCurrency(item.remainingAmount)}
+                        </td>
 
-        <td>
-          {item.isPaid ? (
-            <div>
-              <span className="badge bg-success">Ödendi</span>
-              {item.paidAt && (
-                <div className="text-muted small mt-1">
-                  {new Date(item.paidAt).toLocaleDateString("tr-TR")}
-                </div>
-              )}
-            </div>
-          ) : (
-            <span className="badge bg-warning text-dark">
-              Bekliyor
-            </span>
-          )}
-        </td>
+                        <td>
+                          {item.isPaid ? (
+                            <div>
+                              <span className="badge bg-success">Ödendi</span>
+                              {item.paidAt && (
+                                <div className="text-muted small mt-1">
+                                  {new Date(item.paidAt).toLocaleDateString(
+                                    "tr-TR",
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          ) : (
+                            <span className="badge bg-warning text-dark">
+                              Bekliyor
+                            </span>
+                          )}
+                        </td>
 
-        <td className="text-muted">
-          {item.description || "-"}
-        </td>
+                        <td className="text-muted">
+                          {item.description || "-"}
+                        </td>
 
-        <td>
-          <div className="d-flex gap-2 justify-content-end">
-            {!item.isPaid && (
-              <button
-                className="btn btn-outline-success btn-sm"
-                onClick={() => handleMarkPaid(item.id)}
-              >
-                Ödendi
-              </button>
-            )}
+                        <td>
+                          <div className="d-flex gap-2 justify-content-end">
+                            {!item.isPaid && (
+                              <button
+                                className="btn btn-outline-success btn-sm"
+                                onClick={() => handleMarkPaid(item.id)}
+                              >
+                                Ödendi
+                              </button>
+                            )}
 
-            <button
-              className="btn btn-outline-danger btn-sm"
-              onClick={() => handleDelete(item.id)}
-            >
-              Sil
-            </button>
-          </div>
-        </td>
-      </tr>
-    ))}
-  </tbody>
-</table>
+                            <button
+                              className="btn btn-outline-danger btn-sm"
+                              onClick={() => handleDelete(item.id)}
+                            >
+                              Sil
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             )}
           </div>
@@ -450,6 +596,10 @@ function ServiceAccountTransactionsPage() {
           {`
             .cari-panel {
               border-radius: 20px;
+            }
+            .btn:disabled {
+            opacity: .45;
+            cursor: not-allowed;
             }
           `}
         </style>
