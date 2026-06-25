@@ -17,6 +17,8 @@ function ServiceNotesPage() {
   const [loading, setLoading] = useState(true);
   const [editingNoteId, setEditingNoteId] = useState(null);
   const [filter, setFilter] = useState("All");
+  const [submitted, setSubmitted] = useState(false);
+  const [editSubmitted, setEditSubmitted] = useState(false);
 
   const [form, setForm] = useState({
     title: "",
@@ -30,6 +32,38 @@ function ServiceNotesPage() {
     isImportant: false,
     isCompleted: false,
   });
+
+  const validateNote = (data) => {
+    return {
+      title: !data.title.trim()
+        ? "Not başlığı zorunludur."
+        : data.title.trim().length < 3
+          ? "Başlık en az 3 karakter olmalı."
+          : data.title.trim().length > 100
+            ? "Başlık en fazla 100 karakter olabilir."
+            : "",
+
+      content:
+        data.content.trim().length > 1000
+          ? "Not içeriği en fazla 1000 karakter olabilir."
+          : "",
+    };
+  };
+
+  const formErrors = useMemo(() => validateNote(form), [form]);
+  const editErrors = useMemo(() => validateNote(editForm), [editForm]);
+
+  const isFormValid = Object.values(formErrors).every((err) => !err);
+  const isEditFormValid = Object.values(editErrors).every((err) => !err);
+
+  const shouldShowError = (field) => submitted && formErrors[field];
+  const shouldShowEditError = (field) => editSubmitted && editErrors[field];
+
+  const getInputClass = (field) =>
+    `form-control ${shouldShowError(field) ? "is-invalid" : ""}`;
+
+  const getEditInputClass = (field) =>
+    `form-control ${shouldShowEditError(field) ? "is-invalid" : ""}`;
 
   useEffect(() => {
     loadNotes();
@@ -79,6 +113,7 @@ function ServiceNotesPage() {
       content: "",
       isImportant: false,
     });
+    setSubmitted(false);
   };
 
   const cancelEdit = () => {
@@ -89,13 +124,25 @@ function ServiceNotesPage() {
       isImportant: false,
       isCompleted: false,
     });
+    setEditSubmitted(false);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitted(true);
+
+    if (!isFormValid) {
+      toast.warning("Lütfen not bilgilerini kontrol et.");
+      return;
+    }
 
     try {
-      const createdNote = await createNote(form);
+      const createdNote = await createNote({
+        title: form.title.trim(),
+        content: form.content.trim(),
+        isImportant: form.isImportant,
+      });
+
       setNotes([createdNote, ...notes]);
       resetForm();
       toast.success("Not eklendi.");
@@ -113,13 +160,25 @@ function ServiceNotesPage() {
       isImportant: note.isImportant,
       isCompleted: note.isCompleted,
     });
+    setEditSubmitted(false);
   };
 
   const handleUpdate = async (e, id) => {
     e.preventDefault();
+    setEditSubmitted(true);
+
+    if (!isEditFormValid) {
+      toast.warning("Lütfen not bilgilerini kontrol et.");
+      return;
+    }
 
     try {
-      const updatedNote = await updateNote(id, editForm);
+      const updatedNote = await updateNote(id, {
+        title: editForm.title.trim(),
+        content: editForm.content.trim(),
+        isImportant: editForm.isImportant,
+        isCompleted: editForm.isCompleted,
+      });
 
       setNotes(
         notes.map((note) =>
@@ -194,11 +253,15 @@ function ServiceNotesPage() {
           <div className="card-body p-4">
             <div className="d-flex justify-content-between align-items-start gap-3 flex-wrap">
               <div>
-                <h4 className="mb-1" style={{ color: "#18265a", fontWeight: 850 }}>
+                <h4
+                  className="mb-1"
+                  style={{ color: "#18265a", fontWeight: 850 }}
+                >
                   Servis görev panosu
                 </h4>
                 <p className="text-muted mb-0">
-                  Günlük yapılacakları, önemli hatırlatmaları ve tamamlanan işleri tek yerde takip edin.
+                  Günlük yapılacakları, önemli hatırlatmaları ve tamamlanan
+                  işleri tek yerde takip edin.
                 </p>
               </div>
 
@@ -210,16 +273,43 @@ function ServiceNotesPage() {
         </div>
 
         <div className="row g-3 mb-4">
-          <NoteStatCard icon="🗂️" title="Toplam Not" value={stats.total} tone="#3b60c5" />
-          <NoteStatCard icon="🔥" title="Aktif" value={stats.active} tone="#b78b16" />
-          <NoteStatCard icon="⭐" title="Önemli" value={stats.important} tone="#ffb703" />
-          <NoteStatCard icon="✅" title="Tamamlanan" value={stats.completed} tone="#1a906c" />
+          <NoteStatCard
+            icon="🗂️"
+            title="Toplam Not"
+            value={stats.total}
+            tone="#3b60c5"
+          />
+          <NoteStatCard
+            icon="🔥"
+            title="Aktif"
+            value={stats.active}
+            tone="#b78b16"
+          />
+          <NoteStatCard
+            icon="⭐"
+            title="Önemli"
+            value={stats.important}
+            tone="#ffb703"
+          />
+          <NoteStatCard
+            icon="✅"
+            title="Tamamlanan"
+            value={stats.completed}
+            tone="#1a906c"
+          />
         </div>
 
-        <form onSubmit={handleSubmit} className="note-panel card border-0 shadow-sm p-3 p-md-4 mb-4">
+        <form
+          onSubmit={handleSubmit}
+          noValidate
+          className="note-panel card border-0 shadow-sm p-3 p-md-4 mb-4"
+        >
           <div className="d-flex justify-content-between align-items-start gap-3 flex-wrap mb-3">
             <div>
-              <h5 className="mb-1" style={{ color: "#18265a", fontWeight: 850 }}>
+              <h5
+                className="mb-1"
+                style={{ color: "#18265a", fontWeight: 850 }}
+              >
                 Yeni Not
               </h5>
               <small className="text-muted">
@@ -236,8 +326,13 @@ function ServiceNotesPage() {
                 onChange={(e) =>
                   setForm({ ...form, isImportant: e.target.checked })
                 }
+                style={{ accentColor: "#ffb703" }}
               />
-              <label className="form-check-label fw-semibold" htmlFor="isImportant">
+              <label
+                className="form-check-label fw-semibold"
+                htmlFor="isImportant"
+                style={{ color: "#ffb703" }}
+              >
                 Önemli
               </label>
             </div>
@@ -246,27 +341,44 @@ function ServiceNotesPage() {
           <div className="row g-2">
             <div className="col-lg-4">
               <input
-                className="form-control"
+                className={getInputClass("title")}
                 placeholder="Başlık"
                 value={form.title}
+                maxLength={100}
                 onChange={(e) => setForm({ ...form, title: e.target.value })}
-                required
               />
+
+              {shouldShowError("title") && (
+                <div className="invalid-feedback d-block">
+                  {formErrors.title}
+                </div>
+              )}
             </div>
 
             <div className="col-lg-6">
               <input
-                className="form-control"
+                className={getInputClass("content")}
                 placeholder="Not içeriği"
                 value={form.content}
-                onChange={(e) =>
-                  setForm({ ...form, content: e.target.value })
-                }
+                maxLength={1000}
+                onChange={(e) => setForm({ ...form, content: e.target.value })}
               />
+
+              <div className="d-flex justify-content-between mt-1">
+                <div>
+                  {shouldShowError("content") && (
+                    <div className="invalid-feedback d-block">
+                      {formErrors.content}
+                    </div>
+                  )}
+                </div>
+
+                <small className="text-muted">{form.content.length}/1000</small>
+              </div>
             </div>
 
             <div className="col-lg-2">
-              <button className="btn btn-primary w-100">
+              <button className="btn btn-primary w-100" disabled={!isFormValid}>
                 <i className="bi bi-plus-circle me-2" />
                 Ekle
               </button>
@@ -277,7 +389,10 @@ function ServiceNotesPage() {
         <div className="card border-0 shadow-sm p-3 mb-4 note-panel">
           <div className="d-flex justify-content-between align-items-center gap-3 flex-wrap">
             <div>
-              <h5 className="mb-1" style={{ color: "#18265a", fontWeight: 850 }}>
+              <h5
+                className="mb-1"
+                style={{ color: "#18265a", fontWeight: 850 }}
+              >
                 Not Listesi
               </h5>
               <small className="text-muted">
@@ -286,16 +401,28 @@ function ServiceNotesPage() {
             </div>
 
             <div className="d-flex gap-2 flex-wrap">
-              <FilterButton active={filter === "All"} onClick={() => setFilter("All")}>
+              <FilterButton
+                active={filter === "All"}
+                onClick={() => setFilter("All")}
+              >
                 Tümü
               </FilterButton>
-              <FilterButton active={filter === "Active"} onClick={() => setFilter("Active")}>
+              <FilterButton
+                active={filter === "Active"}
+                onClick={() => setFilter("Active")}
+              >
                 Aktif
               </FilterButton>
-              <FilterButton active={filter === "Important"} onClick={() => setFilter("Important")}>
+              <FilterButton
+                active={filter === "Important"}
+                onClick={() => setFilter("Important")}
+              >
                 Önemli
               </FilterButton>
-              <FilterButton active={filter === "Completed"} onClick={() => setFilter("Completed")}>
+              <FilterButton
+                active={filter === "Completed"}
+                onClick={() => setFilter("Completed")}
+              >
                 Tamamlanan
               </FilterButton>
             </div>
@@ -309,32 +436,43 @@ function ServiceNotesPage() {
               Not bulunamadı
             </h5>
             <p className="text-muted mb-0">
-              Seçili filtreye uygun not yok. Yeni not ekleyerek başlayabilirsiniz.
+              Seçili filtreye uygun not yok. Yeni not ekleyerek
+              başlayabilirsiniz.
             </p>
           </div>
         ) : (
           <div className="notes-grid">
             {filteredNotes.map((note) => (
-              <div key={note.id} className="note-card-hover card border-0 shadow-sm">
+              <div
+                key={note.id}
+                className="note-card-hover card border-0 shadow-sm"
+              >
                 <div className="card-body p-4">
                   {editingNoteId === note.id ? (
-                    <form onSubmit={(e) => handleUpdate(e, note.id)}>
+                    <form onSubmit={(e) => handleUpdate(e, note.id)} noValidate>
                       <div className="mb-2">
                         <input
-                          className="form-control"
+                          className={getEditInputClass("title")}
                           value={editForm.title}
+                          maxLength={100}
                           onChange={(e) =>
                             setEditForm({ ...editForm, title: e.target.value })
                           }
-                          required
                         />
+
+                        {shouldShowEditError("title") && (
+                          <div className="invalid-feedback d-block">
+                            {editErrors.title}
+                          </div>
+                        )}
                       </div>
 
                       <div className="mb-3">
                         <textarea
-                          className="form-control"
+                          className={getEditInputClass("content")}
                           rows="3"
                           value={editForm.content}
+                          maxLength={1000}
                           onChange={(e) =>
                             setEditForm({
                               ...editForm,
@@ -342,6 +480,20 @@ function ServiceNotesPage() {
                             })
                           }
                         />
+
+                        <div className="d-flex justify-content-between mt-1">
+                          <div>
+                            {shouldShowEditError("content") && (
+                              <div className="invalid-feedback d-block">
+                                {editErrors.content}
+                              </div>
+                            )}
+                          </div>
+
+                          <small className="text-muted">
+                            {editForm.content.length}/1000
+                          </small>
+                        </div>
                       </div>
 
                       <div className="d-flex gap-3 align-items-center flex-wrap mb-3">
@@ -358,7 +510,10 @@ function ServiceNotesPage() {
                               })
                             }
                           />
-                          <label className="form-check-label" htmlFor={`important-${note.id}`}>
+                          <label
+                            className="form-check-label"
+                            htmlFor={`important-${note.id}`}
+                          >
                             Önemli
                           </label>
                         </div>
@@ -376,14 +531,23 @@ function ServiceNotesPage() {
                               })
                             }
                           />
-                          <label className="form-check-label" htmlFor={`completed-${note.id}`}>
+                          <label
+                            className="form-check-label"
+                            htmlFor={`completed-${note.id}`}
+                          >
                             Tamamlandı
                           </label>
                         </div>
                       </div>
 
                       <div className="d-flex gap-2">
-                        <button className="btn btn-success btn-sm">Kaydet</button>
+                        <button
+                          className="btn btn-primary btn-sm"
+                          disabled={!isEditFormValid}
+                        >
+                          Kaydet
+                        </button>
+
                         <button
                           type="button"
                           className="btn btn-outline-secondary btn-sm"
@@ -397,8 +561,14 @@ function ServiceNotesPage() {
                     <>
                       <div className="d-flex justify-content-between align-items-start gap-2 mb-3">
                         <div className="d-flex align-items-center gap-3">
-                          <div className={`note-icon ${note.isCompleted ? "done" : note.isImportant ? "important" : ""}`}>
-                            {note.isCompleted ? "✓" : note.isImportant ? "⭐" : "📝"}
+                          <div
+                            className={`note-icon ${note.isCompleted ? "done" : note.isImportant ? "important" : ""}`}
+                          >
+                            {note.isCompleted
+                              ? "✓"
+                              : note.isImportant
+                                ? "⭐"
+                                : "📝"}
                           </div>
 
                           <div>
@@ -407,7 +577,9 @@ function ServiceNotesPage() {
                               style={{
                                 color: "#18265a",
                                 fontWeight: 850,
-                                textDecoration: note.isCompleted ? "line-through" : "none",
+                                textDecoration: note.isCompleted
+                                  ? "line-through"
+                                  : "none",
                               }}
                             >
                               {note.title}
@@ -415,10 +587,14 @@ function ServiceNotesPage() {
 
                             <div className="d-flex gap-2 flex-wrap">
                               {note.isImportant && (
-                                <span className="badge bg-warning text-dark">Önemli</span>
+                                <span className="badge bg-warning text-dark">
+                                  Önemli
+                                </span>
                               )}
                               {note.isCompleted && (
-                                <span className="badge bg-success">Tamamlandı</span>
+                                <span className="badge bg-success">
+                                  Tamamlandı
+                                </span>
                               )}
                             </div>
                           </div>
@@ -529,6 +705,11 @@ function ServiceNotesPage() {
               min-height: 48px;
               line-height: 1.6;
             }
+
+            .btn:disabled {
+              opacity: .45;
+              cursor: not-allowed;
+            }
           `}
         </style>
       </div>
@@ -571,7 +752,9 @@ function FilterButton({ active, onClick, children }) {
   return (
     <button
       type="button"
-      className={active ? "btn btn-primary btn-sm" : "btn btn-outline-primary btn-sm"}
+      className={
+        active ? "btn btn-primary btn-sm" : "btn btn-outline-primary btn-sm"
+      }
       onClick={onClick}
     >
       {children}
