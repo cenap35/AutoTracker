@@ -10,7 +10,7 @@
 
 </p>
 
-<img src="https://readme-typing-svg.herokuapp.com/?lines=AutoTracker;Vehicle+Lifecycle+%26+Automotive+Service+Management+Platform&center=true&width=500&height=50">
+<img src="https://readme-typing-svg.herokuapp.com/?lines=AutoTracker;+Vehicle+Lifecycle+%26+Automotive+Service+Management+Platform&center=true&width=500&height=50">
 
 # 🚗 AutoTracker
 
