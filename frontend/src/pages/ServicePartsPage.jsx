@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import PageWrapper from "../components/PageWrapper";
 import LoadingSpinner from "../components/Common/LoadingSpinner";
 import { toast } from "react-toastify";
@@ -19,6 +19,8 @@ function ServicePartsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [sellQuantityByPartId, setSellQuantityByPartId] = useState({});
+  const [submitted, setSubmitted] = useState(false);
+  const [editSubmitted, setEditSubmitted] = useState(false);
 
   const [newPartForm, setNewPartForm] = useState({
     name: "",
@@ -35,6 +37,63 @@ function ServicePartsPage() {
     salePrice: "",
     stockQuantity: "",
   });
+
+  const validatePart = (data) => {
+    return {
+      name: !data.name.trim()
+        ? "Parça adı zorunludur."
+        : data.name.trim().length < 2
+          ? "Parça adı en az 2 karakter olmalı."
+          : data.name.trim().length > 100
+            ? "Parça adı en fazla 100 karakter olabilir."
+            : "",
+
+      code:
+        data.code.trim().length > 50
+          ? "Kod en fazla 50 karakter olabilir."
+          : "",
+
+      purchasePrice:
+        data.purchasePrice === ""
+          ? "Alış fiyatı zorunludur."
+          : Number(data.purchasePrice) < 0 ||
+              Number(data.purchasePrice) > 1000000
+            ? "Alış fiyatı 0 ile 1.000.000 arasında olmalı."
+            : "",
+
+      salePrice:
+        data.salePrice === ""
+          ? "Satış fiyatı zorunludur."
+          : Number(data.salePrice) < 0 || Number(data.salePrice) > 1000000
+            ? "Satış fiyatı 0 ile 1.000.000 arasında olmalı."
+            : "",
+
+      stockQuantity:
+        data.stockQuantity === ""
+          ? "Stok miktarı zorunludur."
+          : Number(data.stockQuantity) < 0 ||
+              Number(data.stockQuantity) > 100000
+            ? "Stok miktarı 0 ile 100.000 arasında olmalı."
+            : !Number.isInteger(Number(data.stockQuantity))
+              ? "Stok miktarı tam sayı olmalı."
+              : "",
+    };
+  };
+
+  const newPartErrors = useMemo(() => validatePart(newPartForm), [newPartForm]);
+  const editErrors = useMemo(() => validatePart(editForm), [editForm]);
+
+  const isNewPartFormValid = Object.values(newPartErrors).every((err) => !err);
+  const isEditFormValid = Object.values(editErrors).every((err) => !err);
+
+  const shouldShowNewError = (field) => submitted && newPartErrors[field];
+  const shouldShowEditError = (field) => editSubmitted && editErrors[field];
+
+  const getNewInputClass = (field) =>
+    `form-control ${shouldShowNewError(field) ? "is-invalid" : ""}`;
+
+  const getEditInputClass = (field) =>
+    `form-control ${shouldShowEditError(field) ? "is-invalid" : ""}`;
 
   useEffect(() => {
     loadParts();
@@ -112,14 +171,22 @@ function ServicePartsPage() {
       salePrice: "",
       stockQuantity: "",
     });
+    setSubmitted(false);
   };
 
   const handleCreateSubmit = async (e) => {
     e.preventDefault();
+    setSubmitted(true);
+
+    if (!isNewPartFormValid) {
+      toast.warning("Lütfen parça bilgilerini kontrol et.");
+      return;
+    }
 
     try {
       const payload = {
-        ...newPartForm,
+        name: newPartForm.name.trim(),
+        code: newPartForm.code.trim().toUpperCase(),
         purchasePrice: Number(newPartForm.purchasePrice),
         salePrice: Number(newPartForm.salePrice),
         stockQuantity: Number(newPartForm.stockQuantity),
@@ -146,6 +213,7 @@ function ServicePartsPage() {
       salePrice: part.salePrice,
       stockQuantity: part.stockQuantity,
     });
+    setEditSubmitted(false);
   };
 
   const cancelEdit = () => {
@@ -158,14 +226,22 @@ function ServicePartsPage() {
       salePrice: "",
       stockQuantity: "",
     });
+    setEditSubmitted(false);
   };
 
   const handleUpdateSubmit = async (e, id) => {
     e.preventDefault();
+    setEditSubmitted(true);
+
+    if (!isEditFormValid) {
+      toast.warning("Lütfen parça bilgilerini kontrol et.");
+      return;
+    }
 
     try {
       const payload = {
-        ...editForm,
+        name: editForm.name.trim(),
+        code: editForm.code.trim().toUpperCase(),
         purchasePrice: Number(editForm.purchasePrice),
         salePrice: Number(editForm.salePrice),
         stockQuantity: Number(editForm.stockQuantity),
@@ -246,6 +322,7 @@ function ServicePartsPage() {
 
         <form
           onSubmit={handleCreateSubmit}
+          noValidate
           className="card border-0 shadow-sm p-3"
         >
           <div className="mb-3">
@@ -260,78 +337,121 @@ function ServicePartsPage() {
           <div className="row g-2">
             <div className="col-md-3">
               <input
-                className="form-control"
+                className={getNewInputClass("name")}
                 placeholder="Parça Adı"
                 value={newPartForm.name}
+                maxLength={100}
                 onChange={(e) =>
                   setNewPartForm({ ...newPartForm, name: e.target.value })
                 }
-                required
               />
+
+              {shouldShowNewError("name") && (
+                <div className="invalid-feedback d-block">
+                  {newPartErrors.name}
+                </div>
+              )}
             </div>
 
             <div className="col-md-2">
               <input
-                className="form-control"
+                className={getNewInputClass("code")}
                 placeholder="Kod"
                 value={newPartForm.code}
+                maxLength={50}
                 onChange={(e) =>
-                  setNewPartForm({ ...newPartForm, code: e.target.value })
+                  setNewPartForm({
+                    ...newPartForm,
+                    code: e.target.value.toUpperCase(),
+                  })
                 }
               />
+
+              {shouldShowNewError("code") && (
+                <div className="invalid-feedback d-block">
+                  {newPartErrors.code}
+                </div>
+              )}
             </div>
 
             <div className="col-md-2">
               <input
                 type="number"
-                className="form-control"
+                className={getNewInputClass("purchasePrice")}
                 placeholder="Alış"
                 value={newPartForm.purchasePrice}
+                min="0"
+                max="1000000"
+                step="0.01"
                 onChange={(e) =>
                   setNewPartForm({
                     ...newPartForm,
                     purchasePrice: e.target.value,
                   })
                 }
-                required
               />
+
+              {shouldShowNewError("purchasePrice") && (
+                <div className="invalid-feedback d-block">
+                  {newPartErrors.purchasePrice}
+                </div>
+              )}
             </div>
 
             <div className="col-md-2">
               <input
                 type="number"
-                className="form-control"
+                className={getNewInputClass("salePrice")}
                 placeholder="Satış"
                 value={newPartForm.salePrice}
+                min="0"
+                max="1000000"
+                step="0.01"
                 onChange={(e) =>
                   setNewPartForm({
                     ...newPartForm,
                     salePrice: e.target.value,
                   })
                 }
-                required
               />
+
+              {shouldShowNewError("salePrice") && (
+                <div className="invalid-feedback d-block">
+                  {newPartErrors.salePrice}
+                </div>
+              )}
             </div>
 
             <div className="col-md-2">
               <input
                 type="number"
-                className="form-control"
+                className={getNewInputClass("stockQuantity")}
                 placeholder="Stok"
                 value={newPartForm.stockQuantity}
+                min="0"
+                max="100000"
+                step="1"
                 onChange={(e) =>
                   setNewPartForm({
                     ...newPartForm,
                     stockQuantity: e.target.value,
                   })
                 }
-                required
               />
+
+              {shouldShowNewError("stockQuantity") && (
+                <div className="invalid-feedback d-block">
+                  {newPartErrors.stockQuantity}
+                </div>
+              )}
             </div>
 
             <div className="col-md-1">
-              <button className="btn btn-success w-100">
-                <i className="bi bi-plus-circle" />
+              <button
+                className="btn btn-success w-100"
+                disabled={!isNewPartFormValid}
+              >
+                <i className="bi bi-plus-circle" /> Ekle
               </button>
             </div>
           </div>
@@ -355,81 +475,127 @@ function ServicePartsPage() {
             >
               <div className="card-body">
                 {editingPartId === part.id ? (
-                  <form onSubmit={(e) => handleUpdateSubmit(e, part.id)}>
+                  <form
+                    onSubmit={(e) => handleUpdateSubmit(e, part.id)}
+                    noValidate
+                  >
                     <div className="row g-2">
                       <div className="col-md-3">
                         <input
-                          className="form-control"
+                          className={getEditInputClass("name")}
                           placeholder="Parça Adı"
                           value={editForm.name}
+                          maxLength={100}
                           onChange={(e) =>
                             setEditForm({ ...editForm, name: e.target.value })
                           }
-                          required
                         />
+
+                        {shouldShowEditError("name") && (
+                          <div className="invalid-feedback d-block">
+                            {editErrors.name}
+                          </div>
+                        )}
                       </div>
 
                       <div className="col-md-2">
                         <input
-                          className="form-control"
+                          className={getEditInputClass("code")}
                           placeholder="Kod"
                           value={editForm.code}
+                          maxLength={50}
                           onChange={(e) =>
-                            setEditForm({ ...editForm, code: e.target.value })
+                            setEditForm({
+                              ...editForm,
+                              code: e.target.value.toUpperCase(),
+                            })
                           }
                         />
+
+                        {shouldShowEditError("code") && (
+                          <div className="invalid-feedback d-block">
+                            {editErrors.code}
+                          </div>
+                        )}
                       </div>
 
                       <div className="col-md-2">
                         <input
                           type="number"
-                          className="form-control"
+                          className={getEditInputClass("purchasePrice")}
                           placeholder="Alış"
                           value={editForm.purchasePrice}
+                          min="0"
+                          max="1000000"
+                          step="0.01"
                           onChange={(e) =>
                             setEditForm({
                               ...editForm,
                               purchasePrice: e.target.value,
                             })
                           }
-                          required
                         />
+
+                        {shouldShowEditError("purchasePrice") && (
+                          <div className="invalid-feedback d-block">
+                            {editErrors.purchasePrice}
+                          </div>
+                        )}
                       </div>
 
                       <div className="col-md-2">
                         <input
                           type="number"
-                          className="form-control"
+                          className={getEditInputClass("salePrice")}
                           placeholder="Satış"
                           value={editForm.salePrice}
+                          min="0"
+                          max="1000000"
+                          step="0.01"
                           onChange={(e) =>
                             setEditForm({
                               ...editForm,
                               salePrice: e.target.value,
                             })
                           }
-                          required
                         />
+
+                        {shouldShowEditError("salePrice") && (
+                          <div className="invalid-feedback d-block">
+                            {editErrors.salePrice}
+                          </div>
+                        )}
                       </div>
 
                       <div className="col-md-2">
                         <input
                           type="number"
-                          className="form-control"
+                          className={getEditInputClass("stockQuantity")}
                           placeholder="Stok"
                           value={editForm.stockQuantity}
+                          min="0"
+                          max="100000"
+                          step="1"
                           onChange={(e) =>
                             setEditForm({
                               ...editForm,
                               stockQuantity: e.target.value,
                             })
                           }
-                          required
                         />
+
+                        {shouldShowEditError("stockQuantity") && (
+                          <div className="invalid-feedback d-block">
+                            {editErrors.stockQuantity}
+                          </div>
+                        )}
                       </div>
 
                       <div className="col-md-1">
-                        <button className="btn btn-primary w-100">
+                        <button
+                          className="btn btn-primary w-100"
+                          disabled={!isEditFormValid}
+                        >
                           Kaydet
                         </button>
                       </div>
@@ -577,6 +743,11 @@ function ServicePartsPage() {
             background: linear-gradient(95deg, #fbf7ff 88%, #f1e9ff 100%);
             transform: translateY(-2px) scale(1.017);
           }
+
+          .btn:disabled {
+          opacity: .45;
+          cursor: not-allowed;
+         }
         `}
       </style>
     </PageWrapper>
