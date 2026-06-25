@@ -80,6 +80,16 @@ public class ServiceAccountTransactionsController : ControllerBase
     if (serviceBusiness == null)
       return NotFound("Servis hesabı bulunamadı.");
 
+    if (dto.PaidAmount > dto.Amount)
+
+      return BadRequest("Ödenen tutar toplam tutardan büyük olamaz.");
+
+    if (dto.DueDate.HasValue &&
+
+        dto.DueDate.Value.Date < dto.TransactionDate.Date)
+
+      return BadRequest("Vade tarihi işlem tarihinden önce olamaz.");
+
     var isPaid = dto.PaidAmount >= dto.Amount;
 
     var customer = await _context.ServiceCustomers
@@ -172,6 +182,13 @@ public class ServiceAccountTransactionsController : ControllerBase
 
     if (transaction == null)
       return NotFound("Cari kayıt bulunamadı.");
+
+    if (dto.PaidAmount > dto.Amount)
+      return BadRequest("Ödenen tutar toplam tutardan büyük olamaz.");
+
+    if (dto.DueDate.HasValue &&
+        dto.DueDate.Value.Date < dto.TransactionDate.Date)
+      return BadRequest("Vade tarihi işlem tarihinden önce olamaz.");
 
     var wasPaid = transaction.IsPaid;
     var isPaid = dto.IsPaid || dto.PaidAmount >= dto.Amount;
