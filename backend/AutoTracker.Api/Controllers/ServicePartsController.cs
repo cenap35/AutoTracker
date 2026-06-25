@@ -230,6 +230,13 @@ public class ServicePartsController : ControllerBase
         if (serviceBusiness == null)
             return NotFound("Servis hesabı bulunamadı.");
 
+        if (dto.SalePrice < dto.PurchasePrice)
+            return BadRequest("Satış fiyatı alış fiyatından düşük olamaz.");
+
+        if (dto.StockQuantity < 0)
+            return BadRequest("Stok miktarı negatif olamaz.");
+
+
         var part = new ServicePart
         {
             Name = dto.Name,
@@ -268,12 +275,18 @@ public class ServicePartsController : ControllerBase
             return NotFound("Servis hesabı bulunamadı.");
 
         var part = await _context.ServiceParts
-            .FirstOrDefaultAsync(p =>
-                p.Id == id &&
-                p.ServiceBusinessId == serviceBusiness.Id);
+       .FirstOrDefaultAsync(p =>
+           p.Id == id &&
+           p.ServiceBusinessId == serviceBusiness.Id);
 
         if (part == null)
             return NotFound("Parça bulunamadı.");
+
+        if (dto.SalePrice < dto.PurchasePrice)
+            return BadRequest("Satış fiyatı alış fiyatından düşük olamaz.");
+
+        if (dto.StockQuantity < 0)
+            return BadRequest("Stok miktarı negatif olamaz.");
 
         part.Name = dto.Name;
         part.Code = dto.Code;
