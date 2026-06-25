@@ -10,6 +10,8 @@
 
 </p>
 
+<img src="https://readme-typing-svg.herokuapp.com/?lines=AutoTracker&center=true&width=500&height=50">
+
 # 🚗 AutoTracker
 
 ## Vehicle Lifecycle & Automotive Service Management Platform
