@@ -6,7 +6,7 @@ import ServicePageHeader from "../components/ServiceComponents/ServicePageHeader
 const MODULES = [
   {
     icon: "📊",
-    title: "Dashboard",
+    title: "Panel",
     text: "Gelir, iş emri durumu, son işlemler ve servis performansını tek ekranda takip edin.",
     to: "/service/dashboard",
     color: "#3b60c5",
@@ -59,6 +59,14 @@ const MODULES = [
     text: "Müşteri hesap hareketlerini yönetin, bakiyeleri ve ödemeleri takip edin.",
     to: "/service/account-transactions",
     color: "#546e7a",
+  }
+  ,
+  {
+    icon: "🏢",
+    title: "Servis Bilgileri",
+    text: "Servisinize ait temel bilgileri, iletişim ve adres detaylarını yönetin.",
+    to: "/service/settings",
+    color: "#263159",
   }
 ];
 
@@ -169,7 +177,7 @@ function ServiceHomePage() {
                     style={{ borderRadius: 14 }}
                   >
                     <i className="bi bi-speedometer2 me-2" />
-                    Dashboard’a Git
+                    Panel'e Git
                   </Link>
 
                   <Link
