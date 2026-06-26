@@ -10,7 +10,14 @@
 
 </p>
 
-<img src="https://readme-typing-svg.herokuapp.com/?lines=AutoTracker;+Vehicle+Lifecycle+%26+Automotive+Service+Management+Platform&center=true&width=500&height=50">
+<p align="center">
+  <img src="docs/screenshots/homepage.png" alt="Homepage Screenshot" style="margin: 0 auto; display: block;" />
+</p>
+<p align="center">
+  <img src="docs/screenshots/servicehomepage.png" alt="Service Homepage Screenshot" style="margin: 0 auto; display: block;" />
+</p>
+
+
 
 # 🚗 AutoTracker
 
@@ -92,7 +99,7 @@ Beyond solving real-world operational problems, AutoTracker serves as a portfoli
 | 📝 **Notes & Reminder System**           | Organize vehicle notes, service notes, maintenance reminders, and operational tasks within a centralized workspace.                                                                   |
 | 📄 **PDF Reporting**                     | Generate professional PDF reports for maintenance history, inventory, financial summaries, operational records, and vehicle information.                                              |
 | 👥 **Multi-User Data Isolation**         | Ensure every user and service business can securely access and manage only their own vehicles, customers, inventory, and operational data.                                            |
-| 🏗️ **Scalable Full-Stack Architecture** | Built with React, [ASP.NET](http://ASP.NET) Core Web API, Entity Framework Core, PostgreSQL, Docker, and Nginx using a modular, layered, scalable, and production-ready architecture. |
+| 🏗️ **Scalable Full-Stack Architecture** | Built with React, ASP.NET Core Web API, Entity Framework Core, PostgreSQL, Docker, and Nginx using a modular, layered, scalable, and production-ready architecture. |
 
 
 ## 🏗️ System Architecture
@@ -158,7 +165,7 @@ AutoTracker is built using a modern full-stack technology ecosystem designed for
 - Password Hashing
 - Email Verification Workflow
 - Password Recovery & Reset System
-- Gmail SMTP Integration
+- SMTP / Resend Email Integration
 - Custom HTML Email Templates
 
 ### 🧰 Development & Productivity Tools
@@ -175,18 +182,7 @@ AutoTracker is built using a modern full-stack technology ecosystem designed for
 - RESTful Service Design
 - User-Based Data Isolation
 - Containerized Development Environment
-- Scalable and Maintainable Project Struct
-
-## 📸 Screenshots
-
-
-
-
-
-
-
-
-
+- Scalable and Maintainable Project Structure
 
 
 ## 🐳 Docker & Deployment
@@ -300,7 +296,7 @@ Before running the application, make sure the following tools are installed:
 ### Clone Repository
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/cenap35/AutoTracker
 cd AutoTracker
 ```
 
